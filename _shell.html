@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TradeAI v2 — Buyer Flow</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- placeholders for inline scripts -->
+<!-- __INLINE_IOS__ -->
+<!-- __INLINE_UI__ -->
+<!-- __INLINE_SCREENS_BUYER__ -->
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:#070809;
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  font-family:-apple-system,"SF Pro Text","Inter",system-ui,sans-serif;
+  padding:32px 20px;
+  -webkit-font-smoothing:antialiased;
+  color:#fff;
+}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.30)!important}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes orbPulse{
+  0%,100%{transform:scale(1);filter:brightness(1)}
+  50%{transform:scale(1.06);filter:brightness(1.08)}
+}
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(60% 40% at 50% 110%, var(--accentDim), transparent 60%),
+    radial-gradient(60% 40% at 50% -10%, rgba(255,255,255,0.02), transparent 60%);
+}
+
+/* Tweaks */
+.tweaks{
+  position:fixed; bottom:20px; right:20px;
+  width:250px; background:#16181B;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; padding:16px;
+  display:none; flex-direction:column; gap:12px;
+  z-index:9999; color:#fff; font-size:12.5px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.6);
+  max-height:80vh; overflow-y:auto;
+}
+.tweaks.on{display:flex}
+.tweaks h4{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);font-weight:700;margin-bottom:-4px}
+.tweaks .group{display:flex;gap:6px;flex-wrap:wrap}
+.tweaks .opt{
+  flex:1 1 auto; min-width:60px;
+  padding:8px 10px; border-radius:10px;
+  background:#1E2125; border:1px solid rgba(255,255,255,0.06);
+  cursor:pointer; font-size:12px; text-align:center;
+  display:flex; align-items:center; gap:6px; justify-content:center;
+  transition:border-color .15s, background .15s;
+}
+.tweaks .opt.on{border-color:rgba(255,255,255,0.32);background:#23272B}
+.tweaks .sw{width:12px;height:12px;border-radius:4px}
+
+/* Screen nav jumper */
+.jumper{
+  position:fixed; top:16px; left:50%; transform:translateX(-50%);
+  z-index:9998; display:flex; gap:4px; background:rgba(20,22,24,0.85);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.08); border-radius:100px; padding:4px;
+  font-size:11px; font-weight:600;
+}
+.jumper .j{
+  padding:6px 11px; border-radius:100px; cursor:pointer; color:rgba(255,255,255,0.55);
+  transition: background .15s, color .15s;
+}
+.jumper .j.on{ background:var(--accent); color:var(--accentOn); }
+.jumper .j:hover:not(.on){ color:#fff; }
+</style>
+</head>
+<body>
+<div class="jumper" id="jumper"></div>
+<div id="root"></div>
+<div class="tweaks" id="tweaks">
+  <h4>Экран</h4>
+  <div class="group" id="t-screen"></div>
+  <h4>Акцент</h4>
+  <div class="group" id="t-accent"></div>
+  <h4>Роль</h4>
+  <div class="group" id="t-role"></div>
+</div>
+
+<script type="text/babel">
+function App(){
+  const defaults = /*EDITMODE-BEGIN*/{
+    "accent": "lime",
+    "role":   "buyer",
+    "screen": "home"
+  }/*EDITMODE-END*/;
+  const [accentKey, setAccentKey] = React.useState(defaults.accent);
+  const [role, setRole] = React.useState(defaults.role);
+
+  // Navigation state
+  const [screen, setScreen] = React.useState(defaults.screen);
+  const [ctx, setCtx] = React.useState({});
+  const [stack, setStack] = React.useState([]);
+
+  const accent = window.ACCENTS[accentKey] || window.ACCENTS.lime;
+
+  // Apply accent CSS vars
+  React.useEffect(()=>{
+    const r = document.documentElement;
+    r.style.setProperty('--accent', accent.hex);
+    r.style.setProperty('--accentOn', accent.on);
+    r.style.setProperty('--accentDim', accent.dim);
+    r.style.setProperty('--accentDim2', accent.dim2);
+    r.style.setProperty('--accentDeep', accent.deep);
+  },[accentKey]);
+
+  const nav = (next, nctx={})=>{
+    if(next==='back'){
+      setStack(p=>{
+        if(p.length===0){ setScreen('home'); setCtx({}); return []; }
+        const last = p[p.length-1];
+        setScreen(last.screen); setCtx(last.ctx);
+        return p.slice(0,-1);
+      });
+      return;
+    }
+    setStack(p=>[...p, {screen, ctx}]);
+    setScreen(next); setCtx(nctx);
+  };
+
+  // Edit-mode
+  React.useEffect(()=>{
+    const handler = (e)=>{
+      if(e.data?.type==='__activate_edit_mode') document.getElementById('tweaks').classList.add('on');
+      if(e.data?.type==='__deactivate_edit_mode') document.getElementById('tweaks').classList.remove('on');
+    };
+    window.addEventListener('message',handler);
+    try{window.parent.postMessage({type:'__edit_mode_available'},'*')}catch(e){}
+    return ()=>window.removeEventListener('message',handler);
+  },[]);
+
+  // Build tweak buttons
+  React.useEffect(()=>{
+    const ae = document.getElementById('t-accent');
+    ae.innerHTML='';
+    Object.entries(window.ACCENTS).forEach(([k,v])=>{
+      const b = document.createElement('div');
+      b.className = 'opt' + (k===accentKey?' on':'');
+      b.innerHTML = `<span class="sw" style="background:${v.hex}"></span>${v.label}`;
+      b.onclick = ()=>{
+        setAccentKey(k);
+        try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:{accent:k}},'*')}catch(e){}
+      };
+      ae.appendChild(b);
+    });
+    const re = document.getElementById('t-role');
+    re.innerHTML='';
+    [['buyer','Покупатель'],['seller','Продавец']].forEach(([k,l])=>{
+      const b = document.createElement('div');
+      b.className='opt' + (k===role?' on':'');
+      b.textContent=l;
+      b.onclick=()=>{
+        setRole(k);
+        try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:{role:k}},'*')}catch(e){}
+      };
+      re.appendChild(b);
+    });
+    const se = document.getElementById('t-screen');
+    se.innerHTML='';
+    const screens = [
+      ['home','Главная'],['search','Поиск'],['catalog','Каталог'],
+      ['product','Товар'],['supplier','Поставщик'],
+    ];
+    screens.forEach(([k,l])=>{
+      const b = document.createElement('div');
+      b.className='opt'+(k===screen?' on':'');
+      b.textContent=l;
+      b.onclick=()=>{ setStack([]); setScreen(k); setCtx({}); };
+      se.appendChild(b);
+    });
+  },[accentKey, role, screen]);
+
+  // Jumper
+  React.useEffect(()=>{
+    const jumper = document.getElementById('jumper');
+    jumper.innerHTML='';
+    const items = [
+      ['home','Главная'],['search','Поиск'],['catalog','Каталог'],
+      ['product','Товар'],['supplier','Поставщик'],
+    ];
+    items.forEach(([k,l])=>{
+      const d = document.createElement('div');
+      d.className = 'j'+(k===screen?' on':'');
+      d.textContent = l;
+      d.onclick = ()=>{ setStack([]); setScreen(k); setCtx({}); };
+      jumper.appendChild(d);
+    });
+  },[screen]);
+
+  const props = { nav, role, ctx };
+  let content;
+  switch(screen){
+    case 'home':     content = <window.BuyerHome {...props}/>; break;
+    case 'catalog':  content = <window.Catalog   {...props}/>; break;
+    case 'search':   content = <window.Search    {...props}/>; break;
+    case 'product':  content = <window.Product   {...props}/>; break;
+    case 'supplier': content = <window.Supplier  {...props}/>; break;
+    // placeholders for future screens — will come in next pass
+    case 'ai':       content = <Placeholder title="AI-чат" nav={nav}/>; break;
+    case 'chat':     content = window.Chat ? <window.Chat {...props}/> : <Placeholder title="Переписка" nav={nav}/>; break;
+    case 'estimate': content = <Placeholder title="Расчёт стоимости" nav={nav}/>; break;
+    case 'deal':     content = <Placeholder title="Сделка" nav={nav}/>; break;
+    case 'tracking': content = <Placeholder title="Отслеживание" nav={nav}/>; break;
+    case 'profile':  content = window.Profile ? <window.Profile {...props}/> : <Placeholder title="Профиль" nav={nav}/>; break;
+    default:         content = <window.BuyerHome {...props}/>;
+  }
+
+  return (
+    <div style={{position:'relative', zIndex:1}}>
+      <IOSDevice width={402} height={874} dark={true}>
+        {content}
+      </IOSDevice>
+    </div>
+  );
+}
+
+function Placeholder({title, nav}){
+  return (
+    <div style={{height:'100%',background:window.DS.bg,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:18,padding:40,paddingTop:80}}>
+      <div style={{
+        width:80,height:80,borderRadius:24,
+        background:'linear-gradient(135deg, var(--accent) 0%, var(--accentDeep) 100%)',
+        display:'flex',alignItems:'center',justifyContent:'center',
+        boxShadow:'0 8px 30px var(--accentDim2)'
+      }}>
+        <div style={{width:40,height:40,borderRadius:12,background:'rgba(255,255,255,0.2)'}}/>
+      </div>
+      <div style={{textAlign:'center'}}>
+        <div style={{fontSize:22,fontWeight:800,color:'#fff',letterSpacing:-0.5}}>{title}</div>
+        <div style={{fontSize:13,color:'rgba(255,255,255,0.55)',marginTop:8,maxWidth:250,lineHeight:1.5}}>
+          Экран в работе — будет готов в следующей итерации.
+        </div>
+      </div>
+      <div onClick={()=>nav('back')} style={{
+        padding:'10px 20px', borderRadius:12,
+        background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)',
+        color:'#fff', fontSize:13, fontWeight:600, cursor:'pointer',
+      }}>Назад</div>
+    </div>
+  );
+}
+
+function boot(){
+  if(!window.BuyerHome || !window.IOSDevice || !window.Catalog){ setTimeout(boot, 40); return; }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+}
+boot();
+</script>
+</body>
+</html>

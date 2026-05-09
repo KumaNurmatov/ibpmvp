@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TradeAI</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080808;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,system-ui,sans-serif}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.25)!important}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes orbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dot{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.tweak-panel{position:fixed;bottom:24px;right:24px;width:210px;background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:16px;display:none;flex-direction:column;gap:12px;z-index:9999;color:#fff;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.tweak-panel.on{display:flex}
+.t-label{color:#777;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+select{background:#222;border:1px solid #333;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;outline:none;width:100%;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div class="tweak-panel" id="tweakPanel">
+  <div style="font-size:13px;font-weight:600;border-bottom:1px solid #333;padding-bottom:10px">Настройки</div>
+  <div><div class="t-label">Акцент</div>
+    <select id="tAccent"><option value="blue">Синий</option><option value="teal">Бирюза</option><option value="gold">Золото</option><option value="violet">Фиолет</option></select>
+  </div>
+  <div><div class="t-label">Тема</div>
+    <select id="tTheme"><option value="dark">Тёмная</option><option value="charcoal">Уголь</option></select>
+  </div>
+</div>
+
+<script type="text/babel">
+/* ─── CONSTANTS ─── */
+const ACCENT={
+  blue:  {hex:'#3D78F5',glow:'rgba(61,120,245,.35)', rgb:'61,120,245'},
+  teal:  {hex:'#00C9A7',glow:'rgba(0,201,167,.35)',  rgb:'0,201,167'},
+  gold:  {hex:'#E8B84B',glow:'rgba(232,184,75,.3)',   rgb:'232,184,75'},
+  violet:{hex:'#9B72FF',glow:'rgba(155,114,255,.35)', rgb:'155,114,255'},
+};
+const THEMES={
+  dark:    {app:'#0e0e10',card:'rgba(255,255,255,.05)',border:'rgba(255,255,255,.08)',text:'#fff',sub:'rgba(255,255,255,.45)'},
+  charcoal:{app:'#141416',card:'rgba(255,255,255,.06)',border:'rgba(255,255,255,.09)',text:'#fff',sub:'rgba(255,255,255,.45)'},
+};
+
+const CATS=[
+  {id:'elec',label:'Электроника',icon:'⚡',bg:'#141e33',accent:'#3D78F5'},
+  {id:'text',label:'Текстиль',   icon:'🧵',bg:'#0f211a',accent:'#00C9A7'},
+  {id:'meta',label:'Металлы',    icon:'⚙️', bg:'#211414',accent:'#E8B84B'},
+  {id:'plas',label:'Пластик',    icon:'🔩',bg:'#1a1228',accent:'#9B72FF'},
+  {id:'chem',label:'Химикаты',  icon:'🧪',bg:'#0f1e28',accent:'#3DC8F5'},
+  {id:'furn',label:'Мебель',     icon:'🪑',bg:'#1e1a10',accent:'#E87B4B'},
+  {id:'food',label:'Продукты',   icon:'🌾',bg:'#1a2010',accent:'#84cc16'},
+  {id:'pack',label:'Упаковка',   icon:'📦',bg:'#201218',accent:'#f472b6'},
+];
+
+const SUPPLIERS=[
+  {id:1,name:'Shenzhen TechParts',cat:'Электроника',moq:'МЗ 500 ед.',score:98,country:'🇨🇳',rating:4.9,orders:1240,lead:'15–20 дн.',price:'$4.20/ед.'},
+  {id:2,name:'Jiangsu Textile Group',cat:'Текстиль',moq:'МЗ 200 ед.',score:96,country:'🇨🇳',rating:4.8,orders:890,lead:'20–30 дн.',price:'$1.80/м'},
+  {id:3,name:'Vietnam Steel Co.',cat:'Металлы',moq:'МЗ 1 т',score:94,country:'🇻🇳',rating:4.7,orders:560,lead:'25–35 дн.',price:'$680/т'},
+  {id:4,name:'Guangdong Plastics',cat:'Пластик',moq:'МЗ 300 кг',score:92,country:'🇨🇳',rating:4.6,orders:430,lead:'10–15 дн.',price:'$2.50/кг'},
+  {id:5,name:'India ChemSource',cat:'Химикаты',moq:'МЗ 50 кг',score:90,country:'🇮🇳',rating:4.5,orders:320,lead:'30–45 дн.',price:'$12/кг'},
+];
+
+const ORDERS=[
+  {id:'ORD-2841',supplier:'Shenzhen TechParts',cat:'Электроника',status:'В пути',amount:'$12,400',date:'14 апр.',color:'#3D78F5'},
+  {id:'ORD-2790',supplier:'Jiangsu Textile Group',cat:'Текстиль',status:'На таможне',amount:'$5,800',date:'02 апр.',color:'#E8B84B'},
+  {id:'ORD-2744',supplier:'Vietnam Steel Co.',cat:'Металлы',status:'Доставлен',amount:'$18,200',date:'20 мар.',color:'#22c55e'},
+];
+
+const AI_PROMPTS=[
+  {icon:'🏭',text:'Найти поставщиков стали в Китае'},
+  {icon:'🚢',text:'Рассчитать доставку и налоги'},
+  {icon:'📊',text:'Сравнить текстильные фабрики'},
+  {icon:'✅',text:'Верифицированные производители электроники'},
+  {icon:'🌐',text:'Перевести переписку с поставщиком'},
+  {icon:'💰',text:'Рассчитать полную стоимость заказа'},
+];
+
+const SYSTEM=`Ты — ИИ-ассистент платформы TradeAI, B2B маркетплейса для международных закупок.
+Помогаешь находить поставщиков, рассчитывать стоимость (товар+доставка+таможня+НДС), организовывать логистику, переводить переписку.
+Отвечай на русском, кратко и по делу. Используй эмодзи и структурируй ответ абзацами.
+При поиске поставщика — предложи 2–3 варианта с: название, страна, ориентировочная цена, МЗ, рейтинг.
+При расчёте стоимости — покажи разбивку: товар, доставка, таможня (≈15%), НДС 20%, итого.`;
+
+/* ─── ATOMS ─── */
+function Dot({color}){return <div style={{width:6,height:6,borderRadius:'50%',background:color,flexShrink:0}}/>;}
+function Tag({children,color='rgba(255,255,255,.07)',text='rgba(255,255,255,.45)'}){
+  return <div style={{fontSize:10,color:text,background:color,borderRadius:6,padding:'2px 7px',fontWeight:500,whiteSpace:'nowrap'}}>{children}</div>;
+}
+function BackBtn({onBack,th}){
+  return(
+    <div onClick={onBack} style={{width:36,height:36,borderRadius:12,background:th.card,border:`1px solid ${th.border}`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+      <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5L2 7.5l5.5 6" stroke="rgba(255,255,255,.65)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </div>
+  );
+}
+function TypingDots(){
+  return(
+    <div style={{display:'flex',gap:4,alignItems:'center',padding:'2px 0'}}>
+      {[0,1,2].map(i=>(
+        <div key={i} style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,255,255,.45)',animation:`dot 1.2s ease-in-out infinite`,animationDelay:`${i*.2}s`}}/>
+      ))}
+    </div>
+  );
+}
+function StarRating({val}){
+  return(
+    <div style={{display:'flex',gap:2,alignItems:'center'}}>
+      {[1,2,3,4,5].map(i=>(
+        <svg key={i} width="10" height="10" viewBox="0 0 24 24">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill={i<=Math.round(val)?'#E8B84B':'rgba(255,255,255,.15)'} stroke="none"/>
+        </svg>
+      ))}
+      <span style={{fontSize:11,color:'rgba(255,255,255,.5)',marginLeft:3}}>{val}</span>
+    </div>
+  );
+}
+function AIOrb({accent}){
+  const a=ACCENT[accent];
+  return(
+    <div style={{width:46,height:46,borderRadius:'50%',flexShrink:0,
+      background:`radial-gradient(circle at 32% 32%, #fff 0%, ${a.hex} 38%, #6a00ff 75%, #000 100%)`,
+      boxShadow:`0 0 18px 5px ${a.glow},0 0 4px 1px rgba(255,255,255,.18)`,
+      animation:'orbPulse 3s ease-in-out infinite'}}/>
+  );
+}
+
+/* ─── SCREENS ─── */
+function SupplierScreen({s,accent,th,onBack,onAsk}){
+  const a=ACCENT[accent];
+  const cost=[
+    ['Товар (1 000 ед.)', `$${(parseFloat(s.price)*1000).toLocaleString('ru') || '4 200'}`],
+    ['Доставка морем','$1 200'],
+    ['Таможня (~15%)','$630'],
+    ['НДС 20%','$1 206'],
+  ];
+  const total='$7 236';
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      <div style={{padding:'12px 16px 0',display:'flex',alignItems:'center',gap:12,flexShrink:0}}>
+        <BackBtn onBack={onBack} th={th}/>
+        <div style={{flex:1}}>
+          <div style={{fontSize:16,fontWeight:700,color:th.text,letterSpacing:-.3}}>{s.country} {s.name}</div>
+          <div style={{fontSize:12,color:th.sub,marginTop:1}}>{s.cat}</div>
+        </div>
+        <div style={{fontSize:10,color:'#22c55e',background:'rgba(34,197,94,.1)',border:'1px solid rgba(34,197,94,.25)',borderRadius:20,padding:'3px 10px',fontWeight:600}}>✓ Верифицирован</div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'14px 16px 20px',display:'flex',flexDirection:'column',gap:12}}>
+        {/* stats */}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:8}}>
+          {[['Рейтинг',<StarRating val={s.rating}/>],['Заказов',`${s.orders.toLocaleString('ru')}`],['Мин. заказ',s.moq],['Срок произв.',s.lead]].map(([k,v])=>(
+            <div key={k} style={{background:th.card,border:`1px solid ${th.border}`,borderRadius:12,padding:'11px 13px'}}>
+              <div style={{fontSize:10,color:th.sub,marginBottom:5}}>{k}</div>
+              <div style={{fontSize:13,fontWeight:600,color:th.text}}>{v}</div>
+            </div>
+          ))}
+        </div>
+        {/* price breakdown */}
+        <div style={{background:th.card,border:`1px solid ${th.border}`,borderRadius:14,padding:'14px 16px'}}>
+          <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:12}}>💰 Расчёт стоимости</div>
+          {cost.map(([k,v])=>(
+            <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'7px 0',borderBottom:`1px solid ${th.border}`}}>
+              <span style={{fontSize:13,color:th.sub}}>{k}</span>
+              <span style={{fontSize:13,color:th.text,fontWeight:500}}>{v}</span>
+            </div>
+          ))}
+          <div style={{display:'flex',justifyContent:'space-between',padding:'10px 0 0'}}>
+            <span style={{fontSize:14,fontWeight:700,color:th.text}}>Итого</span>
+            <span style={{fontSize:14,fontWeight:700,color:a.hex}}>{total}</span>
+          </div>
+        </div>
+        {/* certs */}
+        <div style={{background:th.card,border:`1px solid ${th.border}`,borderRadius:14,padding:'14px 16px'}}>
+          <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:10}}>📋 Сертификаты</div>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
+            {['ISO 9001','CE','REACH','RoHS'].map(c=>(
+              <Tag key={c} color='rgba(255,255,255,.07)' text='rgba(255,255,255,.6)'>{c}</Tag>
+            ))}
+          </div>
+        </div>
+        {/* actions */}
+        <div style={{display:'flex',gap:10}}>
+          <div onClick={()=>onAsk(`Расскажи подробнее о поставщике ${s.name} из категории ${s.cat}`)} style={{flex:1,height:48,borderRadius:14,background:a.hex,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontWeight:600,color:'#fff',fontSize:14,gap:8,boxShadow:`0 4px 16px ${a.glow}`}}>
+            <span>💬</span> Написать поставщику
+          </div>
+          <div style={{width:48,height:48,borderRadius:14,background:th.card,border:`1px solid ${th.border}`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53L12 21.35z" stroke="rgba(255,255,255,.45)" strokeWidth="2" fill="none"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CategoryScreen({cat,accent,th,onBack,onSupplier}){
+  const a=ACCENT[accent];
+  const list=SUPPLIERS.filter(s=>s.cat===cat.label);
+  const show=list.length?list:SUPPLIERS;
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      <div style={{padding:'12px 16px 0',display:'flex',alignItems:'center',gap:12,flexShrink:0}}>
+        <BackBtn onBack={onBack} th={th}/>
+        <div style={{fontSize:20}}>{cat.icon}</div>
+        <div style={{fontSize:17,fontWeight:700,color:th.text}}>{cat.label}</div>
+      </div>
+      <div style={{fontSize:12,color:th.sub,padding:'8px 16px 12px',flexShrink:0}}>
+        {show.length} поставщик{show.length===1?'':show.length<5?'а':'ов'} найдено
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'0 16px 20px',display:'flex',flexDirection:'column',gap:10}}>
+        {show.map(s=>(
+          <div key={s.id} onClick={()=>onSupplier(s)} style={{borderRadius:14,background:th.card,border:`1px solid ${th.border}`,padding:'14px 16px',cursor:'pointer',animation:'fadeUp .2s ease'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:6}}>
+              <div style={{fontSize:14,fontWeight:600,color:th.text}}>{s.country} {s.name}</div>
+              <div style={{fontSize:13,fontWeight:700,color:a.hex}}>{s.score}%</div>
+            </div>
+            <div style={{fontSize:12,color:th.sub,marginBottom:10}}>{s.cat} · {s.lead}</div>
+            <div style={{display:'flex',gap:7,alignItems:'center',justifyContent:'space-between'}}>
+              <div style={{display:'flex',gap:7}}>
+                <Tag color='rgba(34,197,94,.1)' text='#22c55e'>✓ Верифицирован</Tag>
+                <Tag>{s.moq}</Tag>
+              </div>
+              <div style={{fontSize:12,color:th.text,fontWeight:600}}>{s.price}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SearchScreen({accent,th,onSupplier}){
+  const a=ACCENT[accent];
+  const [q,setQ]=React.useState('');
+  const results=q.length>1?SUPPLIERS.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.cat.toLowerCase().includes(q.toLowerCase())):[];
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      <div style={{padding:'12px 16px 0',flexShrink:0}}>
+        <div style={{fontSize:20,fontWeight:700,color:th.text,letterSpacing:-.5,marginBottom:12}}>Поиск</div>
+        <div style={{height:46,borderRadius:14,background:th.card,border:`1px solid ${a.hex}44`,display:'flex',alignItems:'center',gap:10,padding:'0 14px',boxShadow:`0 0 0 3px rgba(${a.rgb},.08)`}}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="rgba(255,255,255,.35)" strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke="rgba(255,255,255,.35)" strokeWidth="2" strokeLinecap="round"/></svg>
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Товар, поставщик, категория…" style={{flex:1,background:'none',border:'none',outline:'none',color:th.text,fontSize:14,fontFamily:'inherit'}} autoFocus/>
+          {q&&<div onClick={()=>setQ('')} style={{color:'rgba(255,255,255,.35)',cursor:'pointer',fontSize:18,lineHeight:1}}>×</div>}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'14px 16px 20px',display:'flex',flexDirection:'column',gap:10}}>
+        {q.length<2&&(
+          <>
+            <div style={{fontSize:12,color:th.sub,marginBottom:4}}>Популярные запросы</div>
+            {['Электроника Китай','Текстиль МЗ < 200','Металлы Вьетнам','Мебель под заказ'].map(t=>(
+              <div key={t} onClick={()=>setQ(t)} style={{padding:'11px 14px',borderRadius:12,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:13,cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                {t}<span style={{color:th.sub,fontSize:16}}>↗</span>
+              </div>
+            ))}
+          </>
+        )}
+        {q.length>=2&&results.length===0&&(
+          <div style={{color:th.sub,fontSize:13,textAlign:'center',marginTop:40}}>Ничего не найдено по «{q}»</div>
+        )}
+        {results.map(s=>(
+          <div key={s.id} onClick={()=>onSupplier(s)} style={{borderRadius:14,background:th.card,border:`1px solid ${th.border}`,padding:'14px 16px',cursor:'pointer',animation:'fadeUp .15s ease'}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+              <div style={{fontSize:14,fontWeight:600,color:th.text}}>{s.country} {s.name}</div>
+              <div style={{fontSize:13,fontWeight:700,color:a.hex}}>{s.score}%</div>
+            </div>
+            <div style={{fontSize:12,color:th.sub,marginBottom:8}}>{s.cat}</div>
+            <div style={{display:'flex',gap:7}}><Tag color='rgba(34,197,94,.1)' text='#22c55e'>✓ Верифицирован</Tag><Tag>{s.moq}</Tag><Tag>{s.price}</Tag></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function OrdersScreen({accent,th}){
+  const a=ACCENT[accent];
+  const statusColor={['В пути']:a.hex,['На таможне']:'#E8B84B',['Доставлен']:'#22c55e'};
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      <div style={{padding:'12px 16px 14px',flexShrink:0}}>
+        <div style={{fontSize:20,fontWeight:700,color:th.text,letterSpacing:-.5}}>Заказы</div>
+        <div style={{fontSize:13,color:th.sub,marginTop:3}}>{ORDERS.length} активных заказа</div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'0 16px 20px',display:'flex',flexDirection:'column',gap:10}}>
+        {ORDERS.map(o=>(
+          <div key={o.id} style={{borderRadius:14,background:th.card,border:`1px solid ${th.border}`,padding:'14px 16px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+              <div>
+                <div style={{fontSize:11,color:th.sub,marginBottom:3}}>#{o.id} · {o.date}</div>
+                <div style={{fontSize:14,fontWeight:600,color:th.text}}>{o.supplier}</div>
+                <div style={{fontSize:12,color:th.sub,marginTop:2}}>{o.cat}</div>
+              </div>
+              <div style={{fontSize:15,fontWeight:700,color:th.text}}>{o.amount}</div>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{fontSize:11,color:statusColor[o.status]||th.sub,background:`${statusColor[o.status]||'rgba(255,255,255,.1)'}18`,borderRadius:20,padding:'3px 10px',fontWeight:600}}>
+                ● {o.status}
+              </div>
+              <div style={{fontSize:12,color:a.hex,cursor:'pointer',fontWeight:500}}>Подробнее →</div>
+            </div>
+          </div>
+        ))}
+        {/* summary */}
+        <div style={{borderRadius:14,background:`rgba(${ACCENT[accent].rgb},.08)`,border:`1px solid rgba(${ACCENT[accent].rgb},.2)`,padding:'14px 16px',marginTop:4}}>
+          <div style={{fontSize:12,color:th.sub,marginBottom:8}}>Общая сумма за апрель</div>
+          <div style={{fontSize:22,fontWeight:700,color:a.hex}}>$36 400</div>
+          <div style={{fontSize:11,color:th.sub,marginTop:4}}>3 заказа · 2 в пути · 1 доставлен</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProfileScreen({accent,th}){
+  const a=ACCENT[accent];
+  const items=[
+    {icon:'🏢',label:'Моя компания',sub:'ООО «ТрейдГрупп»'},
+    {icon:'📦',label:'Избранные поставщики',sub:'12 поставщиков'},
+    {icon:'💳',label:'Способ оплаты',sub:'SWIFT · Виза •••• 4421'},
+    {icon:'🌐',label:'Язык интерфейса',sub:'Русский'},
+    {icon:'🔔',label:'Уведомления',sub:'Включены'},
+    {icon:'🔒',label:'Безопасность',sub:'2FA включена'},
+  ];
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      <div style={{padding:'12px 16px 14px',flexShrink:0}}>
+        <div style={{fontSize:20,fontWeight:700,color:th.text,letterSpacing:-.5}}>Профиль</div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'0 16px 20px',display:'flex',flexDirection:'column',gap:12}}>
+        {/* avatar card */}
+        <div style={{borderRadius:16,background:th.card,border:`1px solid ${th.border}`,padding:'20px 16px',display:'flex',alignItems:'center',gap:14}}>
+          <div style={{width:56,height:56,borderRadius:18,background:`linear-gradient(135deg,${a.hex},#6a00ff)`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,fontWeight:700,color:'#fff',flexShrink:0}}>ИВ</div>
+          <div>
+            <div style={{fontSize:16,fontWeight:700,color:th.text}}>Иван Волков</div>
+            <div style={{fontSize:12,color:th.sub,marginTop:3}}>Директор по закупкам</div>
+            <div style={{display:'flex',gap:6,marginTop:8}}>
+              <Tag color={`rgba(${a.rgb},.12)`} text={a.hex}>Премиум</Tag>
+              <Tag color='rgba(34,197,94,.1)' text='#22c55e'>Верифицирован</Tag>
+            </div>
+          </div>
+        </div>
+        {/* stats */}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+          {[['$36.4K','Оборот'],['3','Заказа'],['12','Поставщ.']].map(([v,k])=>(
+            <div key={k} style={{background:th.card,border:`1px solid ${th.border}`,borderRadius:12,padding:'12px 10px',textAlign:'center'}}>
+              <div style={{fontSize:16,fontWeight:700,color:a.hex}}>{v}</div>
+              <div style={{fontSize:10,color:th.sub,marginTop:3}}>{k}</div>
+            </div>
+          ))}
+        </div>
+        {/* menu */}
+        <div style={{background:th.card,border:`1px solid ${th.border}`,borderRadius:16,overflow:'hidden'}}>
+          {items.map((it,i)=>(
+            <div key={it.label} style={{display:'flex',alignItems:'center',gap:13,padding:'13px 16px',borderBottom: i<items.length-1?`1px solid ${th.border}`:'none',cursor:'pointer'}}>
+              <div style={{width:34,height:34,borderRadius:10,background:'rgba(255,255,255,.06)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>{it.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,color:th.text,fontWeight:500}}>{it.label}</div>
+                <div style={{fontSize:11,color:th.sub,marginTop:1}}>{it.sub}</div>
+              </div>
+              <svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 1l5 5-5 5" stroke="rgba(255,255,255,.25)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+          ))}
+        </div>
+        <div style={{height:1}}/>
+      </div>
+    </div>
+  );
+}
+
+function AIScreen({accent,th,initialMsg}){
+  const a=ACCENT[accent];
+  const [msgs,setMsgs]=React.useState([]);
+  const [q,setQ]=React.useState('');
+  const [loading,setLoading]=React.useState(false);
+  const ref=React.useRef(null);
+  const inputRef=React.useRef(null);
+  const showPrompts=msgs.length===0;
+
+  React.useEffect(()=>{
+    if(initialMsg){send(initialMsg);}
+  },[initialMsg]);
+
+  React.useEffect(()=>{
+    if(ref.current) ref.current.scrollTop=ref.current.scrollHeight;
+  },[msgs,loading]);
+
+  const send=async(text)=>{
+    const t=(text||q).trim();
+    if(!t||loading) return;
+    const um={role:'user',content:t};
+    setMsgs(p=>[...p,um]);
+    setQ('');
+    setLoading(true);
+    try{
+      const hist=[...msgs,um];
+      const reply=await window.claude.complete({
+        messages:[{role:'user',content:SYSTEM+'\n\n'+hist.map(m=>`${m.role==='user'?'Пользователь':'Ассистент'}: ${m.content}`).join('\n')}]
+      });
+      setMsgs(p=>[...p,{role:'assistant',content:reply}]);
+    }catch(e){
+      setMsgs(p=>[...p,{role:'assistant',content:'Произошла ошибка. Пожалуйста, попробуйте снова.'}]);
+    }
+    setLoading(false);
+  };
+
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      {/* header */}
+      <div style={{padding:'12px 16px 14px',display:'flex',alignItems:'center',gap:12,flexShrink:0,borderBottom:`1px solid ${th.border}`}}>
+        <AIOrb accent={accent}/>
+        <div style={{flex:1}}>
+          <div style={{fontSize:16,fontWeight:700,color:th.text,letterSpacing:-.3}}>ИИ-ассистент</div>
+          <div style={{fontSize:11,color:th.sub,marginTop:1}}>Поиск · Расчёт · Перевод</div>
+        </div>
+        <div style={{fontSize:10,color:a.hex,background:`rgba(${a.rgb},.12)`,border:`1px solid rgba(${a.rgb},.25)`,borderRadius:20,padding:'3px 9px',fontWeight:600}}>ОНЛАЙН</div>
+      </div>
+      {/* messages */}
+      <div ref={ref} style={{flex:1,overflowY:'auto',padding:'14px 16px',display:'flex',flexDirection:'column',gap:10,minHeight:0}}>
+        {showPrompts&&(
+          <>
+            <div style={{fontSize:13,color:'rgba(255,255,255,.55)',lineHeight:1.6,padding:'4px 0 10px',textAlign:'center'}}>
+              👋 Привет! Я помогу найти поставщиков, рассчитать стоимость и организовать доставку.
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+              {AI_PROMPTS.map(p=>(
+                <div key={p.text} onClick={()=>send(p.text)} style={{borderRadius:12,padding:'10px 11px',background:th.card,border:`1px solid ${th.border}`,display:'flex',alignItems:'flex-start',gap:8,cursor:'pointer',transition:'opacity .15s'}}>
+                  <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{p.icon}</span>
+                  <span style={{fontSize:12,color:'rgba(255,255,255,.7)',lineHeight:1.4}}>{p.text}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {msgs.map((m,i)=>(
+          <div key={i} style={{animation:'fadeUp .2s ease',alignSelf:m.role==='user'?'flex-end':'flex-start',maxWidth:'85%'}}>
+            {m.role==='user'
+              ?<div style={{background:a.hex,color:'#fff',borderRadius:'16px 16px 4px 16px',padding:'10px 14px',fontSize:13,lineHeight:1.5,boxShadow:`0 2px 14px ${a.glow}`}}>{m.content}</div>
+              :<div style={{background:th.card,border:`1px solid ${th.border}`,color:'rgba(255,255,255,.85)',borderRadius:'4px 16px 16px 16px',padding:'10px 14px',fontSize:13,lineHeight:1.6,whiteSpace:'pre-wrap'}}>{m.content}</div>
+            }
+          </div>
+        ))}
+        {loading&&(
+          <div style={{alignSelf:'flex-start',background:th.card,border:`1px solid ${th.border}`,borderRadius:'4px 16px 16px 16px',padding:'12px 16px'}}>
+            <TypingDots/>
+          </div>
+        )}
+      </div>
+      {/* input */}
+      <div style={{padding:'10px 16px 14px',flexShrink:0,borderTop:`1px solid ${th.border}`}}>
+        {!showPrompts&&(
+          <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:10}}>
+            {['Найти ещё','Рассчитать цену','Перевести','Уточнить'].map(t=>(
+              <div key={t} onClick={()=>send(t)} style={{height:28,borderRadius:100,padding:'0 11px',background:`rgba(${a.rgb},.1)`,border:`1px solid rgba(${a.rgb},.2)`,color:a.hex,fontSize:12,display:'flex',alignItems:'center',whiteSpace:'nowrap',cursor:'pointer',flexShrink:0}}>{t}</div>
+            ))}
+          </div>
+        )}
+        <div style={{display:'flex',alignItems:'center',gap:10,background:th.card,border:`1px solid rgba(${a.rgb},.3)`,borderRadius:16,padding:'10px 10px 10px 14px',boxShadow:`0 0 0 3px rgba(${a.rgb},.07)`}}>
+          <input ref={inputRef} value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Опишите нужный товар или поставщика…" style={{flex:1,background:'none',border:'none',outline:'none',color:th.text,fontSize:13,fontFamily:'inherit'}}/>
+          <div onClick={()=>send()} style={{width:36,height:36,borderRadius:12,flexShrink:0,cursor:'pointer',background:q.length?a.hex:'rgba(255,255,255,.1)',display:'flex',alignItems:'center',justifyContent:'center',transition:'all .2s',boxShadow:q.length?`0 0 12px ${a.glow}`:'none'}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HomeScreen({accent,th,onCat,onSupplier,onAsk}){
+  const a=ACCENT[accent];
+  const [filter,setFilter]=React.useState('Все');
+  const filters=['Все','Верифицированные','МЗ < 100','Быстрая доставка','Новые'];
+  return(
+    <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',paddingTop:60,overflow:'hidden'}}>
+      {/* header */}
+      <div style={{padding:'12px 16px 0',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        <div>
+          <div style={{fontSize:10,color:'rgba(255,255,255,.35)',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:600}}>Маркетплейс</div>
+          <div style={{fontSize:21,fontWeight:700,color:th.text,letterSpacing:-.5}}>TradeAI</div>
+        </div>
+        <div style={{display:'flex',gap:9}}>
+          <div style={{width:36,height:36,borderRadius:12,background:th.card,border:`1px solid ${th.border}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="rgba(255,255,255,.5)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          <div style={{width:36,height:36,borderRadius:12,background:`linear-gradient(135deg,${a.hex},#6a00ff)`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:'#fff'}}>ИВ</div>
+        </div>
+      </div>
+      {/* search */}
+      <div style={{padding:'12px 16px 0',flexShrink:0}}>
+        <div style={{height:44,borderRadius:14,background:th.card,border:`1px solid ${th.border}`,display:'flex',alignItems:'center',gap:10,padding:'0 14px'}}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="rgba(255,255,255,.28)" strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke="rgba(255,255,255,.28)" strokeWidth="2" strokeLinecap="round"/></svg>
+          <span style={{color:'rgba(255,255,255,.25)',fontSize:14}}>Товары, фабрики, поставщики…</span>
+        </div>
+      </div>
+      {/* filters */}
+      <div style={{padding:'10px 16px 0',flexShrink:0,overflowX:'auto',display:'flex',gap:7}}>
+        {filters.map(f=>(
+          <div key={f} onClick={()=>setFilter(f)} style={{height:30,borderRadius:100,padding:'0 13px',flexShrink:0,background:filter===f?a.hex:th.card,border:`1px solid ${filter===f?'transparent':th.border}`,color:filter===f?'#fff':th.sub,fontSize:13,fontWeight:filter===f?600:400,display:'flex',alignItems:'center',whiteSpace:'nowrap',cursor:'pointer',transition:'all .2s'}}>{f}</div>
+        ))}
+      </div>
+      {/* content */}
+      <div style={{flex:1,overflowY:'auto',padding:'12px 16px 20px',display:'flex',flexDirection:'column',gap:14}}>
+        {/* categories */}
+        <div>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
+            <div style={{fontSize:13,fontWeight:600,color:th.text}}>Категории</div>
+            <div style={{fontSize:12,color:a.hex,fontWeight:500}}>Все →</div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
+            {CATS.slice(0,8).map(cat=>(
+              <div key={cat.id} onClick={()=>onCat(cat)} style={{borderRadius:14,padding:'12px 8px 10px',background:cat.bg,border:`1px solid rgba(255,255,255,.06)`,cursor:'pointer',textAlign:'center'}}>
+                <div style={{fontSize:22,marginBottom:6}}>{cat.icon}</div>
+                <div style={{fontSize:10,color:'rgba(255,255,255,.8)',fontWeight:500,lineHeight:1.25}}>{cat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* top suppliers */}
+        <div>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
+            <div style={{fontSize:13,fontWeight:600,color:th.text}}>Топ поставщики</div>
+            <div style={{fontSize:12,color:a.hex,fontWeight:500}}>Смотреть →</div>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:9}}>
+            {SUPPLIERS.slice(0,3).map(s=>(
+              <div key={s.id} onClick={()=>onSupplier(s)} style={{borderRadius:14,background:th.card,border:`1px solid ${th.border}`,padding:'13px 15px',cursor:'pointer',display:'flex',alignItems:'center',gap:12}}>
+                <div style={{width:42,height:42,borderRadius:13,background:CATS.find(c=>c.label===s.cat)?.bg||'#1a2030',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0}}>
+                  {CATS.find(c=>c.label===s.cat)?.icon||'🏭'}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:13,fontWeight:600,color:th.text}}>{s.country} {s.name}</div>
+                  <div style={{fontSize:11,color:th.sub,marginTop:2}}>{s.cat} · {s.price}</div>
+                  <div style={{display:'flex',gap:6,marginTop:6}}>
+                    <Tag color='rgba(34,197,94,.1)' text='#22c55e'>✓ Верифицирован</Tag>
+                    <Tag>{s.moq}</Tag>
+                  </div>
+                </div>
+                <div style={{fontSize:14,fontWeight:700,color:a.hex,flexShrink:0}}>{s.score}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* AI promo banner */}
+        <div onClick={()=>onAsk(null)} style={{borderRadius:16,background:`linear-gradient(135deg, rgba(${a.rgb},.15) 0%, rgba(106,0,255,.15) 100%)`,border:`1px solid rgba(${a.rgb},.25)`,padding:'14px 16px',cursor:'pointer',display:'flex',alignItems:'center',gap:14}}>
+          <div style={{width:42,height:42,borderRadius:'50%',background:`radial-gradient(circle at 32% 32%, #fff 0%, ${a.hex} 40%, #6a00ff 80%)`,boxShadow:`0 0 16px ${a.glow}`,flexShrink:0,animation:'orbPulse 3s ease-in-out infinite'}}/>
+          <div style={{flex:1}}>
+            <div style={{fontSize:14,fontWeight:700,color:th.text,marginBottom:3}}>Спросить ИИ-ассистента</div>
+            <div style={{fontSize:12,color:th.sub,lineHeight:1.4}}>Найдёт поставщика, рассчитает стоимость и переведёт переписку</div>
+          </div>
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke={`rgba(${a.rgb},.6)`} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── TAB BAR ─── */
+const TABS=[
+  {id:'home',  label:'Главная', icon:(c)=><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke={c} strokeWidth="1.8" strokeLinejoin="round" fill={c==='#fff'?'rgba(255,255,255,.12)':'none'}/><polyline points="9,22 9,12 15,12 15,22" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/></svg>},
+  {id:'search',label:'Поиск',   icon:(c)=><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke={c} strokeWidth="1.8"/><path d="M21 21l-4.35-4.35" stroke={c} strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:'ai',    label:'ИИ',      icon:(c,glow)=><div style={{width:46,height:46,borderRadius:'50%',background:`radial-gradient(circle at 32% 32%,#fff 0%,#3D78F5 40%,#6a00ff 80%,#000 100%)`,boxShadow:glow?`0 0 18px 5px rgba(61,120,245,.5)`:undefined,marginTop:-14,border:'3px solid #0e0e10',flexShrink:0,animation:'orbPulse 3s ease-in-out infinite'}}/>},
+  {id:'orders',label:'Заказы',  icon:(c)=><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/><rect x="9" y="3" width="6" height="4" rx="2" stroke={c} strokeWidth="1.8"/><line x1="9" y1="12" x2="15" y2="12" stroke={c} strokeWidth="1.8" strokeLinecap="round"/><line x1="9" y1="16" x2="13" y2="16" stroke={c} strokeWidth="1.8" strokeLinecap="round"/></svg>},
+  {id:'profile',label:'Профиль',icon:(c)=><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke={c} strokeWidth="1.8" strokeLinecap="round"/><circle cx="12" cy="7" r="4" stroke={c} strokeWidth="1.8"/></svg>},
+];
+
+/* ─── ROOT ─── */
+function App(){
+  const saved=()=>{try{return JSON.parse(localStorage.getItem('tradeai')||'{}')}catch(e){return{}}};
+  const s=saved();
+  const [accent,setAccent]=React.useState(s.accent||'blue');
+  const [themeKey,setThemeKey]=React.useState(s.theme||'dark');
+  const [tab,setTab]=React.useState('home');
+  const [stack,setStack]=React.useState([]); // {type, data}
+  const [aiInitMsg,setAiInitMsg]=React.useState(null);
+
+  const a=ACCENT[accent];
+  const th=THEMES[themeKey];
+
+  React.useEffect(()=>{
+    localStorage.setItem('tradeai',JSON.stringify({accent,theme:themeKey,tab}));
+    window.parent.postMessage({type:'__edit_mode_set_keys',edits:{accent,panelStyle:themeKey}},'*');
+  },[accent,themeKey,tab]);
+
+  React.useEffect(()=>{
+    const h=e=>{
+      if(e.data?.type==='__activate_edit_mode')   document.getElementById('tweakPanel').classList.add('on');
+      if(e.data?.type==='__deactivate_edit_mode') document.getElementById('tweakPanel').classList.remove('on');
+    };
+    window.addEventListener('message',h);
+    window.parent.postMessage({type:'__edit_mode_available'},'*');
+    const ta=document.getElementById('tAccent');
+    const tt=document.getElementById('tTheme');
+    if(ta){ta.value=accent;ta.onchange=e=>setAccent(e.target.value);}
+    if(tt){tt.value=themeKey;tt.onchange=e=>setThemeKey(e.target.value);}
+    return()=>window.removeEventListener('message',h);
+  },[]);
+
+  const push=(type,data)=>setStack(p=>[...p,{type,data}]);
+  const pop=()=>setStack(p=>p.slice(0,-1));
+  const top=stack[stack.length-1];
+
+  const goAsk=(msg)=>{
+    setAiInitMsg(msg);
+    setTab('ai');
+    setStack([]);
+  };
+
+  const renderContent=()=>{
+    if(top?.type==='supplier') return <SupplierScreen s={top.data} accent={accent} th={th} onBack={pop} onAsk={msg=>{goAsk(msg);}}/>;
+    if(top?.type==='category') return <CategoryScreen cat={top.data} accent={accent} th={th} onBack={pop} onSupplier={s=>push('supplier',s)}/>;
+    switch(tab){
+      case 'home':    return <HomeScreen accent={accent} th={th} onCat={c=>push('category',c)} onSupplier={s=>push('supplier',s)} onAsk={goAsk}/>;
+      case 'search':  return <SearchScreen accent={accent} th={th} onSupplier={s=>push('supplier',s)}/>;
+      case 'ai':      return <AIScreen key={aiInitMsg} accent={accent} th={th} initialMsg={aiInitMsg}/>;
+      case 'orders':  return <OrdersScreen accent={accent} th={th}/>;
+      case 'profile': return <ProfileScreen accent={accent} th={th}/>;
+    }
+  };
+
+  const switchTab=(id)=>{
+    if(id==='ai') setAiInitMsg(null);
+    setTab(id);
+    setStack([]);
+  };
+
+  return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',background:'#080808',padding:32}}>
+      <IOSDevice width={393} height={852} dark={true}>
+        <div style={{height:'100%',background:th.app,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+          {/* screen area */}
+          <div style={{flex:1,overflow:'hidden',position:'relative'}}>
+            {renderContent()}
+          </div>
+          {/* TAB BAR */}
+          <div style={{flexShrink:0,background:th.app,borderTop:`1px solid ${th.border}`,display:'flex',alignItems:'flex-end',paddingBottom:20,paddingTop:8,position:'relative'}}>
+            {TABS.map(t=>{
+              const active=tab===t.id&&!top;
+              const color=active?a.hex:'rgba(255,255,255,.32)';
+              const isAI=t.id==='ai';
+              return(
+                <div key={t.id} onClick={()=>switchTab(t.id)} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap: isAI?0:4,cursor:'pointer',paddingTop: isAI?0:4,position:'relative'}}>
+                  {t.icon(color,active&&isAI)}
+                  {!isAI&&<div style={{fontSize:10,color,fontWeight:active?600:400,letterSpacing:.02}}>{t.label}</div>}
+                  {active&&!isAI&&<div style={{position:'absolute',bottom:-8,width:20,height:3,borderRadius:2,background:a.hex}}/>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </IOSDevice>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

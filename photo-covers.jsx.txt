@@ -1,0 +1,694 @@
+// PHOTO COVERS — multi-layer SVG scenes that read like real industrial photography.
+// Each scene uses warm/cool gradients, depth layers, lighting, and a vignette
+// to feel like a photograph rather than an abstract placeholder.
+
+function PhotoCover({ scene, h=200, badge, children, dim=0.4 }) {
+  return (
+    <div style={{height:h, position:'relative', overflow:'hidden', background:'#0A0B0D'}}>
+      <PhotoScene scene={scene} h={h}/>
+      {/* Subtle film grain */}
+      <div style={{position:'absolute', inset:0, opacity:0.06, mixBlendMode:'overlay', pointerEvents:'none',
+        backgroundImage:'radial-gradient(rgba(255,255,255,0.4) 0.5px, transparent 0.6px)',
+        backgroundSize:'3px 3px',
+      }}/>
+      {/* Vignette */}
+      <div style={{position:'absolute', inset:0, pointerEvents:'none',
+        boxShadow:'inset 0 0 80px rgba(0,0,0,0.6)',
+      }}/>
+      {/* Bottom legibility gradient */}
+      <div style={{position:'absolute', inset:0, pointerEvents:'none',
+        background:`linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,${dim+0.4}) 100%)`,
+      }}/>
+      {badge}
+      {children}
+    </div>
+  );
+}
+
+function PhotoScene({ scene, h }) {
+  if(scene==='coils')         return <CoilsScene h={h}/>;
+  if(scene==='factory_floor') return <FactoryFloorScene h={h}/>;
+  if(scene==='warehouse')     return <WarehouseScene h={h}/>;
+  if(scene==='containers')    return <ContainersScene h={h}/>;
+  if(scene==='production')    return <ProductionScene h={h}/>;
+  if(scene==='aluminum')      return <AluminumScene h={h}/>;
+  if(scene==='market')        return <MarketScene h={h}/>;
+  if(scene==='textile')       return <TextileScene h={h}/>;
+  return <FactoryFloorScene h={h}/>;
+}
+
+// ── COILS — stacked steel coils close-up ───────────────────
+function CoilsScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <radialGradient id="coilLight" cx="0.3" cy="0.2" r="1">
+          <stop offset="0%" stopColor="#5A6068" stopOpacity="0.9"/>
+          <stop offset="60%" stopColor="#1F2329" stopOpacity="1"/>
+          <stop offset="100%" stopColor="#0D0F12" stopOpacity="1"/>
+        </radialGradient>
+        <linearGradient id="coilFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7A8088"/>
+          <stop offset="50%" stopColor="#3F4449"/>
+          <stop offset="100%" stopColor="#1A1D21"/>
+        </linearGradient>
+        <radialGradient id="coilHole" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#0A0B0D"/>
+          <stop offset="100%" stopColor="#22262B"/>
+        </radialGradient>
+        <linearGradient id="coilSide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5A6068"/>
+          <stop offset="100%" stopColor="#2A2D32"/>
+        </linearGradient>
+      </defs>
+      {/* Background warehouse haze */}
+      <rect width="400" height="240" fill="url(#coilLight)"/>
+      {/* Floor */}
+      <path d="M0 200 L400 200 L400 240 L0 240 Z" fill="#0F1114"/>
+      <path d="M0 200 L400 200" stroke="#2A2D32" strokeWidth="0.5"/>
+
+      {/* Back row coils (smaller, less detail) */}
+      {[40, 130, 220, 310].map((x,i)=>(
+        <g key={'b'+i} opacity="0.55">
+          <ellipse cx={x} cy="135" rx="34" ry="34" fill="url(#coilFace)"/>
+          <circle cx={x} cy="135" r="11" fill="url(#coilHole)"/>
+          <ellipse cx={x} cy="135" rx="34" ry="34" fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5"/>
+        </g>
+      ))}
+
+      {/* Front row coils — large, photographic */}
+      {[
+        {x:70, y:175, r:48},
+        {x:185, y:178, r:54},
+        {x:300, y:175, r:48},
+      ].map((c,i)=>(
+        <g key={i}>
+          {/* shadow on floor */}
+          <ellipse cx={c.x+4} cy={c.y+c.r+5} rx={c.r*0.95} ry="6" fill="rgba(0,0,0,0.55)"/>
+          {/* coil body — cylinder face */}
+          <ellipse cx={c.x} cy={c.y} rx={c.r} ry={c.r} fill="url(#coilFace)"/>
+          {/* concentric grooves (sheet wraps) */}
+          {[0.92,0.82,0.72,0.62,0.52,0.42,0.32].map((s,j)=>(
+            <ellipse key={j} cx={c.x} cy={c.y} rx={c.r*s} ry={c.r*s} fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.4"/>
+          ))}
+          {/* hole */}
+          <ellipse cx={c.x} cy={c.y} rx={c.r*0.22} ry={c.r*0.22} fill="url(#coilHole)"/>
+          <ellipse cx={c.x} cy={c.y} rx={c.r*0.22} ry={c.r*0.22} fill="none" stroke="#3A3F45" strokeWidth="0.6"/>
+          {/* top highlight */}
+          <path d={`M ${c.x-c.r*0.7} ${c.y-c.r*0.4} A ${c.r} ${c.r} 0 0 1 ${c.x+c.r*0.4} ${c.y-c.r*0.85}`} stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" fill="none"/>
+          {/* edge */}
+          <ellipse cx={c.x} cy={c.y} rx={c.r} ry={c.r} fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.6"/>
+        </g>
+      ))}
+
+      {/* Atmospheric warm light from top-left */}
+      <ellipse cx="60" cy="20" rx="200" ry="80" fill="rgba(255,210,150,0.07)"/>
+    </svg>
+  );
+}
+
+// ── FACTORY FLOOR — wide perspective with machines + ceiling lights ──
+function FactoryFloorScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#15181C"/>
+          <stop offset="100%" stopColor="#0A0C0F"/>
+        </linearGradient>
+        <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1A1D22"/>
+          <stop offset="100%" stopColor="#0E1014"/>
+        </linearGradient>
+        <radialGradient id="ceilLamp" cx="0.5" cy="0" r="1">
+          <stop offset="0%" stopColor="#FFE5B0" stopOpacity="0.9"/>
+          <stop offset="60%" stopColor="#FFB060" stopOpacity="0.15"/>
+          <stop offset="100%" stopColor="#FFB060" stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id="machine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3A4047"/>
+          <stop offset="100%" stopColor="#15181C"/>
+        </linearGradient>
+        <linearGradient id="conveyor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2C3036"/>
+          <stop offset="100%" stopColor="#1A1D22"/>
+        </linearGradient>
+      </defs>
+      {/* Sky / ceiling */}
+      <rect width="400" height="120" fill="url(#ceiling)"/>
+      {/* Floor with perspective */}
+      <path d="M0 120 L400 120 L400 240 L0 240 Z" fill="url(#floor)"/>
+      {/* Floor grid lines (perspective) */}
+      {[150, 175, 195, 215].map((y,i)=>(
+        <line key={i} x1="0" y1={y} x2="400" y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
+      ))}
+      {/* Vanishing-point grid */}
+      <g opacity="0.07" stroke="#fff" strokeWidth="0.4">
+        <line x1="0" y1="240" x2="200" y2="120"/>
+        <line x1="80" y1="240" x2="200" y2="120"/>
+        <line x1="160" y1="240" x2="200" y2="120"/>
+        <line x1="240" y1="240" x2="200" y2="120"/>
+        <line x1="320" y1="240" x2="200" y2="120"/>
+        <line x1="400" y1="240" x2="200" y2="120"/>
+      </g>
+
+      {/* Ceiling beams */}
+      <rect x="0" y="0" width="400" height="14" fill="#0C0E11"/>
+      <rect x="60" y="14" width="6" height="40" fill="#1A1D22"/>
+      <rect x="200" y="14" width="6" height="40" fill="#1A1D22"/>
+      <rect x="335" y="14" width="6" height="40" fill="#1A1D22"/>
+
+      {/* Hanging lamps with warm glow */}
+      {[80, 200, 320].map((x,i)=>(
+        <g key={i}>
+          <line x1={x} y1="14" x2={x} y2="40" stroke="#2A2D32" strokeWidth="1"/>
+          <ellipse cx={x} cy="42" rx="10" ry="4" fill="#3A3F45"/>
+          <ellipse cx={x} cy="44" rx="7" ry="2" fill="#FFD080"/>
+          <ellipse cx={x} cy="60" rx="80" ry="60" fill="url(#ceilLamp)" opacity="0.7"/>
+        </g>
+      ))}
+
+      {/* Background machinery silhouettes */}
+      <g opacity="0.7">
+        <rect x="20" y="80" width="60" height="60" fill="url(#machine)"/>
+        <rect x="22" y="78" width="56" height="4" fill="#4A5057"/>
+        <rect x="30" y="90" width="14" height="14" fill="#0A0C0F"/>
+        <rect x="55" y="90" width="14" height="14" fill="#0A0C0F"/>
+        <circle cx="50" cy="120" r="6" fill="#5A6068"/>
+
+        <rect x="105" y="70" width="80" height="70" fill="url(#machine)"/>
+        <rect x="107" y="68" width="76" height="3" fill="#4A5057"/>
+        <rect x="115" y="80" width="60" height="22" fill="#0E1115"/>
+        <rect x="120" y="84" width="50" height="3" fill="#FFD080" opacity="0.4"/>
+        <rect x="120" y="92" width="30" height="2" fill="#5A6068"/>
+        <circle cx="170" cy="125" r="4" fill="#C8FF00" opacity="0.7"/>
+
+        <rect x="220" y="85" width="55" height="55" fill="url(#machine)"/>
+        <rect x="225" y="95" width="45" height="20" fill="#0A0C0F"/>
+
+        <rect x="300" y="75" width="80" height="65" fill="url(#machine)"/>
+        <rect x="310" y="82" width="60" height="28" fill="#0E1115"/>
+        <rect x="314" y="86" width="50" height="2" fill="#5A6068"/>
+        <rect x="314" y="92" width="35" height="2" fill="#5A6068"/>
+        <rect x="314" y="98" width="42" height="2" fill="#5A6068"/>
+      </g>
+
+      {/* Foreground conveyor belt with parts */}
+      <rect x="-10" y="160" width="420" height="22" fill="url(#conveyor)"/>
+      <rect x="-10" y="160" width="420" height="2" fill="#3F454C"/>
+      <rect x="-10" y="180" width="420" height="2" fill="#0A0C0F"/>
+      {/* belt rollers */}
+      {Array.from({length:14}).map((_,i)=>(
+        <line key={i} x1={i*30} y1="160" x2={i*30} y2="182" stroke="rgba(0,0,0,0.4)" strokeWidth="0.8"/>
+      ))}
+      {/* Items on belt */}
+      {[40, 110, 180, 270, 340].map((x,i)=>(
+        <g key={i}>
+          <rect x={x} y="148" width="20" height="14" fill="#5A6068" rx="1"/>
+          <rect x={x} y="148" width="20" height="2" fill="#7A8088"/>
+          <rect x={x+2} y="152" width="16" height="1" fill="rgba(0,0,0,0.3)"/>
+        </g>
+      ))}
+
+      {/* Worker silhouette */}
+      <g transform="translate(50,140)" opacity="0.85">
+        <ellipse cx="0" cy="-6" rx="4" ry="4" fill="#2A2D32"/>
+        <path d="M-6 -2 L6 -2 L8 24 L-8 24 Z" fill="#1F8A5B" opacity="0.7"/>
+        <rect x="-2" y="0" width="4" height="6" fill="#FFD080"/>
+        <rect x="-7" y="22" width="5" height="14" fill="#15181C"/>
+        <rect x="2" y="22" width="5" height="14" fill="#15181C"/>
+      </g>
+    </svg>
+  );
+}
+
+// ── WAREHOUSE — racks with boxes ───────────────────────────
+function WarehouseScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="whFloor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1A1D22"/>
+          <stop offset="100%" stopColor="#0A0C0F"/>
+        </linearGradient>
+        <linearGradient id="whBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1A1D22"/>
+          <stop offset="60%" stopColor="#0E1014"/>
+          <stop offset="100%" stopColor="#0A0B0D"/>
+        </linearGradient>
+        <linearGradient id="rack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3A4047"/>
+          <stop offset="100%" stopColor="#1A1D22"/>
+        </linearGradient>
+        <linearGradient id="boxA" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#A07840"/>
+          <stop offset="100%" stopColor="#603F1A"/>
+        </linearGradient>
+        <linearGradient id="boxB" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8B6840"/>
+          <stop offset="100%" stopColor="#4A331A"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="160" fill="url(#whBg)"/>
+      <rect y="160" width="400" height="80" fill="url(#whFloor)"/>
+      {/* perspective lines */}
+      <g opacity="0.15" stroke="#fff" strokeWidth="0.5">
+        <line x1="0" y1="160" x2="200" y2="100"/>
+        <line x1="400" y1="160" x2="200" y2="100"/>
+        <line x1="0" y1="240" x2="200" y2="100"/>
+        <line x1="400" y1="240" x2="200" y2="100"/>
+      </g>
+
+      {/* Aisle floor markings */}
+      <path d="M150 240 L180 160 L220 160 L250 240 Z" fill="rgba(200,255,0,0.04)"/>
+      <line x1="170" y1="200" x2="230" y2="200" stroke="rgba(200,255,0,0.18)" strokeWidth="1.5" strokeDasharray="6 4"/>
+
+      {/* LEFT RACK */}
+      <g>
+        <rect x="0" y="40" width="6" height="200" fill="url(#rack)"/>
+        <rect x="120" y="60" width="6" height="180" fill="url(#rack)"/>
+        {/* horizontal beams */}
+        {[80, 130, 180].map((y,i)=>(
+          <rect key={i} x="0" y={y} width="126" height="3" fill="#3A4047"/>
+        ))}
+        {/* boxes on shelves */}
+        {/* top */}
+        <rect x="14" y="55" width="32" height="22" fill="url(#boxA)"/>
+        <rect x="14" y="55" width="32" height="3" fill="#C8954B"/>
+        <rect x="50" y="60" width="28" height="18" fill="url(#boxB)"/>
+        <rect x="82" y="55" width="36" height="22" fill="url(#boxA)"/>
+        <rect x="82" y="55" width="36" height="3" fill="#C8954B"/>
+        {/* mid */}
+        <rect x="14" y="105" width="40" height="22" fill="url(#boxB)"/>
+        <rect x="60" y="100" width="32" height="27" fill="url(#boxA)"/>
+        <rect x="60" y="100" width="32" height="3" fill="#C8954B"/>
+        <rect x="98" y="108" width="22" height="19" fill="url(#boxB)"/>
+        {/* bottom */}
+        <rect x="14" y="155" width="34" height="22" fill="url(#boxA)"/>
+        <rect x="14" y="155" width="34" height="3" fill="#C8954B"/>
+        <rect x="52" y="160" width="36" height="17" fill="url(#boxB)"/>
+        <rect x="92" y="152" width="28" height="25" fill="url(#boxA)"/>
+        <rect x="92" y="152" width="28" height="3" fill="#C8954B"/>
+      </g>
+
+      {/* RIGHT RACK */}
+      <g>
+        <rect x="274" y="40" width="6" height="200" fill="url(#rack)"/>
+        <rect x="394" y="60" width="6" height="180" fill="url(#rack)"/>
+        {[80, 130, 180].map((y,i)=>(
+          <rect key={i} x="274" y={y} width="126" height="3" fill="#3A4047"/>
+        ))}
+        <rect x="288" y="55" width="32" height="22" fill="url(#boxB)"/>
+        <rect x="324" y="60" width="28" height="18" fill="url(#boxA)"/>
+        <rect x="324" y="60" width="28" height="3" fill="#C8954B"/>
+        <rect x="356" y="55" width="36" height="22" fill="url(#boxB)"/>
+
+        <rect x="288" y="105" width="40" height="22" fill="url(#boxA)"/>
+        <rect x="288" y="105" width="40" height="3" fill="#C8954B"/>
+        <rect x="332" y="100" width="32" height="27" fill="url(#boxB)"/>
+        <rect x="370" y="108" width="22" height="19" fill="url(#boxA)"/>
+        <rect x="370" y="108" width="22" height="3" fill="#C8954B"/>
+
+        <rect x="288" y="155" width="34" height="22" fill="url(#boxB)"/>
+        <rect x="326" y="160" width="36" height="17" fill="url(#boxA)"/>
+        <rect x="326" y="160" width="36" height="3" fill="#C8954B"/>
+        <rect x="366" y="152" width="26" height="25" fill="url(#boxB)"/>
+      </g>
+
+      {/* warm lamp glow at top */}
+      <ellipse cx="200" cy="0" rx="180" ry="50" fill="#FFD080" opacity="0.08"/>
+    </svg>
+  );
+}
+
+// ── CONTAINERS — shipping yard ─────────────────────────────
+function ContainersScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2A2F36"/>
+          <stop offset="100%" stopColor="#13161B"/>
+        </linearGradient>
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1A1D22"/>
+          <stop offset="100%" stopColor="#0A0B0D"/>
+        </linearGradient>
+        <linearGradient id="contRed" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#9A4030"/>
+          <stop offset="100%" stopColor="#5A2418"/>
+        </linearGradient>
+        <linearGradient id="contBlue" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3A5A78"/>
+          <stop offset="100%" stopColor="#1F3550"/>
+        </linearGradient>
+        <linearGradient id="contGreen" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3F6F4F"/>
+          <stop offset="100%" stopColor="#1F4030"/>
+        </linearGradient>
+        <linearGradient id="contRust" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#7A5040"/>
+          <stop offset="100%" stopColor="#3F2820"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="170" fill="url(#sky)"/>
+      <rect y="170" width="400" height="70" fill="url(#ground)"/>
+
+      {/* Crane silhouette */}
+      <g opacity="0.55">
+        <rect x="320" y="20" width="4" height="170" fill="#0A0C0F"/>
+        <rect x="324" y="20" width="60" height="3" fill="#0A0C0F"/>
+        <line x1="324" y1="23" x2="384" y2="23" stroke="#1A1D22" strokeWidth="0.5"/>
+        <line x1="354" y1="23" x2="354" y2="80" stroke="#0A0C0F" strokeWidth="1"/>
+        <rect x="350" y="80" width="8" height="14" fill="#0A0C0F"/>
+      </g>
+
+      {/* Container rows — back layer (smaller, dimmer) */}
+      <g opacity="0.7">
+        <rect x="20" y="105" width="60" height="22" fill="url(#contRust)"/>
+        <rect x="80" y="105" width="60" height="22" fill="url(#contBlue)"/>
+        <rect x="140" y="105" width="60" height="22" fill="url(#contGreen)"/>
+        <rect x="200" y="105" width="60" height="22" fill="url(#contRed)"/>
+        <rect x="260" y="105" width="60" height="22" fill="url(#contRust)"/>
+
+        <rect x="20" y="83" width="60" height="22" fill="url(#contBlue)"/>
+        <rect x="80" y="83" width="60" height="22" fill="url(#contGreen)"/>
+        <rect x="140" y="83" width="60" height="22" fill="url(#contRed)"/>
+        <rect x="200" y="83" width="60" height="22" fill="url(#contRust)"/>
+        <rect x="260" y="83" width="60" height="22" fill="url(#contBlue)"/>
+
+        {/* corrugation */}
+        {[20,80,140,200,260].map((x,i)=>(
+          <g key={i}>
+            {Array.from({length:18}).map((_,j)=>(
+              <line key={j} x1={x+2+j*3.2} y1="83" x2={x+2+j*3.2} y2="127" stroke="rgba(0,0,0,0.25)" strokeWidth="0.3"/>
+            ))}
+          </g>
+        ))}
+      </g>
+
+      {/* Front layer containers — large, photographic */}
+      {[
+        {x:-10, y:150, w:120, h:48, grad:'contRed'},
+        {x:115, y:150, w:130, h:48, grad:'contBlue'},
+        {x:250, y:150, w:120, h:48, grad:'contGreen'},
+        {x:375, y:150, w:80,  h:48, grad:'contRust'},
+      ].map((c,i)=>(
+        <g key={i}>
+          {/* shadow on ground */}
+          <rect x={c.x+2} y={c.y+c.h} width={c.w-4} height="3" fill="rgba(0,0,0,0.55)"/>
+          {/* container body */}
+          <rect x={c.x} y={c.y} width={c.w} height={c.h} fill={`url(#${c.grad})`}/>
+          {/* top edge highlight */}
+          <rect x={c.x} y={c.y} width={c.w} height="1.5" fill="rgba(255,255,255,0.18)"/>
+          {/* corrugation */}
+          {Array.from({length:Math.floor(c.w/4)}).map((_,j)=>(
+            <line key={j} x1={c.x+2+j*4} y1={c.y+1} x2={c.x+2+j*4} y2={c.y+c.h-1} stroke="rgba(0,0,0,0.28)" strokeWidth="0.5"/>
+          ))}
+          {/* doors right */}
+          <rect x={c.x+c.w-22} y={c.y+2} width="20" height={c.h-4} fill="rgba(0,0,0,0.18)"/>
+          <line x1={c.x+c.w-12} y1={c.y+4} x2={c.x+c.w-12} y2={c.y+c.h-4} stroke="rgba(0,0,0,0.35)" strokeWidth="0.5"/>
+          {/* lock handles */}
+          <rect x={c.x+c.w-18} y={c.y+10} width="1.5" height={c.h-20} fill="#1A1D22"/>
+          <rect x={c.x+c.w-7} y={c.y+10} width="1.5" height={c.h-20} fill="#1A1D22"/>
+          {/* serial */}
+          <text x={c.x+8} y={c.y+12} fontSize="5" fill="rgba(255,255,255,0.6)" fontFamily="monospace">CN {1000+i*47}</text>
+        </g>
+      ))}
+
+      {/* Distant light haze */}
+      <ellipse cx="80" cy="40" rx="120" ry="40" fill="rgba(255,210,150,0.06)"/>
+      <ellipse cx="320" cy="60" rx="100" ry="30" fill="rgba(200,255,0,0.04)"/>
+    </svg>
+  );
+}
+
+// ── PRODUCTION — assembly line with bright product ─────────
+function ProductionScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="prodBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1F2329"/>
+          <stop offset="100%" stopColor="#0E1115"/>
+        </linearGradient>
+        <linearGradient id="beltMetal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5A6068"/>
+          <stop offset="50%" stopColor="#2A2D32"/>
+          <stop offset="100%" stopColor="#15181C"/>
+        </linearGradient>
+        <radialGradient id="prodLight" cx="0.5" cy="0" r="0.8">
+          <stop offset="0%" stopColor="#C8FF00" stopOpacity="0.25"/>
+          <stop offset="100%" stopColor="#C8FF00" stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id="prodPart" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#9AA0A8"/>
+          <stop offset="100%" stopColor="#3F4449"/>
+        </linearGradient>
+        <linearGradient id="armBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFAA40"/>
+          <stop offset="100%" stopColor="#A05A18"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="240" fill="url(#prodBg)"/>
+      <ellipse cx="200" cy="0" rx="220" ry="100" fill="url(#prodLight)"/>
+
+      {/* Background machinery */}
+      <g opacity="0.65">
+        <rect x="0" y="50" width="120" height="100" fill="#1A1D22"/>
+        <rect x="20" y="60" width="80" height="40" fill="#0E1115"/>
+        <rect x="25" y="65" width="70" height="3" fill="#FFD080" opacity="0.4"/>
+        <rect x="25" y="72" width="40" height="2" fill="#5A6068"/>
+        <rect x="25" y="78" width="55" height="2" fill="#5A6068"/>
+        <rect x="25" y="84" width="35" height="2" fill="#5A6068"/>
+        <circle cx="40" cy="120" r="8" fill="#3A4047"/>
+        <circle cx="80" cy="120" r="8" fill="#3A4047"/>
+
+        <rect x="280" y="50" width="120" height="100" fill="#1A1D22"/>
+        <rect x="300" y="60" width="80" height="40" fill="#0E1115"/>
+        <rect x="305" y="68" width="70" height="2" fill="#5A6068"/>
+        <rect x="305" y="74" width="50" height="2" fill="#5A6068"/>
+        <circle cx="320" cy="120" r="8" fill="#3A4047"/>
+        <circle cx="360" cy="120" r="8" fill="#3A4047"/>
+      </g>
+
+      {/* Robotic arm */}
+      <g>
+        <rect x="180" y="20" width="40" height="14" fill="#1A1D22"/>
+        <circle cx="200" cy="34" r="10" fill="#15181C"/>
+        <rect x="195" y="34" width="10" height="50" fill="url(#armBody)"/>
+        <circle cx="200" cy="84" r="8" fill="#1A1D22"/>
+        <rect x="197" y="84" width="6" height="40" fill="url(#armBody)"/>
+        <rect x="190" y="120" width="20" height="8" fill="#1A1D22"/>
+        <rect x="192" y="128" width="4" height="10" fill="#5A6068"/>
+        <rect x="204" y="128" width="4" height="10" fill="#5A6068"/>
+        {/* spark */}
+        <circle cx="200" cy="142" r="2" fill="#C8FF00"/>
+        <circle cx="200" cy="142" r="6" fill="#C8FF00" opacity="0.3"/>
+      </g>
+
+      {/* Conveyor */}
+      <rect x="0" y="160" width="400" height="34" fill="url(#beltMetal)"/>
+      <rect x="0" y="160" width="400" height="2" fill="#7A8088"/>
+      <rect x="0" y="192" width="400" height="2" fill="#0A0C0F"/>
+      {Array.from({length:25}).map((_,i)=>(
+        <line key={i} x1={i*16} y1="162" x2={i*16} y2="192" stroke="rgba(0,0,0,0.35)" strokeWidth="0.5"/>
+      ))}
+
+      {/* Items on belt */}
+      {[20, 70, 130, 220, 290, 350].map((x,i)=>(
+        <g key={i}>
+          <rect x={x} y="142" width="28" height="18" fill="url(#prodPart)"/>
+          <rect x={x} y="142" width="28" height="2" fill="rgba(255,255,255,0.18)"/>
+          <rect x={x+3} y="146" width="22" height="1" fill="rgba(0,0,0,0.4)"/>
+          <rect x={x+3} y="150" width="14" height="1" fill="rgba(0,0,0,0.4)"/>
+        </g>
+      ))}
+
+      {/* Bottom area / floor */}
+      <rect y="194" width="400" height="46" fill="#0A0C0F"/>
+      <line x1="0" y1="194" x2="400" y2="194" stroke="#1A1D22" strokeWidth="0.5"/>
+
+      {/* status indicator */}
+      <circle cx="370" cy="30" r="3" fill="#C8FF00"/>
+      <circle cx="370" cy="30" r="6" fill="#C8FF00" opacity="0.3"/>
+    </svg>
+  );
+}
+
+// ── ALUMINUM — extruded profiles stack ─────────────────────
+function AluminumScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="alBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#262A30"/>
+          <stop offset="100%" stopColor="#0E1115"/>
+        </linearGradient>
+        <linearGradient id="alFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C8CDD3"/>
+          <stop offset="50%" stopColor="#7A8088"/>
+          <stop offset="100%" stopColor="#3F4449"/>
+        </linearGradient>
+        <linearGradient id="alSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#9AA0A8"/>
+          <stop offset="50%" stopColor="#5A6068"/>
+          <stop offset="100%" stopColor="#2A2D32"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="240" fill="url(#alBg)"/>
+
+      {/* Stack of square aluminum profiles, perspective from front */}
+      {/* Each profile: square cross-section, hollow center */}
+      <g>
+        {/* row 1 — bottom */}
+        {Array.from({length:7}).map((_,i)=>{
+          const x = 20 + i*54;
+          return (
+            <g key={'r1-'+i}>
+              <rect x={x} y={150} width="52" height="52" fill="url(#alFace)"/>
+              <rect x={x+8} y={158} width="36" height="36" fill="#0A0B0D"/>
+              <rect x={x+10} y={160} width="32" height="32" fill="#15181C"/>
+              <rect x={x} y={150} width="52" height="2" fill="rgba(255,255,255,0.4)"/>
+              <rect x={x+1} y={150} width="0.8" height="52" fill="rgba(255,255,255,0.3)"/>
+              {/* side perspective */}
+              <path d={`M ${x+52} 150 L ${x+58} 144 L ${x+58} 196 L ${x+52} 202 Z`} fill="url(#alSide)"/>
+            </g>
+          );
+        })}
+        {/* row 2 */}
+        {Array.from({length:7}).map((_,i)=>{
+          const x = 20 + i*54;
+          return (
+            <g key={'r2-'+i}>
+              <rect x={x} y={98} width="52" height="52" fill="url(#alFace)"/>
+              <rect x={x+8} y={106} width="36" height="36" fill="#0A0B0D"/>
+              <rect x={x+10} y={108} width="32" height="32" fill="#15181C"/>
+              <rect x={x} y={98} width="52" height="2" fill="rgba(255,255,255,0.5)"/>
+              <rect x={x+1} y={98} width="0.8" height="52" fill="rgba(255,255,255,0.35)"/>
+              <path d={`M ${x+52} 98 L ${x+58} 92 L ${x+58} 144 L ${x+52} 150 Z`} fill="url(#alSide)"/>
+            </g>
+          );
+        })}
+        {/* row 3 — top, partial */}
+        {Array.from({length:5}).map((_,i)=>{
+          const x = 20 + i*54;
+          return (
+            <g key={'r3-'+i}>
+              <rect x={x} y={46} width="52" height="52" fill="url(#alFace)"/>
+              <rect x={x+8} y={54} width="36" height="36" fill="#0A0B0D"/>
+              <rect x={x+10} y={56} width="32" height="32" fill="#15181C"/>
+              <rect x={x} y={46} width="52" height="2" fill="rgba(255,255,255,0.5)"/>
+              <rect x={x+1} y={46} width="0.8" height="52" fill="rgba(255,255,255,0.35)"/>
+              <path d={`M ${x+52} 46 L ${x+58} 40 L ${x+58} 92 L ${x+52} 98 Z`} fill="url(#alSide)"/>
+            </g>
+          );
+        })}
+      </g>
+
+      {/* warm spotlight from top-right */}
+      <ellipse cx="320" cy="0" rx="180" ry="80" fill="rgba(255,210,150,0.1)"/>
+    </svg>
+  );
+}
+
+// ── MARKET — financial editorial scene ─────────────────────
+function MarketScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="mktBg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#1A1D22"/>
+          <stop offset="100%" stopColor="#0A0B0D"/>
+        </linearGradient>
+        <linearGradient id="mktLine" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.2"/>
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="1"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="240" fill="url(#mktBg)"/>
+
+      {/* grid */}
+      <g opacity="0.15" stroke="#fff" strokeWidth="0.3">
+        {[40,80,120,160,200].map((y,i)=><line key={i} x1="0" y1={y} x2="400" y2={y}/>)}
+        {[50,100,150,200,250,300,350].map((x,i)=><line key={i} x1={x} y1="0" x2={x} y2="240"/>)}
+      </g>
+
+      {/* candlesticks (red/green muted) */}
+      {[
+        {x:30, top:80, bot:140, oc:[100,120], up:false},
+        {x:60, top:60, bot:130, oc:[80,110], up:true},
+        {x:90, top:50, bot:120, oc:[70,100], up:true},
+        {x:120, top:40, bot:110, oc:[60,90], up:false},
+        {x:150, top:30, bot:100, oc:[50,80], up:true},
+        {x:180, top:50, bot:130, oc:[80,110], up:false},
+        {x:210, top:70, bot:140, oc:[90,120], up:true},
+        {x:240, top:80, bot:160, oc:[100,140], up:false},
+        {x:270, top:90, bot:170, oc:[110,150], up:false},
+        {x:300, top:100, bot:180, oc:[130,160], up:false},
+        {x:330, top:80, bot:170, oc:[110,150], up:true},
+        {x:360, top:60, bot:140, oc:[70,120], up:true},
+      ].map((c,i)=>{
+        const col = c.up ? '#7AA85A' : '#A85A4A';
+        return (
+          <g key={i} opacity="0.7">
+            <line x1={c.x} y1={c.top} x2={c.x} y2={c.bot} stroke={col} strokeWidth="1"/>
+            <rect x={c.x-4} y={c.oc[0]} width="8" height={c.oc[1]-c.oc[0]} fill={col}/>
+          </g>
+        );
+      })}
+
+      {/* trend line — accent */}
+      <path d="M 0 180 Q 100 140 200 100 T 400 60" stroke="var(--accent)" strokeWidth="2" fill="none" opacity="0.85"/>
+      <path d="M 0 180 Q 100 140 200 100 T 400 60 L 400 240 L 0 240 Z" fill="url(#mktLine)" opacity="0.18"/>
+
+      {/* highlight dot */}
+      <circle cx="320" cy="78" r="4" fill="var(--accent)"/>
+      <circle cx="320" cy="78" r="10" fill="var(--accent)" opacity="0.25"/>
+
+      {/* numeric ticker stripe */}
+      <rect y="0" width="400" height="22" fill="rgba(0,0,0,0.5)"/>
+      <text x="14" y="14" fontSize="9" fill="#9AA0A8" fontFamily="monospace">CNY/RUB 12.84</text>
+      <text x="100" y="14" fontSize="9" fill="#7AA85A" fontFamily="monospace">+1.4%</text>
+      <text x="150" y="14" fontSize="9" fill="#9AA0A8" fontFamily="monospace">USD/CNY 7.18</text>
+      <text x="240" y="14" fontSize="9" fill="#A85A4A" fontFamily="monospace">−0.2%</text>
+      <text x="290" y="14" fontSize="9" fill="#9AA0A8" fontFamily="monospace">SHFE 17.1k</text>
+      <text x="370" y="14" fontSize="9" fill="#7AA85A" fontFamily="monospace">+0.6%</text>
+
+      {/* warm haze */}
+      <ellipse cx="80" cy="0" rx="180" ry="60" fill="rgba(255,210,150,0.06)"/>
+    </svg>
+  );
+}
+
+// ── TEXTILE — rolls of fabric ─────────────────────────────
+function TextileScene({h}) {
+  return (
+    <svg width="100%" height={h} viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" style={{position:'absolute', inset:0, display:'block'}}>
+      <defs>
+        <linearGradient id="txBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1F1F1F"/>
+          <stop offset="100%" stopColor="#0E0E0E"/>
+        </linearGradient>
+        {['#3F4A5A','#5A4030','#7A5A40','#3F503F','#403040','#605040'].map((c,i)=>(
+          <linearGradient key={i} id={'tx'+i} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={c}/>
+            <stop offset="100%" stopColor="#1A1D22"/>
+          </linearGradient>
+        ))}
+      </defs>
+      <rect width="400" height="240" fill="url(#txBg)"/>
+      {/* rolls leaning */}
+      {[
+        {x:30, c:0}, {x:100, c:1}, {x:170, c:2}, {x:240, c:3}, {x:310, c:4}, {x:370, c:5},
+      ].map((r,i)=>(
+        <g key={i}>
+          <rect x={r.x} y={60} width="60" height="160" fill={`url(#tx${r.c})`} transform={`rotate(-2 ${r.x+30} 140)`}/>
+          <ellipse cx={r.x+30} cy={62} rx="30" ry="6" fill={`url(#tx${r.c})`} transform={`rotate(-2 ${r.x+30} 140)`}/>
+          <ellipse cx={r.x+30} cy={62} rx="20" ry="3" fill="rgba(0,0,0,0.4)" transform={`rotate(-2 ${r.x+30} 140)`}/>
+        </g>
+      ))}
+      <ellipse cx="200" cy="0" rx="220" ry="60" fill="rgba(255,210,150,0.08)"/>
+    </svg>
+  );
+}

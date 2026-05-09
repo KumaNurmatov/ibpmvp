@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TradeAI — B2B Маркетплейс</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="ds.jsx"></script>
+<script type="text/babel" src="screens1.jsx"></script>
+<script type="text/babel" src="screens2.jsx"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#080808;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  font-family:-apple-system,system-ui,sans-serif;
+  padding:24px 20px 40px;
+  overflow-x:auto;
+}
+<style id="placeholder-style">input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.25)!important}</style>
+<style>::-webkit-scrollbar{width:0;height:0}
+@keyframes orbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tdot{0%,100%{opacity:.25}50%{opacity:1}}
+
+/* Screen label strip */
+.screen-strip{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.screen-label{
+  font-size:11px;color:rgba(255,255,255,0.35);
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  font-family:-apple-system,system-ui,sans-serif;
+}
+.screens-row{
+  display:flex;gap:28px;align-items:flex-start;
+  padding:0 4px;
+}
+.section-title{
+  font-size:12px;color:rgba(200,255,0,0.5);
+  letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  font-family:-apple-system,system-ui,sans-serif;
+  margin-bottom:16px;margin-top:8px;
+}
+.nav-bar{
+  display:flex;align-items:center;gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:24px;
+}
+.nav-btn{
+  padding:7px 14px;border-radius:100px;
+  font-size:12px;font-weight:600;font-family:-apple-system,system-ui,sans-serif;
+  cursor:pointer;transition:all .15s;border:none;outline:none;
+}
+
+/* Tweak panel */
+.tweak-panel{
+  position:fixed;bottom:24px;right:24px;width:210px;
+  background:#1a1a1a;border:1px solid #333;border-radius:16px;
+  padding:16px;display:none;flex-direction:column;gap:12px;
+  z-index:9999;color:#fff;font-size:13px;
+  box-shadow:0 8px 32px rgba(0,0,0,.7);
+}
+.tweak-panel.on{display:flex}
+.t-label{color:#777;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+select{background:#222;border:1px solid #333;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;outline:none;width:100%;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<div class="tweak-panel" id="tweakPanel">
+  <div style="font-size:13px;font-weight:600;border-bottom:1px solid #333;padding-bottom:10px">Настройки</div>
+  <div><div class="t-label">Режим</div>
+    <select id="tMode"><option value="buyer">Покупатель</option><option value="seller">Продавец</option></select>
+  </div>
+  <div><div class="t-label">Начать со</div>
+    <select id="tScreen">
+      <option value="splash">Заставка</option>
+      <option value="role">Выбор роли</option>
+      <option value="home">Главная (покупатель)</option>
+      <option value="catalog">Каталог</option>
+      <option value="ai">AI-ассистент</option>
+      <option value="chat">Чат</option>
+      <option value="estimate">Расчёт стоимости</option>
+      <option value="deal">Безопасная сделка</option>
+      <option value="tracking">Отслеживание</option>
+      <option value="profile">Профиль</option>
+      <option value="seller_dash">Панель продавца</option>
+      <option value="seller_catalog">Каталог продавца</option>
+      <option value="seller_requests">Запросы продавца</option>
+    </select>
+  </div>
+</div>
+
+<script type="text/babel">
+// ── THEME TOKENS ──────────────────────────────────────────
+const THEMES_MAP = {
+  dark: {
+    bg:'#0d0e10', s1:'#141618', s2:'#1c1f23', s3:'#242729',
+    border:'rgba(255,255,255,0.08)', border2:'rgba(255,255,255,0.13)',
+    lime:'#C8FF00', limeDim:'rgba(200,255,0,0.12)', limeDim2:'rgba(200,255,0,0.2)',
+    text:'#FFFFFF', sub:'rgba(255,255,255,0.52)', muted:'rgba(255,255,255,0.28)',
+    green:'#22c55e', red:'#f87171', warn:'#fbbf24',
+  },
+  light: {
+    bg:'#F0F1F3', s1:'#FFFFFF', s2:'#F0F1F3', s3:'#E4E5E9',
+    border:'rgba(0,0,0,0.08)', border2:'rgba(0,0,0,0.12)',
+    lime:'#5A9900', limeDim:'rgba(90,153,0,0.1)', limeDim2:'rgba(90,153,0,0.22)',
+    text:'#0d0e10', sub:'rgba(0,0,0,0.5)', muted:'rgba(0,0,0,0.3)',
+    green:'#16a34a', red:'#dc2626', warn:'#d97706',
+  },
+};
+function applyTheme(t) { Object.assign(window.DS, THEMES_MAP[t]); }
+
+// ── ROUTER ────────────────────────────────────────────────
+function App() {
+  const saved = () => { try { return JSON.parse(localStorage.getItem('tradeai_mvp') || '{}'); } catch(e) { return {}; } };
+  const s = saved();
+
+  const [screen, setScreen] = React.useState(s.screen || 'splash');
+  const [stack, setStack]   = React.useState([]);
+  const [tab, setTab]       = React.useState('home');
+  const [context, setCtx]   = React.useState({});
+  const [theme, setTheme]   = React.useState(s.theme || 'dark');
+  const [renderKey, setRenderKey] = React.useState(0);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    applyTheme(next);
+    setRenderKey(k => k+1);
+    // update placeholder color
+    const style = document.getElementById('placeholder-style');
+    if (style) style.textContent = next === 'light'
+      ? 'input::placeholder,textarea::placeholder{color:rgba(0,0,0,0.25)!important}'
+      : 'input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.25)!important}';
+  };
+
+  // Apply saved theme on mount
+  React.useEffect(() => { applyTheme(theme); }, []);  // current product / supplier / aiMsg etc
+
+  const go   = (scr, ctx={}) => { setStack(p => [...p, {screen, context}]); setScreen(scr); setCtx(ctx); };
+  const back  = () => {
+    // Always go home — simplest and most predictable UX
+    const isSeller = ['seller_dash','seller_catalog','seller_requests'].includes(screen);
+    setScreen(isSeller ? 'seller_dash' : 'home');
+    setStack([]); setCtx({});
+  };
+  const goTab = (t) => {
+    setTab(t); setStack([]); setCtx({});
+    const map = {
+      home:'home', catalog:'catalog', msgs:'chat',
+      deals:'tracking', profile:'profile',
+      requests:'seller_requests',
+    };
+    setScreen(map[t] || t);
+  };
+
+  React.useEffect(() => {
+    localStorage.setItem('tradeai_mvp', JSON.stringify({screen, theme}));
+  }, [screen]);
+
+  // Tweak panel wiring
+  React.useEffect(() => {
+    const h = e => {
+      if (e.data?.type === '__activate_edit_mode')   document.getElementById('tweakPanel').classList.add('on');
+      if (e.data?.type === '__deactivate_edit_mode') document.getElementById('tweakPanel').classList.remove('on');
+    };
+    window.addEventListener('message', h);
+    window.parent.postMessage({type:'__edit_mode_available'}, '*');
+    const ts = document.getElementById('tScreen');
+    if (ts) { ts.value = screen; ts.onchange = e => { setScreen(e.target.value); setStack([]); }; }
+    return () => window.removeEventListener('message', h);
+  }, []);
+
+  const renderScreen = () => {
+    switch(screen) {
+      case 'splash':   return <SplashScreen onNext={()=>go('role')}/>;
+      case 'role':     return <RoleScreen onBuyer={()=>go('buyer_auth')} onSeller={()=>go('seller_auth')}/>;
+      case 'buyer_auth': return <BuyerAuthScreen onNext={()=>go('home')}/>;
+      case 'seller_auth': return <SellerAuthScreen onNext={()=>go('seller_dash')}/>;
+
+      case 'home': return <BuyerHomeScreen
+        tab={tab} onTab={goTab}
+        onCat={c=>go('search',{query:c.label})}
+        onSupplier={s=>go('supplier',{supplier:s})}
+        onAI={()=>go('ai',{})}
+        onAIMsg={msg=>go('ai',{aiMsg:msg})}/>;
+
+      case 'catalog': return <CatalogScreen
+        tab='catalog' onTab={goTab} onBack={back}
+        onProduct={p=>go('product',{product:p})}
+        onSupplier={s=>go('supplier',{supplier:s})}/>;
+
+      case 'search': return <SearchResultsScreen
+        query={context.query} onBack={back}
+        onProduct={p=>go('product',{product:p})}
+        onSupplier={s=>go('supplier',{supplier:s})}/>;
+
+      case 'product': return <ProductDetailScreen
+        product={context.product} onBack={back}
+        onSupplier={s=>go('supplier',{supplier:s})}
+        onEstimate={()=>go('estimate',{product:context.product})}
+        onAI={()=>go('ai',{})}
+        onDeal={()=>go('deal',{product:context.product})}/>;
+
+      case 'supplier': return <SupplierProfileScreen
+        supplier={context.supplier} onBack={back}
+        onChat={()=>go('chat',{supplier:context.supplier})}
+        onAI={()=>go('ai',{})}
+        onDeal={()=>go('deal',{})}
+        onEstimate={()=>go('estimate',{})}/>;
+
+      case 'ai': return <AIScreen onBack={back} initialMsg={context.aiMsg}/>;
+
+      case 'chat': return <ChatScreen supplier={context.supplier} onBack={back}/>;
+
+      case 'estimate': return <CostEstimateScreen
+        product={context.product} onBack={back}
+        onContact={()=>go('chat',{})}
+        onDeal={()=>go('deal',{product:context.product})}
+        onAI={()=>go('ai',{})}/>;
+
+      case 'deal': return <SafeDealScreen
+        product={context.product} onBack={back}
+        onPay={()=>go('tracking',{})}/>;
+
+      case 'tracking': return <DealTrackingScreen
+        onBack={back}
+        onChat={()=>go('chat',{})}
+        onConfirm={()=>{}}/>;
+
+      case 'profile': return <BuyerProfileScreen tab={tab} onTab={goTab} onBack={back}/>;
+
+      case 'seller_dash': return <SellerDashScreen
+        onRequests={()=>go('seller_requests',{})}
+        onCatalog={()=>go('seller_catalog',{})}
+        onTab={goTab}/>;
+
+      case 'seller_catalog': return <SellerCatalogScreen onBack={back} onTab={goTab}/>;
+
+      case 'seller_requests': return <SellerRequestsScreen onBack={back} onTab={goTab}/>;
+
+      default: return <SplashScreen onNext={()=>go('role')}/>;
+    }
+  };
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:0,minHeight:'100vh'}}>
+      {/* ── NAV ── */}
+      <div style={{width:'100%',maxWidth:1400,marginBottom:20}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={{fontSize:11,color:'rgba(200,255,0,0.4)',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:700,fontFamily:'-apple-system,system-ui,sans-serif'}}>TradeAI MVP — полный флоу</div>
+          <div onClick={toggleTheme} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(255,255,255,0.07)',border:'1px solid rgba(255,255,255,0.12)',borderRadius:100,padding:'6px 14px',cursor:'pointer',fontFamily:'-apple-system,system-ui,sans-serif',fontSize:12,fontWeight:600,color:'rgba(255,255,255,0.7)',userSelect:'none'}}>
+            <span>{theme==='dark'?'🌙':'☀️'}</span>
+            <span>{theme==='dark'?'Тёмная':'Светлая'}</span>
+          </div>
+        </div>
+        {/* buyer nav */}
+        <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:8}}>
+          {[
+            ['splash','Заставка'],['role','Роль'],['buyer_auth','Вход'],['home','Главная'],
+            ['catalog','Каталог'],['search','Поиск'],['product','Товар'],['supplier','Поставщик'],
+            ['ai','AI-чат'],['chat','Переписка'],['estimate','Расчёт'],['deal','Сделка'],['tracking','Отслеживание'],['profile','Профиль'],
+          ].map(([id,lb])=>(
+            <button key={id} onClick={()=>{setScreen(id);setStack([]);}} className="nav-btn"
+              style={{background:screen===id?'#C8FF00':'rgba(255,255,255,0.07)',color:screen===id?'#0d0e10':'rgba(255,255,255,0.5)',border:`1px solid ${screen===id?'transparent':'rgba(255,255,255,0.1)'}`}}>
+              {lb}
+            </button>
+          ))}
+        </div>
+        {/* seller nav */}
+        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+          {[['seller_auth','Вход продавца'],['seller_dash','Панель'],['seller_catalog','Каталог продавца'],['seller_requests','Запросы']].map(([id,lb])=>(
+            <button key={id} onClick={()=>{setScreen(id);setStack([]);}} className="nav-btn"
+              style={{background:screen===id?'#C8FF00':'rgba(200,255,0,0.07)',color:screen===id?'#0d0e10':'rgba(200,255,0,0.5)',border:`1px solid ${screen===id?'transparent':'rgba(200,255,0,0.15)'}`}}>
+              🏭 {lb}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── DEVICE ── */}
+      <IOSDevice width={393} height={852} dark={theme==='dark'} key={renderKey}>
+        {renderScreen()}
+      </IOSDevice>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

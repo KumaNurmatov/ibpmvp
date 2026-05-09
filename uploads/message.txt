@@ -1,0 +1,1433 @@
+{
+  "prompt_type": "master_ui_ux_prompt_v2",
+  "target_model": "Claude",
+  "role": "Act as a world-class senior mobile product designer, UX architect, product thinker, and design system lead. Design a complete MVP mobile application for a premium AI-powered B2B sourcing marketplace.",
+  "main_objective": "Create a full, coherent, buildable MVP mobile app with all core buyer and seller pages, using one consistent design system, one visual language, and realistic product UX. The output must feel like a premium shipped product, not abstract concept art.",
+  "working_mode": {
+    "instruction": "Do not ask clarifying questions. Use the assumptions below and produce the best possible scalable MVP.",
+    "decision_policy": "Make strong product decisions when details are missing, but keep them practical and consistent with the system.",
+    "continuity_rule": "All screens must clearly belong to one product family."
+  },
+  "product_context": {
+    "product_name": "AI-powered B2B sourcing marketplace",
+    "summary": "A mobile platform where buyers discover suppliers, factories, and products from different countries, receive AI assistance for search and sourcing, communicate without language barriers through translated chat, estimate costs including logistics and taxes, and pay safely through a protected platform transaction flow.",
+    "roles": [
+      "Buyer",
+      "Seller"
+    ],
+    "core_product_values": [
+      "Global supplier discovery",
+      "AI-guided sourcing",
+      "AI-translated communication",
+      "Estimated landed cost calculation",
+      "Safe platform payment flow",
+      "Escrow-like protection",
+      "Localized currency display",
+      "Business-oriented trust"
+    ]
+  },
+  "presentation_rules": {
+    "device": "iPhone",
+    "device_rule": "Every screen and visualization must be shown inside a realistic premium iPhone mockup.",
+    "orientation": "portrait",
+    "screen_render_rule": "Never show flat UI without a device frame.",
+    "visual_consistency_rule": "All mockups must feel like part of the same premium app presentation."
+  },
+  "language_rules": {
+    "prompt_language": "English",
+    "ui_language": "Russian",
+    "copy_tone": "Clear, concise, premium, modern Russian product UI copy",
+    "forbidden": [
+      "No English in the visible interface",
+      "No mixed-language UI except technical abbreviations like MOQ when needed"
+    ]
+  },
+  "design_system": {
+    "design_dna": "Premium corporate mobile UI with Apple-level polish, high-end Dribbble execution quality, practical buildable layouts, dark graphite surfaces, white typography, lime accents, rounded modular cards, clean information hierarchy, and realistic premium object visuals.",
+    "palette": {
+      "base_colors": [
+        "graphite black",
+        "charcoal",
+        "dark gray"
+      ],
+      "text_colors": [
+        "soft white",
+        "light gray"
+      ],
+      "accent_colors": [
+        "lime green",
+        "salad green"
+      ],
+      "accent_usage": [
+        "Primary CTA",
+        "Selected chips",
+        "Important tags",
+        "Active nav states",
+        "Progress states",
+        "Key highlights"
+      ],
+      "accent_limit_rule": "Use lime selectively. Do not oversaturate the interface with accent color."
+    },
+    "surface_rules": [
+      "Dark layered surfaces",
+      "Soft premium shadows",
+      "Rounded cards",
+      "Subtle borders",
+      "Restrained depth",
+      "Tactile component feel"
+    ],
+    "typography_rules": [
+      "Modern sans-serif",
+      "Strong readability",
+      "Clear hierarchy",
+      "Large confident headings",
+      "Compact secondary text",
+      "Consistent line heights"
+    ],
+    "iconography_rules": [
+      "Minimal",
+      "Clean stroke or soft filled style",
+      "Consistent weight",
+      "No playful illustrations"
+    ],
+    "visual_asset_rules": [
+      "Use realistic premium 3D/product visuals where appropriate",
+      "Object visuals should support category understanding",
+      "Do not use cartoonish renders",
+      "Keep visuals clean and premium"
+    ]
+  },
+  "ux_principles": [
+    "Clear hierarchy",
+    "Consistent spacing",
+    "Strong alignment",
+    "Thumb-friendly zones",
+    "Discoverable navigation",
+    "Low visual noise",
+    "Practical implementation logic",
+    "Predictable component behavior",
+    "Primary actions obvious",
+    "Secondary actions quieter",
+    "Good contrast",
+    "Business trust first",
+    "AI must reduce friction, not add complexity"
+  ],
+  "hard_constraints": [
+    "This is a serious B2B sourcing platform, not a playful consumer marketplace.",
+    "Do not make the product feel like AliExpress, a generic crypto dashboard, or a chatbot-only app.",
+    "Do not use blue or purple futuristic AI glow.",
+    "Do not use random bright colors.",
+    "Do not use childish iconography.",
+    "All screens must stay inside a realistic iPhone mockup.",
+    "On the buyer home screen, the AI assistant must always remain visible as an integrated bottom sheet/dialog module occupying about 35% to 40% of the screen."
+  ],
+  "deliverable_expectation": {
+    "task": "Design all MVP screens as one connected product system.",
+    "screen_quality": "Every screen should feel buildable, detailed, premium, and internally consistent.",
+    "system_quality": "Use one coherent design system, one shared spacing logic, one shared card language, and one shared navigation approach.",
+    "priority": [
+      "Buyer flow completeness",
+      "Seller flow completeness",
+      "AI integration",
+      "Payment trust",
+      "Search and sourcing clarity",
+      "Consistency"
+    ]
+  },
+  "navigation": {
+    "buyer_bottom_nav": [
+      "Главная",
+      "Каталог",
+      "Сообщения",
+      "Сделки",
+      "Профиль"
+    ],
+    "seller_bottom_nav": [
+      "Главная",
+      "Каталог",
+      "Запросы",
+      "Сделки",
+      "Профиль"
+    ]
+  },
+  "component_system": {
+    "search_bar": {
+      "description": "Large rounded search field with premium dark surface and subtle icon treatment",
+      "rules": [
+        "Always clear and readable",
+        "Placeholder aligned left",
+        "Filter entry available when useful"
+      ]
+    },
+    "chips": {
+      "description": "Rounded chips for filters, suggested actions, and categories",
+      "states": [
+        "default",
+        "selected",
+        "verified",
+        "accent-highlighted"
+      ]
+    },
+    "cards": {
+      "description": "Rounded modular cards with strong spacing and object-led visual anchors",
+      "rules": [
+        "Clear labels",
+        "Clear tap affordance",
+        "Consistent radius",
+        "Readable content hierarchy"
+      ]
+    },
+    "buttons": {
+      "description": "Primary and secondary CTA system",
+      "rules": [
+        "Primary uses lime only when needed",
+        "Secondary uses dark or outlined styles",
+        "Avoid too many competing CTAs"
+      ]
+    },
+    "bottom_sheet": {
+      "description": "Used for AI, quick actions, and contextual tasks",
+      "rules": [
+        "Feels native",
+        "Rounded top corners",
+        "Balanced height",
+        "Integrated with overall layout"
+      ]
+    },
+    "input_fields": {
+      "description": "Enterprise-grade clean form inputs",
+      "rules": [
+        "Readable labels",
+        "Clear active states",
+        "Minimal friction",
+        "Mobile-first spacing"
+      ]
+    },
+    "status_blocks": {
+      "description": "Deal, payment, shipment, translation, and trust status components",
+      "rules": [
+        "Short labels",
+        "Strong clarity",
+        "Use accent only for important state"
+      ]
+    }
+  },
+  "screen_specs": [
+    {
+      "id": "01_splash_intro",
+      "name": "Splash / Intro",
+      "purpose": "Introduce the product as a premium global sourcing app with AI assistance.",
+      "screen_structure": {
+        "layout_type": "single-focus launch screen",
+        "blocks": [
+          {
+            "block_name": "brand_mark",
+            "goal": "Show the app identity cleanly",
+            "elements": [
+              "Minimal logo or symbol",
+              "Dark background",
+              "Subtle lime accent"
+            ]
+          },
+          {
+            "block_name": "headline",
+            "goal": "State the value quickly",
+            "elements": [
+              "Short title",
+              "One-line supporting text"
+            ],
+            "ui_copy_examples": [
+              "Глобальные закупки без барьеров",
+              "Поиск поставщиков, AI-помощь и безопасные сделки"
+            ]
+          },
+          {
+            "block_name": "ambient_visual",
+            "goal": "Create premium atmosphere",
+            "elements": [
+              "Subtle sourcing / logistics / global trade metaphor",
+              "No clutter"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "02_role_selection",
+      "name": "Role Selection",
+      "purpose": "Let the user choose between buyer and seller.",
+      "screen_structure": {
+        "layout_type": "two-choice onboarding screen",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Introduce role decision",
+            "elements": [
+              "Title",
+              "Short explanation"
+            ],
+            "ui_copy_examples": [
+              "Выберите роль",
+              "Настроим интерфейс под ваши задачи"
+            ]
+          },
+          {
+            "block_name": "role_cards",
+            "goal": "Present two role options clearly",
+            "elements": [
+              "Card for buyer",
+              "Card for seller",
+              "Icon or visual",
+              "Short description",
+              "Selected state"
+            ],
+            "ui_copy_examples": [
+              "Покупатель",
+              "Ищет товары, поставщиков и фабрики",
+              "Продавец",
+              "Размещает товары и получает запросы"
+            ]
+          },
+          {
+            "block_name": "primary_cta",
+            "goal": "Move to auth",
+            "elements": [
+              "Continue button"
+            ],
+            "ui_copy_examples": [
+              "Продолжить"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "03_buyer_auth",
+      "name": "Buyer Auth",
+      "purpose": "Register or sign in the buyer quickly.",
+      "screen_structure": {
+        "layout_type": "auth form",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Frame the flow",
+            "elements": [
+              "Title",
+              "Short subtitle"
+            ],
+            "ui_copy_examples": [
+              "Вход для покупателя",
+              "Найдите поставщиков и начните закупку"
+            ]
+          },
+          {
+            "block_name": "form",
+            "goal": "Capture identity",
+            "elements": [
+              "Телефон или email",
+              "Пароль or OTP",
+              "Primary action"
+            ],
+            "ui_copy_examples": [
+              "Телефон или email",
+              "Пароль",
+              "Получить код",
+              "Войти"
+            ]
+          },
+          {
+            "block_name": "secondary_auth",
+            "goal": "Offer alternative entry",
+            "elements": [
+              "Register link",
+              "Social/quick auth if needed"
+            ],
+            "ui_copy_examples": [
+              "Создать аккаунт"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "04_seller_auth",
+      "name": "Seller Auth",
+      "purpose": "Register or sign in the seller with a business-oriented feel.",
+      "screen_structure": {
+        "layout_type": "business auth form",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Create enterprise framing",
+            "elements": [
+              "Title",
+              "Subtitle"
+            ],
+            "ui_copy_examples": [
+              "Вход для продавца",
+              "Управляйте каталогом и входящими запросами"
+            ]
+          },
+          {
+            "block_name": "form",
+            "goal": "Capture business info",
+            "elements": [
+              "Название компании",
+              "Страна",
+              "Телефон или email",
+              "Primary CTA"
+            ],
+            "ui_copy_examples": [
+              "Название компании",
+              "Страна",
+              "Телефон или email",
+              "Продолжить"
+            ]
+          },
+          {
+            "block_name": "trust_note",
+            "goal": "Increase trust",
+            "elements": [
+              "Short note about verification or secure access"
+            ],
+            "ui_copy_examples": [
+              "Данные компании можно будет подтвердить позже"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "05_buyer_home",
+      "name": "Buyer Home",
+      "purpose": "Main discovery + AI sourcing screen.",
+      "screen_structure": {
+        "layout_type": "discover + persistent AI bottom sheet",
+        "blocks": [
+          {
+            "block_name": "status_header",
+            "goal": "Set the top framing",
+            "elements": [
+              "iOS status bar",
+              "Optional profile/utility actions"
+            ]
+          },
+          {
+            "block_name": "search_bar",
+            "goal": "Main search entry",
+            "elements": [
+              "Large rounded search bar",
+              "Search icon",
+              "Filter/settings icon"
+            ],
+            "ui_copy_examples": [
+              "Поиск товаров, поставщиков и фабрик"
+            ]
+          },
+          {
+            "block_name": "quick_filter_chips",
+            "goal": "Enable fast filter entry",
+            "elements": [
+              "Horizontal chip row",
+              "Selected and unselected states"
+            ],
+            "ui_copy_examples": [
+              "Проверенные поставщики",
+              "Готово к отправке",
+              "MOQ < 50",
+              "Металл",
+              "Текстиль"
+            ]
+          },
+          {
+            "block_name": "category_grid",
+            "goal": "Make discovery visual and immediate",
+            "elements": [
+              "Large rounded marketplace-style category cards",
+              "Object visuals",
+              "Asymmetric visual rhythm"
+            ],
+            "ui_copy_examples": [
+              "Металл",
+              "Текстиль",
+              "Электроника",
+              "Упаковка",
+              "Оборудование",
+              "Стройматериалы",
+              "Фурнитура"
+            ]
+          },
+          {
+            "block_name": "secondary_service_icons",
+            "goal": "Show broader platform value",
+            "elements": [
+              "Round or modular service shortcuts"
+            ],
+            "ui_copy_examples": [
+              "Блокчейн сделки",
+              "Таможня",
+              "Логистика",
+              "Фабрики"
+            ]
+          },
+          {
+            "block_name": "persistent_ai_panel",
+            "goal": "Keep AI assistant always visible",
+            "elements": [
+              "Integrated bottom sheet",
+              "Title",
+              "Subtitle",
+              "Prompt chips",
+              "Input field",
+              "Send button"
+            ],
+            "height_rule": "Must occupy about 35% to 40% of the screen",
+            "ui_copy_examples": [
+              "AI-ассистент по закупкам",
+              "Найдет поставщиков, рассчитает стоимость и поможет с выбором",
+              "Найти поставщиков металла в Китае",
+              "Рассчитать доставку и налоги",
+              "Сравнить предложения фабрик",
+              "Найти проверенных производителей",
+              "Перевести переписку",
+              "Рассчитать итоговую стоимость",
+              "Опишите товар или задачу"
+            ]
+          },
+          {
+            "block_name": "bottom_nav",
+            "goal": "Provide stable navigation",
+            "elements": [
+              "5-tab bottom navigation"
+            ],
+            "ui_copy_examples": [
+              "Главная",
+              "Каталог",
+              "Сообщения",
+              "Сделки",
+              "Профиль"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "06_catalog_discovery",
+      "name": "Catalog / Discover",
+      "purpose": "Browse categories, products, and suppliers more deeply.",
+      "screen_structure": {
+        "layout_type": "catalog browse screen",
+        "blocks": [
+          {
+            "block_name": "top_search_and_filters",
+            "goal": "Refine browsing",
+            "elements": [
+              "Search field",
+              "Filter entry",
+              "Sort entry",
+              "Category chips"
+            ],
+            "ui_copy_examples": [
+              "Каталог",
+              "Все категории",
+              "Фильтры",
+              "Сортировка"
+            ]
+          },
+          {
+            "block_name": "view_toggle",
+            "goal": "Switch between products and suppliers",
+            "elements": [
+              "Segmented control"
+            ],
+            "ui_copy_examples": [
+              "Товары",
+              "Поставщики"
+            ]
+          },
+          {
+            "block_name": "content_grid_or_list",
+            "goal": "Show discoverable results",
+            "elements": [
+              "Product cards",
+              "Supplier cards",
+              "Verification labels",
+              "Price preview",
+              "Country"
+            ]
+          },
+          {
+            "block_name": "small_ai_entry",
+            "goal": "Offer contextual AI help",
+            "elements": [
+              "Small AI strip or chip"
+            ],
+            "ui_copy_examples": [
+              "Уточнить запрос через AI"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "07_search_results",
+      "name": "Search Results",
+      "purpose": "Show search matches with strong filter logic.",
+      "screen_structure": {
+        "layout_type": "results + filter layer",
+        "blocks": [
+          {
+            "block_name": "query_header",
+            "goal": "Display active search intent",
+            "elements": [
+              "Search field with query",
+              "Result count",
+              "Filter button"
+            ],
+            "ui_copy_examples": [
+              "Результаты поиска"
+            ]
+          },
+          {
+            "block_name": "scope_switch",
+            "goal": "Separate supplier and product results",
+            "elements": [
+              "Segmented switch"
+            ],
+            "ui_copy_examples": [
+              "Товары",
+              "Поставщики"
+            ]
+          },
+          {
+            "block_name": "filter_panel_entry",
+            "goal": "Support sourcing-specific filters",
+            "elements": [
+              "Country",
+              "MOQ",
+              "Price",
+              "Verified only",
+              "Ready to ship"
+            ]
+          },
+          {
+            "block_name": "results_list",
+            "goal": "Show cards clearly",
+            "elements": [
+              "Image",
+              "Title",
+              "Supplier",
+              "Country",
+              "MOQ",
+              "Price",
+              "Verification status"
+            ]
+          },
+          {
+            "block_name": "ai_refinement_strip",
+            "goal": "Help narrow search",
+            "elements": [
+              "Compact AI suggestion"
+            ],
+            "ui_copy_examples": [
+              "Уточнить параметры через AI"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "08_product_detail",
+      "name": "Product Detail",
+      "purpose": "Present a product and help the buyer act.",
+      "screen_structure": {
+        "layout_type": "product detail page",
+        "blocks": [
+          {
+            "block_name": "product_gallery",
+            "goal": "Show product visually",
+            "elements": [
+              "Large image",
+              "Gallery preview",
+              "Save/share action"
+            ]
+          },
+          {
+            "block_name": "product_summary",
+            "goal": "Present key info first",
+            "elements": [
+              "Product name",
+              "Local currency price",
+              "MOQ",
+              "Availability",
+              "Country"
+            ],
+            "ui_copy_examples": [
+              "Минимальный заказ",
+              "Цена",
+              "В наличии"
+            ]
+          },
+          {
+            "block_name": "supplier_preview",
+            "goal": "Connect the product to the supplier",
+            "elements": [
+              "Supplier name",
+              "Verified status",
+              "Rating or trust note"
+            ],
+            "ui_copy_examples": [
+              "Поставщик",
+              "Проверенный"
+            ]
+          },
+          {
+            "block_name": "specifications",
+            "goal": "Show technical data cleanly",
+            "elements": [
+              "Structured specs rows"
+            ],
+            "ui_copy_examples": [
+              "Характеристики"
+            ]
+          },
+          {
+            "block_name": "ai_actions",
+            "goal": "Offer next-step help",
+            "elements": [
+              "Estimate cost",
+              "Compare offers",
+              "Ask AI"
+            ],
+            "ui_copy_examples": [
+              "Рассчитать стоимость",
+              "Сравнить предложения",
+              "Спросить AI"
+            ]
+          },
+          {
+            "block_name": "primary_cta_area",
+            "goal": "Push to supplier interaction",
+            "elements": [
+              "Contact supplier",
+              "Start safe deal"
+            ],
+            "ui_copy_examples": [
+              "Связаться с поставщиком",
+              "Начать сделку"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "09_supplier_profile",
+      "name": "Supplier / Factory Profile",
+      "purpose": "Create supplier trust and support contact.",
+      "screen_structure": {
+        "layout_type": "company profile page",
+        "blocks": [
+          {
+            "block_name": "company_header",
+            "goal": "Show identity and trust",
+            "elements": [
+              "Company logo/avatar",
+              "Company name",
+              "Verified badge",
+              "Country and city"
+            ],
+            "ui_copy_examples": [
+              "Проверенный поставщик"
+            ]
+          },
+          {
+            "block_name": "company_overview",
+            "goal": "Summarize supplier",
+            "elements": [
+              "Short description",
+              "Categories",
+              "Years on market or capability hint"
+            ]
+          },
+          {
+            "block_name": "catalog_preview",
+            "goal": "Lead into supplier products",
+            "elements": [
+              "Horizontal product preview"
+            ],
+            "ui_copy_examples": [
+              "Каталог"
+            ]
+          },
+          {
+            "block_name": "reviews_block",
+            "goal": "Support trust",
+            "elements": [
+              "Rating",
+              "Review count",
+              "Short review previews"
+            ],
+            "ui_copy_examples": [
+              "Отзывы"
+            ]
+          },
+          {
+            "block_name": "location_block",
+            "goal": "Show physical presence",
+            "elements": [
+              "Map preview",
+              "Address or region"
+            ],
+            "ui_copy_examples": [
+              "Расположение"
+            ]
+          },
+          {
+            "block_name": "actions_block",
+            "goal": "Drive next actions",
+            "elements": [
+              "Message supplier",
+              "Ask AI about supplier",
+              "Open deal flow"
+            ],
+            "ui_copy_examples": [
+              "Связаться",
+              "Спросить AI",
+              "Начать сделку"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "10_ai_assistant_expanded",
+      "name": "Expanded AI Assistant",
+      "purpose": "Give the user a deeper AI workspace.",
+      "screen_structure": {
+        "layout_type": "AI conversation screen",
+        "blocks": [
+          {
+            "block_name": "assistant_header",
+            "goal": "Orient the user",
+            "elements": [
+              "Back",
+              "Title",
+              "Menu or context actions"
+            ],
+            "ui_copy_examples": [
+              "AI-ассистент"
+            ]
+          },
+          {
+            "block_name": "conversation_intro",
+            "goal": "Explain what AI can do",
+            "elements": [
+              "Short helper text",
+              "Light visual mark"
+            ],
+            "ui_copy_examples": [
+              "Что вы хотите найти?",
+              "Подберу поставщиков, рассчитаю стоимость и помогу сравнить предложения"
+            ]
+          },
+          {
+            "block_name": "suggested_actions",
+            "goal": "Reduce prompt effort",
+            "elements": [
+              "Prompt chips",
+              "Scenario chips"
+            ],
+            "ui_copy_examples": [
+              "Подобрать поставщика",
+              "Рассчитать стоимость",
+              "Сравнить предложения",
+              "Оценить доставку"
+            ]
+          },
+          {
+            "block_name": "message_stream",
+            "goal": "Show AI interaction",
+            "elements": [
+              "User and AI messages",
+              "Structured AI answers",
+              "Quick action buttons"
+            ]
+          },
+          {
+            "block_name": "composer",
+            "goal": "Allow flexible queries",
+            "elements": [
+              "Input field",
+              "Send button",
+              "Optional attachment or voice action"
+            ],
+            "ui_copy_examples": [
+              "Опишите задачу"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "11_messages_translation_chat",
+      "name": "Buyer-Supplier Chat",
+      "purpose": "Enable multilingual chat with translation clarity.",
+      "screen_structure": {
+        "layout_type": "conversation screen",
+        "blocks": [
+          {
+            "block_name": "chat_header",
+            "goal": "Show who the user is talking to",
+            "elements": [
+              "Supplier avatar",
+              "Supplier name",
+              "Translation status",
+              "More actions"
+            ],
+            "ui_copy_examples": [
+              "Перевод включён"
+            ]
+          },
+          {
+            "block_name": "message_list",
+            "goal": "Present conversation clearly",
+            "elements": [
+              "Incoming messages",
+              "Outgoing messages",
+              "Translated message hint if needed",
+              "Attachment preview"
+            ]
+          },
+          {
+            "block_name": "ai_support_row",
+            "goal": "Offer assistance inside chat",
+            "elements": [
+              "Quick AI reply suggestions",
+              "Translation help",
+              "Quote request help"
+            ],
+            "ui_copy_examples": [
+              "Уточнить цену",
+              "Запросить условия",
+              "Спросить о сроках"
+            ]
+          },
+          {
+            "block_name": "message_composer",
+            "goal": "Let the user write easily",
+            "elements": [
+              "Input",
+              "Attachment",
+              "Send"
+            ],
+            "ui_copy_examples": [
+              "Написать сообщение",
+              "Отправить"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "12_cost_estimate",
+      "name": "Cost Estimate",
+      "purpose": "Show AI-generated preliminary landed cost.",
+      "screen_structure": {
+        "layout_type": "calculation summary page",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Frame the estimate",
+            "elements": [
+              "Title",
+              "Estimate status"
+            ],
+            "ui_copy_examples": [
+              "Предварительный расчёт"
+            ]
+          },
+          {
+            "block_name": "product_cost_block",
+            "goal": "Show base product cost",
+            "elements": [
+              "Subtotal",
+              "Quantity",
+              "Unit price"
+            ],
+            "ui_copy_examples": [
+              "Стоимость товара"
+            ]
+          },
+          {
+            "block_name": "logistics_block",
+            "goal": "Show shipping assumptions",
+            "elements": [
+              "Delivery estimate",
+              "Route note",
+              "Timing hint"
+            ],
+            "ui_copy_examples": [
+              "Доставка"
+            ]
+          },
+          {
+            "block_name": "taxes_block",
+            "goal": "Show estimated taxes",
+            "elements": [
+              "Customs/tax lines",
+              "VAT/no VAT scenario if relevant"
+            ],
+            "ui_copy_examples": [
+              "Налоги"
+            ]
+          },
+          {
+            "block_name": "total_block",
+            "goal": "Show final estimate clearly",
+            "elements": [
+              "Local currency total",
+              "Approximate marker",
+              "Comparison with budget if useful"
+            ],
+            "ui_copy_examples": [
+              "Итоговая сумма",
+              "Это ориентировочный расчёт"
+            ]
+          },
+          {
+            "block_name": "actions",
+            "goal": "Move to next step",
+            "elements": [
+              "Contact supplier",
+              "Proceed to deal",
+              "Refine with AI"
+            ],
+            "ui_copy_examples": [
+              "Связаться с поставщиком",
+              "Продолжить сделку",
+              "Уточнить через AI"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "13_safe_deal_checkout",
+      "name": "Safe Deal Checkout",
+      "purpose": "Create trust around platform-based payment.",
+      "screen_structure": {
+        "layout_type": "checkout + trust explainer",
+        "blocks": [
+          {
+            "block_name": "deal_header",
+            "goal": "Set safe deal context",
+            "elements": [
+              "Title",
+              "Protection label"
+            ],
+            "ui_copy_examples": [
+              "Безопасная сделка",
+              "Оплата через платформу"
+            ]
+          },
+          {
+            "block_name": "order_summary",
+            "goal": "Summarize what is being paid for",
+            "elements": [
+              "Product or supplier summary",
+              "Quantity",
+              "Estimated total"
+            ]
+          },
+          {
+            "block_name": "protection_explanation",
+            "goal": "Explain escrow-like protection simply",
+            "elements": [
+              "Short visual status",
+              "Explanation text"
+            ],
+            "ui_copy_examples": [
+              "Средства будут переведены продавцу после подтверждения получения"
+            ]
+          },
+          {
+            "block_name": "payment_method_block",
+            "goal": "Show local payment path",
+            "elements": [
+              "Selected currency",
+              "Payment method",
+              "Conversion note if needed"
+            ]
+          },
+          {
+            "block_name": "primary_cta",
+            "goal": "Complete safe payment",
+            "elements": [
+              "Pay button"
+            ],
+            "ui_copy_examples": [
+              "Оплатить"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "14_deal_tracking",
+      "name": "Deal Tracking",
+      "purpose": "Track deal progress and next steps.",
+      "screen_structure": {
+        "layout_type": "timeline/status page",
+        "blocks": [
+          {
+            "block_name": "deal_summary",
+            "goal": "Show the main deal at a glance",
+            "elements": [
+              "Product/supplier",
+              "Amount",
+              "Current status"
+            ],
+            "ui_copy_examples": [
+              "Статус сделки"
+            ]
+          },
+          {
+            "block_name": "timeline",
+            "goal": "Make progression understandable",
+            "elements": [
+              "Payment confirmed",
+              "Supplier preparing",
+              "Shipped",
+              "Awaiting receipt",
+              "Completed"
+            ],
+            "ui_copy_examples": [
+              "Оплата подтверждена",
+              "Товар отправлен",
+              "Ожидает получения"
+            ]
+          },
+          {
+            "block_name": "action_state",
+            "goal": "Show what user can do now",
+            "elements": [
+              "Confirm receipt",
+              "Open support",
+              "Message supplier"
+            ],
+            "ui_copy_examples": [
+              "Подтвердить получение",
+              "Связаться с поддержкой",
+              "Написать поставщику"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "15_buyer_profile",
+      "name": "Buyer Profile / Cabinet",
+      "purpose": "Personal area with preferences, history, and recommendations.",
+      "screen_structure": {
+        "layout_type": "profile dashboard",
+        "blocks": [
+          {
+            "block_name": "profile_header",
+            "goal": "Show user identity",
+            "elements": [
+              "Avatar",
+              "Name",
+              "Location",
+              "Edit action"
+            ]
+          },
+          {
+            "block_name": "preferences_block",
+            "goal": "Store business preferences",
+            "elements": [
+              "Preferred categories",
+              "Currency",
+              "Language"
+            ],
+            "ui_copy_examples": [
+              "Предпочтения"
+            ]
+          },
+          {
+            "block_name": "recommendations_block",
+            "goal": "Show personalized content",
+            "elements": [
+              "Interest-based cards"
+            ],
+            "ui_copy_examples": [
+              "Рекомендации"
+            ]
+          },
+          {
+            "block_name": "history_block",
+            "goal": "Show past actions",
+            "elements": [
+              "Recently viewed",
+              "Search history",
+              "Saved suppliers"
+            ],
+            "ui_copy_examples": [
+              "История",
+              "Просмотренные",
+              "Сохранённые"
+            ]
+          },
+          {
+            "block_name": "wallet_or_balance_block",
+            "goal": "Show financial context if needed",
+            "elements": [
+              "Balance/wallet summary"
+            ],
+            "ui_copy_examples": [
+              "Баланс"
+            ]
+          },
+          {
+            "block_name": "settings_entry",
+            "goal": "Access app settings",
+            "elements": [
+              "Settings row"
+            ],
+            "ui_copy_examples": [
+              "Настройки"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "16_seller_dashboard",
+      "name": "Seller Dashboard",
+      "purpose": "Main seller control center.",
+      "screen_structure": {
+        "layout_type": "business dashboard",
+        "blocks": [
+          {
+            "block_name": "company_header",
+            "goal": "Show seller business identity",
+            "elements": [
+              "Company avatar/logo",
+              "Company name",
+              "Verification state"
+            ]
+          },
+          {
+            "block_name": "metrics_cards",
+            "goal": "Show top seller KPIs",
+            "elements": [
+              "New requests",
+              "Active deals",
+              "Awaiting payment",
+              "Payout status"
+            ],
+            "ui_copy_examples": [
+              "Новые запросы",
+              "Активные сделки",
+              "Ожидают оплаты",
+              "Выплаты"
+            ]
+          },
+          {
+            "block_name": "lead_list_preview",
+            "goal": "Preview incoming buyer interest",
+            "elements": [
+              "Lead cards",
+              "Urgency or recency indicators"
+            ]
+          },
+          {
+            "block_name": "catalog_entry",
+            "goal": "Go to product management",
+            "elements": [
+              "Manage catalog CTA"
+            ],
+            "ui_copy_examples": [
+              "Управление каталогом"
+            ]
+          },
+          {
+            "block_name": "bottom_nav",
+            "goal": "Seller navigation",
+            "elements": [
+              "Seller tabs"
+            ],
+            "ui_copy_examples": [
+              "Главная",
+              "Каталог",
+              "Запросы",
+              "Сделки",
+              "Профиль"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "17_seller_catalog_management",
+      "name": "Seller Catalog Management",
+      "purpose": "Manage products simply and clearly.",
+      "screen_structure": {
+        "layout_type": "list management screen",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Frame the catalog area",
+            "elements": [
+              "Title",
+              "Add product button"
+            ],
+            "ui_copy_examples": [
+              "Мой каталог",
+              "Добавить товар"
+            ]
+          },
+          {
+            "block_name": "filter_and_sort",
+            "goal": "Manage larger catalog",
+            "elements": [
+              "Category filter",
+              "Status filter",
+              "Sort"
+            ]
+          },
+          {
+            "block_name": "product_list",
+            "goal": "Show seller product cards",
+            "elements": [
+              "Image",
+              "Name",
+              "Availability",
+              "Edit",
+              "Price"
+            ],
+            "ui_copy_examples": [
+              "В наличии",
+              "Редактировать"
+            ]
+          },
+          {
+            "block_name": "empty_or_add_state",
+            "goal": "Handle initial seller state",
+            "elements": [
+              "Illustration or clean empty block",
+              "Add first product CTA"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "18_seller_requests_and_orders",
+      "name": "Seller Requests / Orders",
+      "purpose": "Manage incoming inquiries and active order states.",
+      "screen_structure": {
+        "layout_type": "tabbed request/order management",
+        "blocks": [
+          {
+            "block_name": "header",
+            "goal": "Frame the communication pipeline",
+            "elements": [
+              "Title",
+              "Optional filter"
+            ],
+            "ui_copy_examples": [
+              "Запросы"
+            ]
+          },
+          {
+            "block_name": "tab_switch",
+            "goal": "Separate lead and order states",
+            "elements": [
+              "New requests",
+              "In negotiation",
+              "Active orders"
+            ],
+            "ui_copy_examples": [
+              "Новые обращения",
+              "В переговорах",
+              "Активные заказы"
+            ]
+          },
+          {
+            "block_name": "request_cards",
+            "goal": "Show each inquiry clearly",
+            "elements": [
+              "Buyer name/company",
+              "Product interest",
+              "Quantity",
+              "Date",
+              "Reply CTA"
+            ],
+            "ui_copy_examples": [
+              "Ответить"
+            ]
+          },
+          {
+            "block_name": "order_status_cards",
+            "goal": "Track post-agreement state",
+            "elements": [
+              "Payment status",
+              "Shipment state",
+              "Payout note"
+            ],
+            "ui_copy_examples": [
+              "Ожидает подтверждения",
+              "Товар отправлен",
+              "Выплата после получения"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "flow_map": {
+    "buyer_primary_flow": [
+      "Splash",
+      "Role selection",
+      "Buyer auth",
+      "Buyer home",
+      "Catalog or search",
+      "Product detail",
+      "Supplier profile",
+      "AI estimate",
+      "Chat",
+      "Safe deal checkout",
+      "Deal tracking",
+      "Buyer profile"
+    ],
+    "seller_primary_flow": [
+      "Splash",
+      "Role selection",
+      "Seller auth",
+      "Seller dashboard",
+      "Catalog management",
+      "Requests",
+      "Orders",
+      "Profile"
+    ]
+  },
+  "cross_screen_rules": [
+    "Supplier trust information should appear consistently across product, supplier, and deal screens.",
+    "AI should feel helpful and embedded, not visually alien.",
+    "Payment-related screens should emphasize security, protection, and clarity.",
+    "Chat should clearly indicate translation support without clutter.",
+    "Buyer screens should feel guided and discoverable.",
+    "Seller screens should feel operational, efficient, and business-oriented."
+  ],
+  "forbidden_style_directions": [
+    "Generic crypto dashboard",
+    "Consumer resale marketplace aesthetic",
+    "Cheap e-commerce look",
+    "Playful startup vibe",
+    "Blue-purple sci-fi AI styling",
+    "Low-detail flat mockups",
+    "Inconsistent components",
+    "English UI"
+  ],
+  "final_output_instruction": "Design the complete MVP using the screen specs above. Treat every page as part of one premium Russian-language iPhone app. Keep the home screen AI assistant permanently visible as an integrated bottom sheet occupying about 35% to 40% of the screen. Show all pages in realistic iPhone mockups. Use a dark graphite corporate UI with white typography and restrained lime accents. Make the result feel premium, structured, buildable, and ready for Figma implementation."
+}
