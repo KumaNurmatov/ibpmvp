@@ -211,6 +211,16 @@ function IOSDevice({
       fontFamily: '-apple-system, system-ui, sans-serif',
       WebkitFontSmoothing: 'antialiased',
     }}>
+      {/* dynamic island — decorative, must not intercept taps */}
+      <div style={{
+        position: 'absolute', top: 11, left: '50%', transform: 'translateX(-50%)',
+        width: 126, height: 37, borderRadius: 24, background: '#000', zIndex: 50,
+        pointerEvents: 'none',
+      }} />
+      {/* status bar (absolute) — decorative, must not intercept taps */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: 'none' }}>
+        <IOSStatusBar dark={dark} />
+      </div>
       {/* nav + content */}
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {title !== undefined && <IOSNavBar title={title} dark={dark} />}
@@ -979,32 +989,12 @@ const AVATAR_MAP = {
   'Hanoi Textile Co.':        'photos/avatars/jt.png',
   'Yantai Aluminum':          'photos/avatars/fm.png',
   // people
-  'Адилет С.':                  'photos/avatars/iv.png',
+  'Иван В.':                  'photos/avatars/iv.png',
   'Мария К.':                 'photos/avatars/mk.png',
   // current user
-  'Адилет Сатыбалдиев':              'photos/avatars/user_iv.png',
+  'Иван Волков':              'photos/avatars/user_iv.png',
 };
-// Suppliers render with logo-style monograms (not photos).
-const SUPPLIER_LOGOS = {
-  'Shenzhen TechParts':    { mono:'ST', hue:'lime',   accent:'#C7F23B', tag:'TP' },
-  'Jiangsu Textile':       { mono:'JT', hue:'cyan',   accent:'#7CC9FF', tag:'TX' },
-  'Vietnam Steel Co.':     { mono:'VS', hue:'slate',  accent:'#C8CDD3', tag:'VN' },
-  'Guangdong Plastics':    { mono:'GP', hue:'violet', accent:'#A78BFA', tag:'PL' },
-  'Mumbai Packaging':      { mono:'MP', hue:'amber',  accent:'#FF8A4C', tag:'IN' },
-  'Foshan MetalCorp':      { mono:'FM', hue:'lime',   accent:'#C7F23B', tag:'MC' },
-  'Hangzhou TextilePro':   { mono:'HT', hue:'cyan',   accent:'#7CC9FF', tag:'TP' },
-  'Shenzhen Yifeng Steel': { mono:'YS', hue:'slate',  accent:'#C8CDD3', tag:'ST' },
-  'Hanoi Textile Co.':     { mono:'HT', hue:'violet', accent:'#A78BFA', tag:'VN' },
-  'Yantai Aluminum':       { mono:'YA', hue:'amber',  accent:'#FF8A4C', tag:'AL' },
-  'Yantai Steel Group':    { mono:'YS', hue:'lime',   accent:'#C7F23B', tag:'CN' },
-  'Tianjin Iron':          { mono:'TI', hue:'slate',  accent:'#C8CDD3', tag:'CN' },
-  'Yifeng Coffee Co.':     { mono:'YC', hue:'amber',  accent:'#FF8A4C', tag:'CN' },
-  'COSCO':                 { mono:'CO', hue:'cyan',   accent:'#7CC9FF', tag:'CN' },
-  'TransCargo':            { mono:'TC', hue:'lime',   accent:'#C7F23B', tag:'RU' },
-};
-function supplierLogo(name){ return name ? SUPPLIER_LOGOS[name] : null; }
 function avatarSrc(name) {
-  if (supplierLogo(name)) return null; // suppliers render as logos, not photos
   const url = AVATAR_MAP[name];
   if (!url) return null;
   return url + (typeof __PREVIEW_QS !== 'undefined' ? __PREVIEW_QS : '');
@@ -1013,56 +1003,18 @@ function avatarSrc(name) {
 function Avatar({ name, initials, size=40, radius, style, statusDot, accentBorder }) {
   const r = radius != null ? radius : Math.round(size * 0.27);
   const src = name ? avatarSrc(name) : null;
-  const logo = name ? supplierLogo(name) : null;
   const fallbackInitials = initials || (name ? name.split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase() : '?');
-  const monoFontSize = Math.max(10, Math.round(size*0.38));
-  const tagFontSize = Math.max(6, Math.round(size*0.16));
   const dotSize = Math.max(10, Math.round(size*0.28));
   return (
     <div style={{width:size, height:size, position:'relative', flexShrink:0, ...style}}>
       <div style={{
         width:'100%', height:'100%', borderRadius:r, position:'relative', overflow:'hidden',
-        background: src
-          ? '#0E1013'
-          : logo
-            ? `linear-gradient(160deg, #1B1E22 0%, #0B0D10 100%)`
-            : `linear-gradient(135deg, var(--accentDim2) 0%, transparent 100%), linear-gradient(160deg, #2A2D31 0%, #14171A 100%)`,
+        background: src ? '#0E1013' : `linear-gradient(135deg, var(--accentDim2) 0%, transparent 100%), linear-gradient(160deg, #2A2D31 0%, #14171A 100%)`,
         border: `1px solid ${accentBorder ? 'var(--accentDim2)' : (typeof DS!=='undefined'?DS.border2:'rgba(255,255,255,0.08)')}`,
         boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.04)',
       }}>
         {src && (
           <img src={src} alt="" draggable={false} style={{position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover'}}/>
-        )}
-        {logo && !src && (
-          <>
-            {/* Brand color band (top-left diagonal accent) */}
-            <div style={{position:'absolute', left:0, top:0, width:'55%', height:'55%',
-              background:`linear-gradient(135deg, ${logo.accent} 0%, transparent 80%)`,
-              opacity:0.18, pointerEvents:'none',
-            }}/>
-            {/* Monogram */}
-            <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:monoFontSize, fontWeight:900, color:'#fff', letterSpacing:-0.5,
-              fontFamily:'-apple-system,system-ui,sans-serif', lineHeight:1,
-            }}>{logo.mono}</div>
-            {/* Tiny accent dot (top-right) */}
-            <div style={{position:'absolute', top:Math.max(3, Math.round(size*0.08)), right:Math.max(3, Math.round(size*0.08)),
-              width:Math.max(4, Math.round(size*0.10)), height:Math.max(4, Math.round(size*0.10)),
-              borderRadius:'50%', background:logo.accent, boxShadow:`0 0 6px ${logo.accent}80`,
-            }}/>
-            {/* Country tag chip at bottom (only on larger avatars) */}
-            {size >= 44 && (
-              <div style={{position:'absolute', left:Math.round(size*0.10), bottom:Math.round(size*0.10),
-                fontSize:tagFontSize, fontWeight:800, color:logo.accent, letterSpacing:'0.1em',
-                fontFamily:'"SF Mono",ui-monospace,monospace', lineHeight:1,
-              }}>{logo.tag}</div>
-            )}
-          </>
-        )}
-        {!src && !logo && (
-          <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:monoFontSize, fontWeight:800, color:'rgba(255,255,255,0.85)', letterSpacing:-0.3,
-          }}>{fallbackInitials}</div>
         )}
       </div>
       {statusDot && (
@@ -1259,12 +1211,12 @@ function HomeHeaderV3({ onProfile }) {
     <div style={{padding:'10px 20px 0', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0}}>
       <div style={{display:'flex', alignItems:'center', gap:11}}>
         <div onClick={onProfile} style={{cursor:'pointer'}}>
-          <Avatar name="Адилет Сатыбалдиев" size={40} radius={13} statusDot/>
+          <Avatar name="Иван Волков" size={40} radius={13} statusDot/>
         </div>
         <div>
           <div style={{fontSize:10, color:DS.muted, letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:700}}>Покупатель</div>
           <div style={{fontSize:15, fontWeight:700, color:DS.text, letterSpacing:-0.25, marginTop:2, display:'flex', alignItems:'center', gap:5}}>
-            Адилет Сатыбалдиев
+            Иван Волков
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" style={{opacity:0.4}}><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
         </div>
@@ -1412,7 +1364,7 @@ function AIPanelV3({ onAI, onAIMsg }) {
 // ── BUYER HOME v3 — main composition ───────────────────────
 function BuyerHome({ nav, role }) {
   const [tab, setTab] = React.useState('foryou');
-  const [feedFilter, setFeedFilter] = React.useState('foryou');
+  const [feedFilter, setFeedFilter] = React.useState('all');
   const [draft, setDraft] = React.useState('');
   const [sheetState, setSheetState] = React.useState('compact'); // compact | full | collapsed
 
@@ -1467,7 +1419,7 @@ function BuyerHome({ nav, role }) {
     moq:'500 кг',
   };
 
-  const promos = window.PROMOS || [
+  const promos = [
     { id:'pr1', kind:'discount', label:'Спецпредложение', cover:'coils',
       title:'Сталь 316L · −8% до конца декабря', sub:'Shenzhen Yifeng Steel · MOQ 500 кг',
       cta:'Открыть' },
@@ -1484,7 +1436,6 @@ function BuyerHome({ nav, role }) {
       title:'Алюминий 6063: 4 топ-заводов', sub:'AI-рекомендация под вашу историю закупок',
       cta:'Смотреть' },
   ];
-  if(!window.PROMOS) window.PROMOS = promos;
 
   const feed = [
     {
@@ -1576,124 +1527,140 @@ function BuyerHome({ nav, role }) {
   const showHero = feedFilter === 'all';
   const SHEET_H = 304;
 
-  // 2-COL feed grid items (mix of products, AI insights, market news, supplier posts)
-  const allGrid = [
-    { id:'g1', kind:'product',  cover:'production', tag:'СПЕЦПРЕДЛОЖЕНИЕ', tagTone:'#FF8A4C',
-      title:'Оптовые партии: кофе',  sub:'Анализ спроса', price:'$3.40', unit:'кг', supplier:'Yifeng Coffee Co.', moq:'500 кг' },
-    { id:'g2', kind:'insight',  cover:'market',     tag:'AI · ИНСАЙТ',
-      title:'AI: Поиск лучших поставщиков', sub:'3 кандидата · сталь 316L', metric:'+12 матчей' },
-    { id:'g3', kind:'product',  cover:'coils',      tag:'НОВИНКА', tagTone:'#7CC9FF',
-      title:'Сталь HRC 4 мм',         sub:'Прямой контракт', price:'$612', unit:'т', supplier:'Yantai Steel Group', moq:'5 т' },
-    { id:'g4', kind:'news',     cover:'containers', tag:'РЫНОК',
-      title:'Юань ↑ 1.4% к рублю',    sub:'Коридор 12.6–13.1 ₽', metric:'+1.4%' },
-    { id:'g5', kind:'product',  cover:'textile',    tag:'СЕЗОН', tagTone:'#A78BFA',
-      title:'Полиэстер 600D',         sub:'Рулон 50 м',      price:'$1.12', unit:'м', supplier:'Hangzhou TextilePro', moq:'2 000 м' },
-    { id:'g6', kind:'supplier', cover:'factory_floor', tag:'ТОП-5',
-      title:'Foshan MetalCorp',       sub:'Цех холодного проката', metric:'4.9 ★ · 320 сделок' },
-    { id:'g7', kind:'product',  cover:'aluminum',   tag:'ВЫГОДНО', tagTone:'#FF8A4C',
-      title:'Алюминий 6063-T5',       sub:'Профиль · экструзия', price:'$1.85', unit:'кг', supplier:'Tianjin Iron', moq:'1 т' },
-    { id:'g8', kind:'insight',  cover:'warehouse',  tag:'AI · РЕКОМЕНДАЦИЯ',
-      title:'Цикл закупки −11 дней',  sub:'Переключиться на FCA Циндао', metric:'Анализ ваших сделок' },
-    { id:'g9', kind:'product',  cover:'production', tag:'НОВИНКА', tagTone:'#7CC9FF',
-      title:'Полипропилен ПП-1525',   sub:'Гранулы · 25 кг',  price:'$1.05', unit:'кг', supplier:'Guangdong Plastics', moq:'2 т' },
-    { id:'g10',kind:'news',     cover:'market',     tag:'РЫНОК',
-      title:'Алюминий LME +2.7% / нед.', sub:'Запасы LME −1.8%', metric:'$2 480/т' },
-  ];
-  const gridItems = feedFilter === 'newest'
-    ? allGrid.filter(g => ['НОВИНКА','СЕЗОН'].includes(g.tag))
-    : feedFilter === 'favs'
-      ? allGrid.filter(g => g.kind === 'product').slice(0,4)
-      : allGrid;
-
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden', position:'relative'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden', position:'relative'}}>
+
+      {/* HEADER — clean, no logo */}
+      <div style={{flexShrink:0, background:DS.bg}}>
+        <div style={{padding:'4px 16px 10px', display:'flex', alignItems:'center', gap:10}}>
+          {/* Segmented tabs — full width, properly spaced */}
+          <div style={{flex:1, display:'flex', gap:0, padding:3, background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`, borderRadius:10}}>
+            {[
+              {id:'foryou',    label:'Для вас'},
+              {id:'following', label:'Подписки'},
+              {id:'market',    label:'Рынок'},
+            ].map(t=>{
+              const on = tab===t.id;
+              return (
+                <div key={t.id} onClick={()=>setTab(t.id)} style={{
+                  flex:1, padding:'7px 0', borderRadius:8, cursor:'pointer',
+                  background: on ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)` : 'transparent',
+                  fontSize:11.5, fontWeight: on?800:700,
+                  color: on ? 'var(--accentOn)' : DS.sub,
+                  letterSpacing:-0.1, transition:'all .18s', whiteSpace:'nowrap', textAlign:'center',
+                  boxShadow: on ? '0 2px 6px var(--accentDim2)' : 'none',
+                }}>{t.label}</div>
+              );
+            })}
+          </div>
+          <div style={{position:'relative', width:34, height:34, borderRadius:10, cursor:'pointer',
+            background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
+            display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9 M14 21a2 2 0 01-4 0" stroke={DS.text} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <div style={{position:'absolute', top:-2, right:-2, width:7, height:7, borderRadius:'50%',
+              background:'var(--accent)', border:`2px solid ${DS.bg}`,
+            }}/>
+          </div>
+          <div onClick={()=>nav('profile')} style={{cursor:'pointer'}}>
+            <Avatar name="Иван Волков" size={34} radius={10} accentBorder/>
+          </div>
+        </div>
+      </div>
 
       {/* SCROLLABLE CONTENT */}
       <div style={{flex:1, overflowY:'auto', paddingBottom: sheetState==='collapsed' ? 90 : SHEET_H + 12}}>
 
-        {/* PROMO RAIL — top placement, BIG cards */}
-        <div style={{padding:'4px 0 14px'}}>
-          <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px 10px'}}>
-            <span style={{fontSize:17, fontWeight:800, color:DS.text, letterSpacing:-0.4}}>Промо</span>
-            <div onClick={()=>nav('promo')} style={{
-              width:30, height:30, borderRadius:9, cursor:'pointer',
-              background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
+        {/* AI search entry — opens AI assistant */}
+        <div style={{padding:'10px 16px 10px'}}>
+          <div onClick={()=>setSheetState('full')} style={{
+            display:'flex', alignItems:'center', gap:10, cursor:'pointer',
+            background:`linear-gradient(160deg, rgba(200,255,0,0.08) 0%, rgba(200,255,0,0.02) 100%)`,
+            border:`1px solid var(--accentDim2)`, borderRadius:14,
+            padding:'12px 14px',
+          }}>
+            <div style={{
+              width:30, height:30, borderRadius:9, flexShrink:0,
+              background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
               display:'flex', alignItems:'center', justifyContent:'center',
             }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke={DS.sub} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="var(--accentOn)" strokeWidth="2"/><path d="M12 2v3M12 19v3M5 5l2 2M17 17l2 2M2 12h3M19 12h3M5 19l2-2M17 7l2-2" stroke="var(--accentOn)" strokeWidth="2" strokeLinecap="round"/></svg>
             </div>
-          </div>
-          <div style={{display:'flex', gap:10, overflowX:'auto', padding:'0 16px 4px', scrollSnapType:'x mandatory', scrollbarWidth:'none'}}>
-            {promos.map(p=><PromoCard key={p.id} p={p} nav={nav}/>)}
-            <div style={{flexShrink:0, width:6}}/>
-          </div>
-          {/* Dot indicator under promo rail */}
-          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:5, marginTop:12}}>
-            {promos.map((_,i)=>(
-              <div key={i} style={{width: i===0?22:5, height:5, borderRadius:3,
-                background: i===0 ? 'var(--accent)' : DS.border2,
-                transition:'all .25s',
-              }}/>
-            ))}
+            <div style={{flex:1, minWidth:0}}>
+              <div style={{fontSize:13, fontWeight:700, color:DS.text, letterSpacing:-0.1, lineHeight:1.2}}>Что вы ищете?</div>
+              <div style={{fontSize:10, color:DS.muted, letterSpacing:-0.03, marginTop:2}}>Опишите задачу — AI найдёт поставщиков и товары</div>
+            </div>
+            <div style={{display:'flex', alignItems:'center', gap:4, padding:'4px 9px', borderRadius:6,
+              background:'var(--accent)',
+            }}>
+              <span style={{fontSize:9.5, fontWeight:800, color:'var(--accentOn)', letterSpacing:'0.06em', textTransform:'uppercase'}}>Спросить AI</span>
+            </div>
           </div>
         </div>
 
-        {/* STORIES — lime rings, photo only */}
-        <div style={{padding:'2px 0 16px'}}>
-          <div style={{padding:'0 16px 12px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
-            <span style={{fontSize:17, fontWeight:800, color:DS.text, letterSpacing:-0.4}}>Истории</span>
-            <div style={{
-              width:30, height:30, borderRadius:9, cursor:'pointer',
-              background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
-              display:'flex', alignItems:'center', justifyContent:'center',
-            }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke={DS.sub} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-          </div>
+        {/* STORIES (compact) */}
+        <div style={{padding:'2px 0 12px'}}>
           <div style={{display:'flex', gap:14, overflowX:'auto', padding:'0 16px 4px', scrollbarWidth:'none'}}>
             {stories.map(s => <StoryItem key={s.id} item={s} onOpen={()=>setOpenStory(s)}/>)}
           </div>
         </div>
 
-        {/* TABS — Для Вас / Новинки / Избранное (pill-style, sticky) */}
-        <div style={{position:'sticky', top:0, background:DS.bg, zIndex:1, padding:'4px 16px 12px'}}>
-          <div style={{display:'flex', gap:8, alignItems:'center'}}>
+        {/* FEED FILTER (slim sticky) */}
+        <div style={{position:'sticky', top:0, background:DS.bg, zIndex:1, padding:'4px 0 10px'}}>
+          <div style={{display:'flex', gap:14, overflowX:'auto', padding:'0 16px',
+            borderBottom:`1px solid ${DS.border}`, scrollbarWidth:'none',
+          }}>
             {[
-              {id:'foryou',  label:'Для Вас'},
-              {id:'newest',  label:'Новинки'},
-              {id:'favs',    label:'Избранное'},
-            ].map(t=>{
-              const on = feedFilter===t.id;
+              {id:'all',       label:'Лента'},
+              {id:'suppliers', label:'Поставщики'},
+              {id:'products',  label:'Товары'},
+              {id:'news',      label:'Новости'},
+              {id:'ai',        label:'AI-подборка'},
+            ].map(f=>{
+              const on = feedFilter===f.id;
               return (
-                <div key={t.id} onClick={()=>setFeedFilter(t.id)} style={{
-                  padding:'8px 16px', borderRadius:10, cursor:'pointer',
-                  background: on ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)` : 'transparent',
-                  border: on ? '1px solid rgba(0,0,0,0.2)' : `1px solid ${DS.border}`,
-                  fontSize:12.5, fontWeight: on?800:700,
-                  color: on ? 'var(--accentOn)' : DS.sub,
-                  letterSpacing:-0.1, transition:'all .18s', whiteSpace:'nowrap',
-                  boxShadow: on ? '0 4px 12px var(--accentDim2)' : 'none',
-                }}>{t.label}</div>
+                <div key={f.id} onClick={()=>setFeedFilter(f.id)} style={{
+                  flexShrink:0, padding:'6px 0 9px',
+                  borderBottom: on ? '2px solid var(--accent)' : '2px solid transparent',
+                  marginBottom:-1,
+                  fontSize:12, fontWeight: on?800:600,
+                  color: on ? DS.text : DS.muted,
+                  letterSpacing:-0.05, cursor:'pointer',
+                  transition:'all .18s', whiteSpace:'nowrap',
+                }}>{f.label}</div>
               );
             })}
-            <div style={{flex:1}}/>
-            <div style={{
-              width:36, height:36, borderRadius:10, cursor:'pointer',
-              background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
-              display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M6 12h12M10 18h4" stroke={DS.sub} strokeWidth="2" strokeLinecap="round"/></svg>
-            </div>
           </div>
         </div>
 
-        {/* FEED — 2-column grid */}
-        <div style={{padding:'0 14px 16px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, alignItems:'start'}}>
-          {gridItems.map(item => <FeedGridCard key={item.id} item={item} nav={nav}/>)}
-        </div>
+        {/* PROMO RAIL — sponsored placements (horizontal) */}
+        {showHero && (
+          <div style={{padding:'2px 0 14px'}}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px 8px'}}>
+              <div style={{display:'flex', alignItems:'center', gap:6}}>
+                <span style={{fontSize:10, color:DS.muted, letterSpacing:'0.16em', textTransform:'uppercase', fontWeight:700}}>Реклама</span>
+                <div style={{width:3, height:3, borderRadius:'50%', background:DS.border3}}/>
+                <span style={{fontSize:10, color:DS.muted, letterSpacing:-0.05}}>спонсорские предложения</span>
+              </div>
+              <div style={{display:'flex', alignItems:'center', gap:3}}>
+                {promos.map((_,i)=>(
+                  <div key={i} style={{width: i===0?14:4, height:4, borderRadius:2,
+                    background: i===0 ? 'var(--accent)' : DS.border2}}/>
+                ))}
+              </div>
+            </div>
+            <div style={{display:'flex', gap:10, overflowX:'auto', padding:'0 16px 4px', scrollSnapType:'x mandatory', scrollbarWidth:'none'}}>
+              {promos.map(p=><PromoCard key={p.id} p={p} nav={nav}/>)}
+              <div style={{flexShrink:0, width:6}}/>
+            </div>
+          </div>
+        )}
 
-        {/* Commerce shortcuts at bottom */}
-        <div style={{padding:'0 14px 12px'}}>
+        {/* FEED — large rectangular cards */}
+        <div style={{padding:'0 14px 12px', display:'flex', flexDirection:'column', gap:12}}>
+          {filtered.map(item => <FeedCard key={item.id} item={item} nav={nav}/>)}
+
+          {/* Commerce shortcuts — unified single rectangular block embedded in feed */}
           <ShortcutsBlock nav={nav}/>
         </div>
       </div>
@@ -1901,17 +1868,16 @@ function StoryViewer({ story, stories, onClose, onSwitch, nav }) {
 function StoryItem({ item, onOpen }) {
   const photoSrc = item.cover ? (PHOTO_MAP[item.cover] + __PREVIEW_QS) : null;
   return (
-    <div onClick={onOpen} style={{display:'flex', flexDirection:'column', alignItems:'center', gap:7, width:72, flexShrink:0, cursor:'pointer'}}>
+    <div onClick={onOpen} style={{display:'flex', flexDirection:'column', alignItems:'center', gap:6, width:66, flexShrink:0, cursor:'pointer'}}>
       <div style={{
-        width:64, height:64, borderRadius:'50%',
-        padding:2,
-        background: `conic-gradient(from 200deg, var(--accent) 0%, var(--accentDeep) 60%, var(--accent) 100%)`,
+        width:60, height:60, borderRadius:'50%',
+        padding:1.7,
+        background: item.hot ? `conic-gradient(from 200deg, var(--accent) 0%, var(--accentDeep) 60%, var(--accent) 100%)` : DS.border2,
         position:'relative',
-        boxShadow:'0 4px 12px var(--accentDim)',
       }}>
         <div style={{
           width:'100%', height:'100%', borderRadius:'50%',
-          background:DS.bg, padding:2,
+          background:DS.bg, padding:1.9,
         }}>
           <div style={{
             width:'100%', height:'100%', borderRadius:'50%',
@@ -1925,8 +1891,8 @@ function StoryItem({ item, onOpen }) {
             {photoSrc && !item.self && (
               <img src={photoSrc} alt="" draggable={false} style={{
                 position:'absolute', inset:0, width:'100%', height:'100%',
-                objectFit:'cover', objectPosition: item.cover==='market'?'50% 35%':'50% 45%',
-                filter:'saturate(1.0) contrast(1.05) brightness(0.92)',
+                objectFit:'cover', objectPosition: item.cover==='market'?'50% 35%':'50% 40%',
+                filter:'saturate(0.9) contrast(1.05) brightness(0.92)',
               }}/>
             )}
             {item.self && (
@@ -1935,11 +1901,7 @@ function StoryItem({ item, onOpen }) {
           </div>
         </div>
       </div>
-      <div style={{
-        fontSize:10.5, fontWeight: item.hot ? 800 : 600,
-        color: item.hot ? 'var(--accent)' : DS.sub,
-        letterSpacing:-0.05, textAlign:'center', maxWidth:72, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
-      }}>{item.label}</div>
+      <div style={{fontSize:10, color:DS.sub, fontWeight:600, letterSpacing:-0.05, textAlign:'center', maxWidth:66, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{item.label}</div>
     </div>
   );
 }
@@ -2002,48 +1964,61 @@ function Cover({ kind, h=200, badge, children }) {
 // ── PROMO CARD (sponsored placement, horizontal rail) ──────
 function PromoCard({ p, nav }) {
   const TONE = {
-    discount:  { label:'var(--accent)' },
-    top:       { label:'var(--accent)' },
-    new:       { label:'#7CC9FF' },
-    logistics: { label:'#A78BFA' },
-    ai:        { label:'var(--accent)' },
-  }[p.kind] || { label:'var(--accent)' };
+    discount:  { label:'#FF8A4C', bg:'rgba(255,138,76,0.14)', bd:'rgba(255,138,76,0.4)' },
+    top:       { label:'var(--accent)', bg:'var(--accentDim)', bd:'var(--accentDim2)' },
+    new:       { label:'#7CC9FF', bg:'rgba(124,201,255,0.12)', bd:'rgba(124,201,255,0.35)' },
+    logistics: { label:'#A78BFA', bg:'rgba(167,139,250,0.14)', bd:'rgba(167,139,250,0.36)' },
+    ai:        { label:'var(--accent)', bg:'var(--accentDim)', bd:'var(--accentDim2)' },
+  }[p.kind] || { label:'var(--accent)', bg:'var(--accentDim)', bd:'var(--accentDim2)' };
 
   return (
     <div onClick={()=>nav('product')} style={{
-      flexShrink:0, width:232, height:226, scrollSnapAlign:'start',
-      borderRadius:20, overflow:'hidden', cursor:'pointer',
+      flexShrink:0, width:286, scrollSnapAlign:'start',
+      borderRadius:18, overflow:'hidden', cursor:'pointer',
+      background:`linear-gradient(160deg, #16191D 0%, #0E1114 100%)`,
       border:`1px solid ${DS.border2}`,
-      boxShadow:'0 10px 24px rgba(0,0,0,0.5)',
+      boxShadow:'0 12px 28px rgba(0,0,0,0.45)',
       position:'relative',
     }}>
-      <PhotoCover scene={p.cover} h={226} dim={0.05}>
-        {/* Left-side legibility gradient */}
-        <div style={{position:'absolute', inset:0,
-          background:'linear-gradient(95deg, rgba(11,12,14,0.92) 0%, rgba(11,12,14,0.62) 38%, rgba(11,12,14,0.18) 62%, rgba(11,12,14,0.0) 82%)',
-        }}/>
-        {/* TOP-LEFT stacked: eyebrow → title → sub */}
-        <div style={{position:'absolute', left:16, right:48, top:16}}>
-          <div style={{fontSize:9, fontWeight:800, color:TONE.label, letterSpacing:'0.16em', textTransform:'uppercase', marginBottom:8,
-            textShadow:'0 1px 8px rgba(0,0,0,0.8)',
-          }}>{p.label}</div>
-          <div style={{fontSize:18, fontWeight:800, color:'#fff', letterSpacing:-0.5, lineHeight:1.12, textShadow:'0 2px 14px rgba(0,0,0,0.85)', marginBottom:8,
-            display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden',
-          }}>{p.title}</div>
-          <div style={{fontSize:11, color:'rgba(255,255,255,0.74)', letterSpacing:-0.05, textShadow:'0 1px 8px rgba(0,0,0,0.85)', lineHeight:1.3,
-            display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden',
-          }}>{p.sub}</div>
+      <PhotoCover scene={p.cover} h={172}>
+        {/* Top-left: AD label */}
+        <div style={{position:'absolute', top:12, left:12, display:'flex', alignItems:'center', gap:6}}>
+          <div style={{
+            padding:'3px 7px', borderRadius:5,
+            background:'rgba(0,0,0,0.55)', backdropFilter:'blur(8px)',
+            border:`1px solid rgba(255,255,255,0.1)`,
+          }}>
+            <span style={{fontSize:8.5, fontWeight:800, color:'#fff', letterSpacing:'0.16em'}}>РЕКЛАМА</span>
+          </div>
+          <div style={{
+            padding:'3px 8px', borderRadius:5,
+            background:TONE.bg, border:`1px solid ${TONE.bd}`,
+            backdropFilter:'blur(8px)',
+          }}>
+            <span style={{fontSize:9, fontWeight:800, color:TONE.label, letterSpacing:'0.1em', textTransform:'uppercase'}}>{p.label}</span>
+          </div>
         </div>
-        {/* Bottom-left CTA chevron */}
-        <div style={{position:'absolute', left:16, bottom:14, display:'flex', alignItems:'center', gap:6,
-          padding:'7px 11px 7px 13px', borderRadius:99,
-          background:'rgba(255,255,255,0.10)', backdropFilter:'blur(10px)',
-          border:'1px solid rgba(255,255,255,0.14)',
-        }}>
-          <span style={{fontSize:10.5, fontWeight:700, color:'#fff', letterSpacing:-0.05}}>Подробнее</span>
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+
+        {/* Bottom: title + sub */}
+        <div style={{position:'absolute', left:14, right:14, bottom:12}}>
+          <div style={{fontSize:14.5, fontWeight:800, color:'#fff', letterSpacing:-0.2, lineHeight:1.22, textShadow:'0 2px 10px rgba(0,0,0,0.7)', marginBottom:4}}>{p.title}</div>
+          <div style={{fontSize:10.5, color:'rgba(255,255,255,0.78)', letterSpacing:-0.05, textShadow:'0 1px 6px rgba(0,0,0,0.7)'}}>{p.sub}</div>
         </div>
       </PhotoCover>
+
+      {/* CTA strip */}
+      <div style={{padding:'10px 14px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+        <div style={{fontSize:10, color:DS.muted, letterSpacing:-0.05}}>Спонсорское предложение</div>
+        <div style={{
+          height:28, padding:'0 12px', borderRadius:8,
+          background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
+          display:'flex', alignItems:'center', gap:5,
+          boxShadow:'0 3px 10px var(--accentDim2)',
+        }}>
+          <span style={{fontSize:10.5, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>{p.cta}</span>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="var(--accentOn)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2108,93 +2083,6 @@ function HeroCard({ item, nav }) {
     </div>
   );
 }
-
-// ── FEED GRID CARD (2-column compact) ─────────────────────
-function FeedGridCard({ item, nav }) {
-  const photoSrc = (PHOTO_MAP[item.cover] || PHOTO_MAP.factory_floor) + __PREVIEW_QS;
-  const tone = item.tagTone || 'var(--accent)';
-  const target = item.kind === 'insight' ? 'ai'
-    : item.kind === 'supplier' ? 'supplier'
-    : item.kind === 'news' ? 'home'
-    : 'product';
-  return (
-    <div onClick={()=>nav(target)} style={{
-      borderRadius:14, overflow:'hidden', cursor:'pointer',
-      background:`linear-gradient(160deg, #1B1E22 0%, #0E1013 100%)`,
-      border:`1px solid ${DS.border2}`,
-      boxShadow:'0 6px 14px rgba(0,0,0,0.35)',
-      display:'flex', flexDirection:'column',
-    }}>
-      {/* Photo */}
-      <div style={{position:'relative', height:108, overflow:'hidden', background:'#0A0B0D'}}>
-        <img src={photoSrc} alt="" draggable={false} style={{
-          position:'absolute', inset:0, width:'100%', height:'100%',
-          objectFit:'cover', objectPosition:'50% 45%',
-          filter:'saturate(0.95) brightness(0.85)',
-        }}/>
-        <div style={{position:'absolute', inset:0,
-          background:'linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 50%, rgba(11,12,14,0.55) 100%)'}}/>
-        {/* Top-right kebab */}
-        <div style={{position:'absolute', top:8, right:8,
-          width:24, height:24, borderRadius:7,
-          background:'rgba(0,0,0,0.45)', backdropFilter:'blur(8px)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-        }}>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-            <circle cx="5" cy="12" r="1.4" fill="#fff"/>
-            <circle cx="12" cy="12" r="1.4" fill="#fff"/>
-            <circle cx="19" cy="12" r="1.4" fill="#fff"/>
-          </svg>
-        </div>
-        {/* Top-left tag — neutral chip, colored text only */}
-        <div style={{position:'absolute', top:8, left:8,
-          padding:'4px 8px', borderRadius:5,
-          background:'rgba(8,9,11,0.78)', backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)',
-          display:'flex', alignItems:'center',
-        }}>
-          <span style={{fontSize:9, fontWeight:800, color:tone, letterSpacing:'0.14em', textTransform:'uppercase', lineHeight:1, display:'block'}}>{item.tag}</span>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div style={{padding:'10px 12px 12px', display:'flex', flexDirection:'column', gap:4}}>
-        <div style={{
-          fontSize:13, fontWeight:800, color:DS.text, letterSpacing:-0.25, lineHeight:1.2,
-          display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden',
-        }}>{item.title}</div>
-        <div style={{fontSize:10.5, color:DS.muted, letterSpacing:-0.05, lineHeight:1.3,
-          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
-        }}>{item.sub}</div>
-
-        {/* Footer — uniform across all card types */}
-        {(item.price || item.metric) && (
-          <div style={{marginTop:6, paddingTop:8, borderTop:`1px solid ${DS.border}`,
-            display:'flex', alignItems:'baseline', justifyContent:'space-between', gap:6, minHeight:18}}>
-            {item.price ? (
-              <>
-                <div>
-                  <span style={{fontSize:14, fontWeight:800, color:'var(--accent)', fontFamily:'"SF Mono",ui-monospace,monospace', letterSpacing:-0.3}}>{item.price}</span>
-                  <span style={{fontSize:9.5, color:DS.muted, marginLeft:2}}>/{item.unit}</span>
-                </div>
-                <span style={{fontSize:9, color:DS.muted, letterSpacing:-0.05}}>MOQ {item.moq}</span>
-              </>
-            ) : (
-              <>
-                <span style={{fontSize:13, fontWeight:800, color:'var(--accent)', fontFamily:'"SF Mono",ui-monospace,monospace', letterSpacing:-0.2,
-                  overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', flex:1, minWidth:0,
-                }}>{item.metric}</span>
-                <span style={{fontSize:9, color:DS.muted, letterSpacing:'0.06em', textTransform:'uppercase', fontWeight:700, flexShrink:0}}>
-                  {item.kind === 'news' ? 'Рынок' : item.kind === 'supplier' ? 'Поставщик' : 'AI'}
-                </span>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-window.FeedGridCard = FeedGridCard;
 
 // ── FEED CARD ROUTER ───────────────────────────────────────
 function FeedCard({ item, nav }) {
@@ -2611,95 +2499,6 @@ function AISheet({ height, state, setState, draft, setDraft, nav }) {
   const dragRef = React.useRef({ startY:0, dy:0, dragging:false, base: isFull?'full':'compact' });
   const [drag, setDrag] = React.useState(0);
 
-  // Chat state — lives in AISheet so it survives compact↔full toggles
-  const initialChat = React.useMemo(()=>([
-    { role:'ai', text:'Здравствуйте, Адилет. Я помогу найти поставщиков, сравнить цены и подготовить сделки. С чего начнём?', t:'только что' },
-  ]), []);
-  const [chat, setChat] = React.useState(initialChat);
-  const [typing, setTyping] = React.useState(false);
-  const scrollerRef = React.useRef(null);
-  React.useEffect(()=>{
-    const el = scrollerRef.current;
-    if(el) el.scrollTop = el.scrollHeight;
-  }, [chat, typing, isFull]);
-
-  // AI reply generator — varies output by keyword
-  const aiReply = React.useCallback((userText)=>{
-    const t = (userText||'').toLowerCase();
-    // suppliers
-    if(/поставщ|завод|произв|фабрик|найди|найти/.test(t)){
-      return { role:'ai', kind:'suppliers',
-        text:'Подобрал 3 поставщика под задачу. Все проверены, доставка в РФ 18–24 дня.',
-        suppliers:[
-          {n:'Yifeng Steel',     c:'Шэньчжэнь', p:'$2.40/кг', s:'18 дн.', why:'Лучший рейтинг'},
-          {n:'Foshan MetalCorp', c:'Фошань',    p:'$2.28/кг', s:'21 дн.', why:'Цена на 5% ниже'},
-          {n:'Tianjin Iron',     c:'Тяньцзинь', p:'$2.32/кг', s:'24 дн.', why:'Объёмы до 5 т'},
-        ], t:'сейчас' };
-    }
-    // calculation / cost
-    if(/расчит|рассчит|стоим|цен|итог|сколько|калькул/.test(t)){
-      return { role:'ai', kind:'estimate',
-        text:'Расчёт по Yifeng Steel · 1.2 т:',
-        rows:[
-          {k:'Товар · 1.2 т × $2.40', v:'$2 880'},
-          {k:'Доставка CIF Москва',   v:'$380'},
-          {k:'Налоги и сборы (7%)',   v:'$202'},
-        ],
-        total:'$3 462', totalRub:'≈ 319 889 ₽', lead:'20–30 дней', t:'сейчас' };
-    }
-    // compare
-    if(/сравн|варианты|разниц/.test(t)){
-      return { role:'ai', kind:'compare',
-        text:'Сравнение по ключевым параметрам:',
-        rows:[
-          {k:'Цена',  a:'$2.40/кг', b:'$2.28/кг', c:'$2.32/кг', best:1},
-          {k:'Срок',  a:'18 дн.',   b:'21 дн.',   c:'24 дн.',   best:0},
-          {k:'MOQ',   a:'500 кг',   b:'1 т',      c:'500 кг',   best:0},
-          {k:'Рейт.', a:'4.9',       b:'4.7',       c:'4.8',       best:0},
-        ], t:'сейчас' };
-    }
-    // draft message
-    if(/сообщ|напиш|подгот|письм|отправ/.test(t)){
-      return { role:'ai', kind:'message',
-        text:'Готовое сообщение поставщику:',
-        draft:'Здравствуйте! Интересует нержавеющая сталь 316L (0.8 мм), объём 1.2 т. Уточните MOQ для скидки и условия оплаты — возможна ли предоплата 50% с остатком до отгрузки? Также сроки производства. Спасибо.',
-        t:'сейчас' };
-    }
-    // market news
-    if(/новост|рынок|курс|тренд|прогноз/.test(t)){
-      return { role:'ai', kind:'news',
-        text:'Сегодня на рынке:',
-        items:[
-          {h:'Юань ↑ 1.4% к рублю', s:'Коридор 12.6–13.1 ₽ на 2 недели'},
-          {h:'Алюминий LME +2.7%',   s:'Спот $2 480/т, запасы −1.8%'},
-          {h:'Сталь HRC стабильна',  s:'$612/т, отгрузки в норме'},
-        ], t:'сейчас' };
-    }
-    // moq
-    if(/moq|минимальн/.test(t)){
-      return { role:'ai',
-        text:'Типовые MOQ по вашей категории:\n• Yifeng Steel — 500 кг\n• Foshan MetalCorp — 1 т\n• Tianjin Iron — 500 кг\n\nМогу запросить индивидуальные условия для меньших партий.',
-        t:'сейчас' };
-    }
-    // generic
-    return { role:'ai',
-      text:'Уточните, пожалуйста: товар, объём и страну поставщика — подберу 3 варианта с расчётом стоимости и сроков.',
-      t:'сейчас' };
-  }, []);
-
-  const sendMessage = React.useCallback((text)=>{
-    const v = (text||'').trim();
-    if(!v) return;
-    setChat(prev => [...prev, { role:'user', text:v, t:'только что' }]);
-    setDraft('');
-    setTyping(true);
-    setTimeout(()=>{
-      const reply = aiReply(v);
-      setChat(prev => [...prev, reply]);
-      setTyping(false);
-    }, 900 + Math.random()*500);
-  }, [aiReply, setDraft]);
-
   // Vertical viewport for full-screen calc
   const [vh, setVh] = React.useState(800);
   React.useEffect(()=>{
@@ -2862,7 +2661,7 @@ function AISheet({ height, state, setState, draft, setDraft, nav }) {
 
         {/* CONTENT — switches by state */}
         {isFull ? (
-          <FullChatBody nav={nav} messages={chat} typing={typing} onSend={sendMessage} scrollerRef={scrollerRef}/>
+          <FullChatBody nav={nav}/>
         ) : (
           <div style={{padding:'0 14px 10px', flexShrink:0}}>
             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:6}}>
@@ -2896,7 +2695,6 @@ function AISheet({ height, state, setState, draft, setDraft, nav }) {
             <input
               value={draft}
               onChange={e=>setDraft(e.target.value)}
-              onKeyDown={e=>{ if(isFull && e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(draft); } }}
               placeholder="Опишите товар, задачу или вопрос"
               style={{
                 flex:1, background:'transparent', border:'none', outline:'none',
@@ -2904,7 +2702,7 @@ function AISheet({ height, state, setState, draft, setDraft, nav }) {
                 padding:'8px 0',
               }}
             />
-            <div onClick={()=>{ if(!draft.trim()) return; if(isFull) sendMessage(draft); else nav('ai',{msg:draft}); }} style={{
+            <div onClick={()=>{ if(draft.trim()) nav('ai',{msg:draft}); }} style={{
               width:34, height:34, borderRadius:9, cursor:'pointer', flexShrink:0,
               background: draft.trim() ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)` : 'rgba(255,255,255,0.04)',
               border: draft.trim() ? '1px solid transparent' : `1px solid ${DS.border}`,
@@ -2941,24 +2739,27 @@ function AISheet({ height, state, setState, draft, setDraft, nav }) {
 }
 
 // ── FULL-SCREEN AI CHAT BODY ───────────────────────────────
-function FullChatBody({ nav, messages, typing, onSend, scrollerRef }) {
+function FullChatBody({ nav }) {
   const PROMPTS = [
     'Найти поставщиков',
     'Сравнить предложения',
     'Рассчитать стоимость',
     'Подготовить сообщение',
     'Новости рынка',
-    'Уточнить MOQ',
   ];
-
+  const messages = [
+    { role:'ai', text:'Здравствуйте, Иван. Я помогу найти поставщиков, сравнить цены и подготовить сделки. С чего начнём?' },
+    { role:'user', text:'Сталь 316L, 0.5 мм, 800 кг — найди 3 завода с лучшим соотношением цена / срок' },
+    { role:'ai', text:'Подобрал 3 поставщика под задачу. Все проверены, доставка в РФ 18–24 дня.', cards: true },
+  ];
   return (
-    <div ref={scrollerRef} style={{flex:1, overflowY:'auto', padding:'14px 16px 18px', display:'flex', flexDirection:'column', gap:14}}>
+    <div style={{flex:1, overflowY:'auto', padding:'14px 16px 18px', display:'flex', flexDirection:'column', gap:14}}>
       {/* Quick prompt chips */}
       <div style={{display:'flex', gap:6, overflowX:'auto', margin:'0 -16px', padding:'0 16px',
-        scrollbarWidth:'none', WebkitMaskImage:'linear-gradient(to right, #000 90%, transparent 100%)', flexShrink:0,
+        scrollbarWidth:'none', WebkitMaskImage:'linear-gradient(to right, #000 90%, transparent 100%)',
       }}>
         {PROMPTS.map(p=>(
-          <div key={p} onClick={()=>onSend(p)} style={{
+          <div key={p} style={{
             flexShrink:0, padding:'7px 12px', borderRadius:9,
             background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border2}`,
             fontSize:11.5, fontWeight:600, color:DS.text, letterSpacing:-0.05, cursor:'pointer', whiteSpace:'nowrap',
@@ -2968,284 +2769,81 @@ function FullChatBody({ nav, messages, typing, onSend, scrollerRef }) {
 
       {/* Messages */}
       {messages.map((m,i)=>(
-        <ChatMessage key={i} m={m} nav={nav} onSend={onSend}/>
+        <div key={i} style={{
+          display:'flex', flexDirection:'column',
+          alignItems: m.role==='user' ? 'flex-end' : 'flex-start',
+          gap:8,
+        }}>
+          {m.role==='ai' && (
+            <div style={{display:'flex', alignItems:'center', gap:6}}>
+              <div style={{width:18, height:18, borderRadius:5,
+                background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
+                display:'flex', alignItems:'center', justifyContent:'center',
+              }}>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="var(--accentOn)" strokeWidth="2"/></svg>
+              </div>
+              <span style={{fontSize:10, fontWeight:700, color:DS.muted, letterSpacing:'0.1em', textTransform:'uppercase'}}>AI · только что</span>
+            </div>
+          )}
+          <div style={{
+            maxWidth:'82%',
+            padding:'11px 14px', borderRadius: m.role==='user' ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
+            background: m.role==='user'
+              ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`
+              : `linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
+            border: m.role==='user' ? 'none' : `1px solid ${DS.border}`,
+            color: m.role==='user' ? 'var(--accentOn)' : DS.text,
+            fontSize:13, lineHeight:1.45, letterSpacing:-0.05, fontWeight: m.role==='user'?700:500,
+            boxShadow: m.role==='user' ? '0 4px 14px var(--accentDim2)' : 'none',
+          }}>{m.text}</div>
+
+          {/* Structured supplier cards */}
+          {m.cards && (
+            <div style={{width:'100%', display:'flex', flexDirection:'column', gap:6, marginTop:2}}>
+              {[
+                {n:'Yifeng Steel',     c:'Шэньчжэнь', p:'$2.40/кг', s:'18 дн.', why:'Лучший рейтинг'},
+                {n:'Foshan MetalCorp', c:'Фошань',    p:'$2.28/кг', s:'21 дн.', why:'Цена на 5% ниже'},
+                {n:'Tianjin Iron',     c:'Тяньцзинь', p:'$2.32/кг', s:'24 дн.', why:'Объёмы до 5 т'},
+              ].map((s,j)=>(
+                <div key={j} onClick={()=>nav('supplier',{supplier:{name:s.n,city:s.c,country:'CN',rating:'4.8'}})} style={{
+                  display:'flex', alignItems:'center', gap:10, padding:'10px 12px', cursor:'pointer',
+                  background:`linear-gradient(160deg, #14171B 0%, #0E1114 100%)`,
+                  border:`1px solid ${DS.border2}`, borderRadius:12,
+                }}>
+                  <div style={{width:30, height:30, borderRadius:8, flexShrink:0,
+                    background:`linear-gradient(160deg, #2A2D31 0%, #14171A 100%)`,
+                    border:`1px solid ${DS.border2}`,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:9.5, fontWeight:800, color:DS.text, letterSpacing:-0.3,
+                  }}>{s.n.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+                  <div style={{flex:1, minWidth:0}}>
+                    <div style={{fontSize:12, fontWeight:800, color:DS.text, letterSpacing:-0.1, lineHeight:1.2}}>{s.n}</div>
+                    <div style={{fontSize:9.5, color:DS.muted, marginTop:2}}>{s.c} · {s.s} · <span style={{color:'var(--accent)', fontWeight:700}}>{s.why}</span></div>
+                  </div>
+                  <div style={{fontSize:12, fontWeight:800, color:DS.text, fontFamily:'"SF Mono",ui-monospace,monospace', letterSpacing:-0.2}}>{s.p}</div>
+                </div>
+              ))}
+              <div style={{display:'flex', gap:6, marginTop:2}}>
+                <div onClick={()=>nav('ai',{msg:'Сравни эти 3 завода детально'})} style={{
+                  flex:1, height:34, borderRadius:9, cursor:'pointer',
+                  background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border2}`,
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                }}>
+                  <span style={{fontSize:11, fontWeight:700, color:DS.text, letterSpacing:-0.05}}>Сравнить</span>
+                </div>
+                <div onClick={()=>nav('ai',{msg:'Рассчитай полную стоимость'})} style={{
+                  flex:1, height:34, borderRadius:9, cursor:'pointer',
+                  background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  boxShadow:'0 3px 10px var(--accentDim2)',
+                }}>
+                  <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Рассчитать стоимость</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       ))}
-
-      {typing && (
-        <div style={{alignSelf:'flex-start', display:'flex', alignItems:'center', gap:6, padding:'10px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`, borderRadius:'4px 14px 14px 14px',
-        }}>
-          {[0,1,2].map(d=>(
-            <div key={d} style={{width:5, height:5, borderRadius:'50%', background:'var(--accent)',
-              animation:`aidot 1.2s ${d*0.18}s infinite ease-in-out`}}/>
-          ))}
-          <style>{`@keyframes aidot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}`}</style>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Individual chat message renderer ────────────────────────
-function ChatMessage({ m, nav, onSend }) {
-  const mine = m.role === 'user';
-
-  // suppliers card list
-  if(m.kind === 'suppliers'){
-    return (
-      <div style={{alignSelf:'flex-start', maxWidth:'92%', width:'100%', display:'flex', flexDirection:'column', gap:8}}>
-        <AIBubbleHead t={m.t}/>
-        <div style={{
-          padding:'11px 14px', borderRadius:'4px 14px 14px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`,
-          fontSize:13, lineHeight:1.45, letterSpacing:-0.05, color:DS.text,
-        }}>{m.text}</div>
-        {m.suppliers.map((s,j)=>(
-          <div key={j} onClick={()=>nav('supplier',{supplier:{name:s.n,city:s.c,country:'CN',rating:'4.8'}})} style={{
-            display:'flex', alignItems:'center', gap:10, padding:'10px 12px', cursor:'pointer',
-            background:`linear-gradient(160deg, #14171B 0%, #0E1114 100%)`,
-            border:`1px solid ${DS.border2}`, borderRadius:12,
-          }}>
-            <div style={{width:30, height:30, borderRadius:8, flexShrink:0,
-              background:`linear-gradient(160deg, #2A2D31 0%, #14171A 100%)`,
-              border:`1px solid ${DS.border2}`,
-              display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:9.5, fontWeight:800, color:DS.text, letterSpacing:-0.3,
-            }}>{s.n.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
-            <div style={{flex:1, minWidth:0}}>
-              <div style={{fontSize:12, fontWeight:800, color:DS.text, letterSpacing:-0.1, lineHeight:1.2}}>{s.n}</div>
-              <div style={{fontSize:9.5, color:DS.muted, marginTop:2}}>{s.c} · {s.s} · <span style={{color:'var(--accent)', fontWeight:700}}>{s.why}</span></div>
-            </div>
-            <div style={{fontSize:12, fontWeight:800, color:DS.text, fontFamily:'"SF Mono",ui-monospace,monospace', letterSpacing:-0.2}}>{s.p}</div>
-          </div>
-        ))}
-        <div style={{display:'flex', gap:6, marginTop:2}}>
-          <div onClick={()=>onSend('Сравни эти 3 завода детально')} style={{
-            flex:1, height:34, borderRadius:9, cursor:'pointer',
-            background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border2}`,
-            display:'flex', alignItems:'center', justifyContent:'center',
-          }}>
-            <span style={{fontSize:11, fontWeight:700, color:DS.text, letterSpacing:-0.05}}>Сравнить</span>
-          </div>
-          <div onClick={()=>onSend('Рассчитай полную стоимость 1.2 т от Yifeng Steel')} style={{
-            flex:1, height:34, borderRadius:9, cursor:'pointer',
-            background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 3px 10px var(--accentDim2)',
-          }}>
-            <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Рассчитать стоимость</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // estimate / breakdown
-  if(m.kind === 'estimate'){
-    return (
-      <div style={{alignSelf:'flex-start', maxWidth:'92%', width:'100%', display:'flex', flexDirection:'column', gap:8}}>
-        <AIBubbleHead t={m.t}/>
-        <div style={{
-          padding:'11px 14px', borderRadius:'4px 14px 14px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`,
-          fontSize:13, lineHeight:1.45, letterSpacing:-0.05, color:DS.text,
-        }}>{m.text}</div>
-        <div style={{
-          background:'rgba(0,0,0,0.25)', border:`1px solid ${DS.border}`, borderRadius:12,
-          padding:'12px 13px',
-        }}>
-          <div style={{display:'flex', flexDirection:'column', gap:7, marginBottom:10}}>
-            {m.rows.map(r=>(
-              <div key={r.k} style={{display:'flex', justifyContent:'space-between', alignItems:'baseline'}}>
-                <span style={{fontSize:11.5, color:DS.sub, letterSpacing:-0.05}}>{r.k}</span>
-                <span style={{fontSize:12, color:DS.text, fontWeight:600, fontFamily:'"SF Mono",ui-monospace,monospace'}}>{r.v}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{height:1, background:DS.border, marginBottom:10}}/>
-          <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:10}}>
-            <span style={{fontSize:12, color:DS.text, fontWeight:700, letterSpacing:-0.05}}>Итог</span>
-            <div style={{textAlign:'right'}}>
-              <div style={{fontSize:15, fontWeight:800, color:'var(--accent)', fontFamily:'"SF Mono",ui-monospace,monospace', letterSpacing:-0.2, lineHeight:1.1}}>{m.total}</div>
-              <div style={{fontSize:10, color:DS.muted, fontFamily:'"SF Mono",ui-monospace,monospace', marginTop:2}}>{m.totalRub}</div>
-            </div>
-          </div>
-          <div style={{display:'flex', alignItems:'center', gap:6, padding:'5px 9px',
-            background:'var(--accentDim)', border:`1px solid var(--accentDim2)`, borderRadius:7,
-          }}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--accent)" strokeWidth="1.7"/><path d="M12 7v5l3 2" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"/></svg>
-            <span style={{fontSize:10.5, fontWeight:700, color:DS.text, letterSpacing:-0.05}}>Срок · <span style={{fontFamily:'"SF Mono",ui-monospace,monospace'}}>{m.lead}</span></span>
-          </div>
-        </div>
-        <div style={{display:'flex', gap:6}}>
-          <div onClick={()=>onSend('Сравни 3 варианта поставщиков')} style={{
-            flex:1, height:34, borderRadius:9, cursor:'pointer',
-            background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border2}`,
-            display:'flex', alignItems:'center', justifyContent:'center',
-          }}>
-            <span style={{fontSize:11, fontWeight:700, color:DS.text, letterSpacing:-0.05}}>Сравнить варианты</span>
-          </div>
-          <div onClick={()=>nav('deal')} style={{
-            flex:1, height:34, borderRadius:9, cursor:'pointer',
-            background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 3px 10px var(--accentDim2)',
-          }}>
-            <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Начать сделку</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // compare table
-  if(m.kind === 'compare'){
-    return (
-      <div style={{alignSelf:'flex-start', maxWidth:'92%', width:'100%', display:'flex', flexDirection:'column', gap:8}}>
-        <AIBubbleHead t={m.t}/>
-        <div style={{
-          padding:'11px 14px', borderRadius:'4px 14px 14px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`,
-          fontSize:13, lineHeight:1.45, letterSpacing:-0.05, color:DS.text,
-        }}>{m.text}</div>
-        <div style={{
-          background:'rgba(0,0,0,0.25)', border:`1px solid ${DS.border}`, borderRadius:12,
-          overflow:'hidden',
-        }}>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', padding:'9px 12px',
-            background:'rgba(255,255,255,0.03)', borderBottom:`1px solid ${DS.border}`,
-            fontSize:9.5, fontWeight:800, color:DS.muted, letterSpacing:'0.1em', textTransform:'uppercase'}}>
-            <span></span><span>Yifeng</span><span>Foshan</span><span>Tianjin</span>
-          </div>
-          {m.rows.map((r,j)=>{
-            const cells = [r.a, r.b, r.c];
-            return (
-              <div key={j} style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', padding:'10px 12px',
-                borderBottom: j<m.rows.length-1 ? `1px solid ${DS.border}` : 'none',
-                fontSize:11.5, fontFamily:'"SF Mono",ui-monospace,monospace', alignItems:'center'}}>
-                <span style={{color:DS.sub, fontFamily:'inherit', fontWeight:600}}>{r.k}</span>
-                {cells.map((c,k)=>(
-                  <span key={k} style={{color: r.best===k ? 'var(--accent)' : DS.text, fontWeight: r.best===k ? 800 : 600}}>{c}</span>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-        <div onClick={()=>onSend('Рассчитай стоимость по Yifeng')} style={{
-          height:34, borderRadius:9, cursor:'pointer', alignSelf:'stretch',
-          background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow:'0 3px 10px var(--accentDim2)',
-        }}>
-          <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Выбрать Yifeng и рассчитать</span>
-        </div>
-      </div>
-    );
-  }
-
-  // draft message
-  if(m.kind === 'message'){
-    return (
-      <div style={{alignSelf:'flex-start', maxWidth:'92%', width:'100%', display:'flex', flexDirection:'column', gap:8}}>
-        <AIBubbleHead t={m.t}/>
-        <div style={{
-          padding:'11px 14px', borderRadius:'4px 14px 14px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`,
-          fontSize:13, lineHeight:1.45, letterSpacing:-0.05, color:DS.text,
-        }}>{m.text}</div>
-        <div style={{
-          background:'rgba(0,0,0,0.3)', border:`1px solid ${DS.border}`, borderLeft:'2px solid var(--accent)', borderRadius:10,
-          padding:'12px 14px',
-          fontSize:12.5, color:DS.text, lineHeight:1.5, letterSpacing:-0.05, fontStyle:'italic',
-        }}>«{m.draft}»</div>
-        <div style={{display:'flex', gap:6}}>
-          <div onClick={()=>nav('chat')} style={{
-            flex:1.2, height:34, borderRadius:9, cursor:'pointer',
-            background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-            display:'flex', alignItems:'center', justifyContent:'center', gap:5,
-            boxShadow:'0 3px 10px var(--accentDim2)',
-          }}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="var(--accentOn)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Отправить</span>
-          </div>
-          <div onClick={()=>onSend('Перепиши сообщение в более деловом тоне')} style={{
-            flex:1, height:34, borderRadius:9, cursor:'pointer',
-            background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border2}`,
-            display:'flex', alignItems:'center', justifyContent:'center',
-          }}>
-            <span style={{fontSize:11, fontWeight:700, color:DS.text, letterSpacing:-0.05}}>Переписать</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // market news
-  if(m.kind === 'news'){
-    return (
-      <div style={{alignSelf:'flex-start', maxWidth:'92%', width:'100%', display:'flex', flexDirection:'column', gap:8}}>
-        <AIBubbleHead t={m.t}/>
-        <div style={{
-          padding:'11px 14px', borderRadius:'4px 14px 14px 14px',
-          background:`linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-          border:`1px solid ${DS.border}`,
-          fontSize:13, lineHeight:1.45, letterSpacing:-0.05, color:DS.text,
-        }}>{m.text}</div>
-        {m.items.map((it,j)=>(
-          <div key={j} style={{
-            display:'flex', gap:11, padding:'11px 13px',
-            background:`linear-gradient(160deg, #14171B 0%, #0E1114 100%)`,
-            border:`1px solid ${DS.border2}`, borderRadius:12,
-          }}>
-            <div style={{width:5, alignSelf:'stretch', borderRadius:3, background:'var(--accent)', flexShrink:0}}/>
-            <div style={{flex:1}}>
-              <div style={{fontSize:12.5, fontWeight:800, color:DS.text, letterSpacing:-0.1}}>{it.h}</div>
-              <div style={{fontSize:10.5, color:DS.muted, marginTop:3}}>{it.s}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // plain bubble (user or AI)
-  return (
-    <div style={{
-      display:'flex', flexDirection:'column',
-      alignItems: mine ? 'flex-end' : 'flex-start',
-      gap:6, alignSelf: mine ? 'flex-end' : 'flex-start', maxWidth:'85%',
-    }}>
-      {!mine && <AIBubbleHead t={m.t}/>}
-      <div style={{
-        padding:'11px 14px', borderRadius: mine ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
-        background: mine
-          ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`
-          : `linear-gradient(160deg, #16191D 0%, #0F1216 100%)`,
-        border: mine ? 'none' : `1px solid ${DS.border}`,
-        color: mine ? 'var(--accentOn)' : DS.text,
-        fontSize:13, lineHeight:1.45, letterSpacing:-0.05, fontWeight: mine?700:500,
-        boxShadow: mine ? '0 4px 14px var(--accentDim2)' : 'none',
-        whiteSpace:'pre-wrap',
-      }}>{m.text}</div>
-    </div>
-  );
-}
-
-function AIBubbleHead({ t }) {
-  return (
-    <div style={{display:'flex', alignItems:'center', gap:6}}>
-      <div style={{width:18, height:18, borderRadius:5,
-        background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-        display:'flex', alignItems:'center', justifyContent:'center',
-      }}>
-        <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="var(--accentOn)" strokeWidth="2"/></svg>
-      </div>
-      <span style={{fontSize:10, fontWeight:700, color:DS.muted, letterSpacing:'0.1em', textTransform:'uppercase'}}>AI · {t || 'только что'}</span>
     </div>
   );
 }
@@ -3306,220 +2904,6 @@ function NavItem({ t, onPress }) {
 window.BuyerHome = BuyerHome;
 
 
-// ── PROMO CATALOG SCREEN ───────────────────────────────────
-function PromoScreen({ nav }) {
-  const promos = window.PROMOS || [];
-  const [filter, setFilter] = React.useState('all');
-
-  const FILTERS = [
-    { id:'all',       label:'Все' },
-    { id:'discount',  label:'Скидки' },
-    { id:'new',       label:'Новинки' },
-    { id:'top',       label:'Топ' },
-    { id:'logistics', label:'Логистика' },
-    { id:'ai',        label:'AI-подборки' },
-  ];
-
-  const KIND_TONE = {
-    discount:'var(--accent)', top:'var(--accent)', new:'#7CC9FF',
-    logistics:'#A78BFA', ai:'var(--accent)',
-  };
-
-  // Expand promos with synthetic count to feel like a catalog
-  const expanded = [
-    ...promos,
-    { id:'pr6', kind:'discount', label:'Скидка −12%', cover:'aluminum',
-      title:'Алюминий 6063-T5 · акция октября', sub:'Tianjin Iron · от 1 т · −12%' },
-    { id:'pr7', kind:'new',      label:'Новый каталог', cover:'production',
-      title:'Полипропилен ПП-1525 · гранулы', sub:'Guangdong Plastics · 2 т · $1.05/кг' },
-    { id:'pr8', kind:'top',      label:'Топ недели', cover:'warehouse',
-      title:'Yantai Steel Group · HRC 4 мм', sub:'180 сделок · 4.8 ★ · ответ 8 мин' },
-    { id:'pr9', kind:'logistics',label:'Маршрут месяца', cover:'containers',
-      title:'Ж/д Маньчжурия → Москва · 14 дн.', sub:'TransCargo · −8% при объёме от 5 контейнеров' },
-    { id:'pr10',kind:'ai',       label:'AI · персонально', cover:'market',
-      title:'Сезонный спрос: ваша вертикаль', sub:'AI-прогноз на Q1 2027 · 8 категорий' },
-  ];
-
-  const list = filter==='all' ? expanded : expanded.filter(p=>p.kind===filter);
-
-  return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
-      {/* HEADER */}
-      <div style={{flexShrink:0, padding:'4px 16px 12px', display:'flex', alignItems:'center', gap:10}}>
-        <div onClick={()=>nav('back')} style={{
-          width:36, height:36, borderRadius:11, flexShrink:0, cursor:'pointer',
-          background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
-          display:'flex', alignItems:'center', justifyContent:'center',
-        }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke={DS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </div>
-        <div style={{flex:1, minWidth:0}}>
-          <div style={{fontSize:10, color:DS.muted, letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:700, marginBottom:1}}>Каталог</div>
-          <div style={{fontSize:20, fontWeight:800, color:DS.text, letterSpacing:-0.5, lineHeight:1.1}}>Промо · спецпредложения</div>
-        </div>
-        <div style={{
-          width:36, height:36, borderRadius:11, cursor:'pointer', flexShrink:0,
-          background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
-          display:'flex', alignItems:'center', justifyContent:'center',
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke={DS.text} strokeWidth="2"/><path d="M21 21l-4-4" stroke={DS.text} strokeWidth="2" strokeLinecap="round"/></svg>
-        </div>
-      </div>
-
-      {/* FILTER CHIPS */}
-      <div style={{flexShrink:0, padding:'0 0 12px'}}>
-        <div style={{display:'flex', gap:7, overflowX:'auto', padding:'0 16px', scrollbarWidth:'none'}}>
-          {FILTERS.map(f=>{
-            const on = filter===f.id;
-            return (
-              <div key={f.id} onClick={()=>setFilter(f.id)} style={{
-                flexShrink:0, padding:'8px 14px', borderRadius:10, cursor:'pointer',
-                background: on ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)` : 'rgba(255,255,255,0.03)',
-                border: on ? '1px solid rgba(0,0,0,0.2)' : `1px solid ${DS.border}`,
-                fontSize:12, fontWeight: on?800:700,
-                color: on ? 'var(--accentOn)' : DS.sub,
-                letterSpacing:-0.05, whiteSpace:'nowrap',
-                boxShadow: on ? '0 4px 12px var(--accentDim2)' : 'none',
-                transition:'all .18s',
-              }}>{f.label}</div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* RESULTS SUMMARY */}
-      <div style={{flexShrink:0, padding:'0 18px 10px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
-        <span style={{fontSize:11, color:DS.muted, letterSpacing:-0.05}}>{list.length} предложений</span>
-        <div style={{display:'flex', alignItems:'center', gap:5, cursor:'pointer'}}>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M6 12h12M10 18h4" stroke={DS.sub} strokeWidth="2" strokeLinecap="round"/></svg>
-          <span style={{fontSize:11, fontWeight:700, color:DS.sub, letterSpacing:-0.05}}>Сортировка</span>
-        </div>
-      </div>
-
-      {/* LIST — hero on top, compact thumbnail-left rows below */}
-      <div style={{flex:1, overflowY:'auto', padding:'0 16px 100px', display:'block'}}>
-        {list[0] && (() => {
-          const p = list[0];
-          return (
-            <div key={p.id} onClick={()=>nav('product')} style={{
-              borderRadius:18, overflow:'hidden', cursor:'pointer', marginBottom:14,
-              background:`linear-gradient(160deg, #16191D 0%, #0E1114 100%)`,
-              border:`1px solid ${DS.border2}`,
-              boxShadow:'0 12px 28px rgba(0,0,0,0.45)',
-              position:'relative',
-            }}>
-              <div style={{height:200, position:'relative', overflow:'hidden'}}>
-                <PhotoCover scene={p.cover} h={200} dim={0.08}>
-                  <div style={{position:'absolute', inset:0,
-                    background:'linear-gradient(180deg, rgba(11,12,14,0.08) 30%, rgba(11,12,14,0.85) 100%)',
-                  }}/>
-                  <div style={{position:'absolute', top:12, left:12,
-                    padding:'5px 9px', borderRadius:6,
-                    background:'rgba(8,9,11,0.78)', backdropFilter:'blur(10px)',
-                  }}>
-                    <span style={{fontSize:9.5, fontWeight:800, color: KIND_TONE[p.kind] || 'var(--accent)', letterSpacing:'0.14em', textTransform:'uppercase', lineHeight:1}}>{p.label}</span>
-                  </div>
-                  <div style={{position:'absolute', top:10, right:10,
-                    width:32, height:32, borderRadius:10,
-                    background:'rgba(8,9,11,0.6)', backdropFilter:'blur(10px)',
-                    display:'flex', alignItems:'center', justifyContent:'center',
-                  }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </div>
-                  <div style={{position:'absolute', left:14, right:14, bottom:12}}>
-                    <div style={{fontSize:18, fontWeight:800, color:'#fff', letterSpacing:-0.5, lineHeight:1.15, textShadow:'0 2px 14px rgba(0,0,0,0.85)', marginBottom:5,
-                      display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden',
-                    }}>{p.title}</div>
-                    <div style={{fontSize:12, color:'rgba(255,255,255,0.78)', letterSpacing:-0.05, textShadow:'0 1px 8px rgba(0,0,0,0.85)',
-                      overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
-                    }}>{p.sub}</div>
-                  </div>
-                </PhotoCover>
-              </div>
-              <div style={{padding:'12px 14px', display:'flex', alignItems:'center', gap:10}}>
-                <div style={{flex:1, display:'flex', alignItems:'center', gap:6}}>
-                  <div style={{width:6, height:6, borderRadius:'50%', background:'var(--accent)', boxShadow:'0 0 8px var(--accentDim)'}}/>
-                  <span style={{fontSize:10.5, fontWeight:700, color:DS.sub, letterSpacing:-0.05}}>Активно сейчас</span>
-                </div>
-                <div onClick={(e)=>{e.stopPropagation(); nav('product');}} style={{
-                  padding:'7px 12px', borderRadius:9, cursor:'pointer',
-                  background:`linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)`,
-                  display:'flex', alignItems:'center', gap:5,
-                  boxShadow:'0 4px 12px var(--accentDim2)',
-                }}>
-                  <span style={{fontSize:11, fontWeight:800, color:'var(--accentOn)', letterSpacing:-0.05}}>Открыть</span>
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="var(--accentOn)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Section divider */}
-        {list.length > 1 && (
-          <div style={{display:'flex', alignItems:'center', gap:10, padding:'2px 2px 10px'}}>
-            <span style={{fontSize:10, fontWeight:800, color:DS.muted, letterSpacing:'0.16em', textTransform:'uppercase'}}>Другие предложения</span>
-            <div style={{flex:1, height:1, background:DS.border}}/>
-          </div>
-        )}
-
-        {/* Compact rows */}
-        {list.slice(1).map(p=>(
-          <div key={p.id} onClick={()=>nav('product')} style={{
-            borderRadius:14, overflow:'hidden', cursor:'pointer', marginBottom:10,
-            background:`linear-gradient(160deg, #16191D 0%, #0E1114 100%)`,
-            border:`1px solid ${DS.border2}`,
-            boxShadow:'0 4px 12px rgba(0,0,0,0.3)',
-            display:'flex', alignItems:'stretch', height:96,
-          }}>
-            {/* Thumbnail */}
-            <div style={{width:96, flexShrink:0, position:'relative', overflow:'hidden'}}>
-              <PhotoCover scene={p.cover} h={96} dim={0.15}>
-                <div style={{position:'absolute', inset:0,
-                  background:'linear-gradient(90deg, rgba(11,12,14,0) 60%, rgba(14,17,20,0.7) 100%)',
-                }}/>
-              </PhotoCover>
-            </div>
-            {/* Content */}
-            <div style={{flex:1, minWidth:0, padding:'10px 12px 10px 12px', display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
-              <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:2}}>
-                <span style={{fontSize:8.5, fontWeight:800, color: KIND_TONE[p.kind] || 'var(--accent)', letterSpacing:'0.14em', textTransform:'uppercase', lineHeight:1}}>{p.label}</span>
-                <span style={{width:3, height:3, borderRadius:'50%', background:DS.border2}}/>
-                <span style={{fontSize:9.5, fontWeight:700, color:DS.muted, letterSpacing:-0.02}}>Активно</span>
-              </div>
-              <div style={{fontSize:13, fontWeight:800, color:DS.text, letterSpacing:-0.3, lineHeight:1.2,
-                display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden',
-              }}>{p.title}</div>
-              <div style={{fontSize:10.5, color:DS.muted, letterSpacing:-0.05,
-                overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
-              }}>{p.sub}</div>
-            </div>
-            {/* Right rail: save + chevron */}
-            <div style={{flexShrink:0, padding:'10px 10px 10px 0', display:'flex', flexDirection:'column', alignItems:'flex-end', justifyContent:'space-between', gap:6}}>
-              <div onClick={(e)=>e.stopPropagation()} style={{
-                width:26, height:26, borderRadius:8, cursor:'pointer',
-                background:'rgba(255,255,255,0.04)', border:`1px solid ${DS.border}`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-              }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" stroke={DS.sub} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke={DS.muted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-          </div>
-        ))}
-        {list.length === 0 && (
-          <div style={{padding:'80px 20px', textAlign:'center'}}>
-            <div style={{fontSize:14, fontWeight:700, color:DS.text, marginBottom:6}}>Нет активных предложений</div>
-            <div style={{fontSize:11, color:DS.muted}}>Попробуйте другой фильтр</div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-window.PromoScreen = PromoScreen;
-
-
 
 // ── 06 CATALOG v3 ──────────────────────────────────────────
 function Catalog({ nav, role, ctx }) {
@@ -3572,7 +2956,7 @@ function Catalog({ nav, role, ctx }) {
   };
 
   return (
-    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden', position:'relative'}}>
+    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden', position:'relative'}}>
       {/* Header */}
       <div style={{padding:'10px 20px 0', flexShrink:0, display:'flex', alignItems:'flex-end', justifyContent:'space-between'}}>
         <div>
@@ -3809,7 +3193,7 @@ function Search({ nav, ctx }) {
   ];
 
   return (
-    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       {/* Search header */}
       <div style={{padding:'10px 20px 0', flexShrink:0}}>
         <div style={{fontSize:10, color:DS.muted, letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:700, marginBottom:6}}>Search</div>
@@ -3944,7 +3328,7 @@ function Product({ nav, ctx }) {
     ['Сертификат','ISO 9001, SGS, RoHS'],
   ];
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       <div style={{padding:'10px 20px 0', flexShrink:0, display:'flex', alignItems:'center', gap:10}}>
         <BackBtn onPress={()=>nav('back')}/>
         <div style={{flex:1, fontSize:14, fontWeight:600, color:DS.sub, letterSpacing:-0.1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{p.name}</div>
@@ -4288,14 +3672,14 @@ function Supplier({ nav, ctx }) {
   const s = ctx?.supplier || SUPPLIERS[0];
   const products = PRODUCTS.filter(p => p.supplier === s.name).concat(PRODUCTS).slice(0,4);
   const reviews = [
-    { name:'Адилет С.', co:'ООО «Полимер‑Трейд»', text:'Отличное качество, доставка вовремя. Рекомендую для оптовых закупок.', rating:5.0, date:'12.03', deals:7 },
+    { name:'Иван В.', co:'ООО «Полимер‑Трейд»', text:'Отличное качество, доставка вовремя. Рекомендую для оптовых закупок.', rating:5.0, date:'12.03', deals:7 },
     { name:'Мария К.', co:'Фабрика «Норд»',     text:'Хорошая коммуникация, AI‑перевод работает точно. Заказ пришёл точно в срок.', rating:4.8, date:'03.03', deals:3 },
   ];
   const city = s.country==='CN'?'Шэньчжэнь':s.country==='VN'?'Хошимин':'Мумбаи';
   const country = s.country==='CN'?'Китай':s.country==='VN'?'Вьетнам':'Индия';
 
   return (
-    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       {/* Header */}
       <div style={{padding:'10px 20px 0', flexShrink:0, display:'flex', alignItems:'center', gap:10}}>
         <BackBtn onPress={()=>nav('back')}/>
@@ -4665,7 +4049,7 @@ function Profile({ nav, role }) {
   ];
 
   return (
-    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:`radial-gradient(120% 80% at 50% -10%, #14181C 0%, ${DS.bg} 65%)`, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       {/* Header */}
       <div style={{padding:'10px 20px 0', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'space-between'}}>
         <div style={{fontSize:10, color:DS.muted, letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:700}}>Профиль</div>
@@ -4706,9 +4090,9 @@ function Profile({ nav, role }) {
             <div style={{position:'absolute', right:-30, top:-30, width:160, height:160, borderRadius:'50%',
               background:'radial-gradient(circle, var(--accentDim) 0%, transparent 65%)', pointerEvents:'none'}}/>
             <div style={{position:'relative', display:'flex', alignItems:'flex-start', gap:14}}>
-              <Avatar name="Адилет Сатыбалдиев" size={60} radius={16} statusDot/>
+              <Avatar name="Иван Волков" size={60} radius={16} statusDot/>
               <div style={{flex:1, minWidth:0}}>
-                <div style={{fontSize:18, fontWeight:800, color:DS.text, letterSpacing:-0.4, lineHeight:1.1, marginBottom:5}}>Адилет Сатыбалдиев</div>
+                <div style={{fontSize:18, fontWeight:800, color:DS.text, letterSpacing:-0.4, lineHeight:1.1, marginBottom:5}}>Иван Волков</div>
                 <div style={{fontSize:11.5, color:DS.sub, marginBottom:8, letterSpacing:-0.05}}>ООО «Полимер‑Трейд» · закупки</div>
                 <div style={{display:'flex', gap:6, flexWrap:'wrap'}}>
                   <span style={{
@@ -5044,11 +4428,8 @@ function Chat({ nav, ctx }) {
 
   const [draft, setDraft] = React.useState('');
   const [showHelpers, setShowHelpers] = React.useState(true);
-  const [typing, setTyping] = React.useState(false);
-  const scrollRef = React.useRef(null);
-  const inputRef = React.useRef(null);
 
-  const [messages, setMessages] = React.useState([
+  const messages = [
     { from:'them', time:'10:42', orig:'您好！很高兴收到您的询价。', tr:'Здравствуйте! Рады получить ваш запрос.', srcLang:theirLang },
     { from:'me',   time:'10:45', text:'Здравствуйте. Интересует нержавеющая сталь 316L, 0.8 мм. Какой минимальный заказ и условия доставки в РФ?' },
     { from:'them', time:'10:51',
@@ -5060,81 +4441,7 @@ function Chat({ nav, ctx }) {
     { from:'me',   time:'10:58', text:'Готовы заказать 1.2 тонны. Возможна скидка при оплате 50% предоплатой?' },
     { from:'them', time:'11:03', orig:'1.2 吨可以减 4%。50% 预付款，余款发货前。',
       tr:'На 1.2 т возможна скидка 4%. Предоплата 50%, остаток до отгрузки.', srcLang:theirLang },
-  ]);
-
-  // Auto-scroll to bottom on new messages / typing
-  React.useEffect(()=>{
-    const el = scrollRef.current;
-    if(el) el.scrollTop = el.scrollHeight;
-  }, [messages, typing]);
-
-  // Generate contextual supplier reply based on user's last message
-  function generateReply(userText){
-    const t = (userText||'').toLowerCase();
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    const time = `${hh}:${mm}`;
-    const RU = (msg)=>({ from:'them', time, srcLang:theirLang, ...msg });
-
-    if(/цен|цена|стоим|сколько|price|\$/.test(t))
-      return RU({ orig:'我们的最优价格是 FOB 深圳 $2.35/公斤，前提是订单超过 1 吨。',
-                  tr:'Наша лучшая цена — FOB Шэньчжэнь $2.35/кг при заказе от 1 тонны.' });
-    if(/moq|минимал|тираж|минимум/.test(t))
-      return RU({ orig:'最小起订量为 500 公斤。建议批量 1–3 吨以获得最佳折扣。',
-                  tr:'MOQ — 500 кг. Рекомендуем партию 1–3 т для лучшей скидки.' });
-    if(/срок|производст|lead|когда/.test(t))
-      return RU({ orig:'生产 12–15 天，海运到莫斯科 18–22 天。可加急。',
-                  tr:'Производство 12–15 дней, морем до Москвы 18–22 дня. Возможен ускоренный режим.' });
-    if(/доставк|логист|транспорт|shipping|cif|fob/.test(t))
-      return RU({ orig:'我们支持 FOB 深圳和 CIF 莫斯科。CIF 每吨增加 $180。',
-                  tr:'Работаем FOB Шэньчжэнь и CIF Москва. CIF — +$180/т.' });
-    if(/оплат|предоплат|аккредитив|эскроу|payment|t\/t/.test(t))
-      return RU({ orig:'我们接受 T/T 30/70、信用证或 TradeAI 托管。推荐托管支付。',
-                  tr:'Принимаем T/T 30/70, аккредитив или эскроу TradeAI. Рекомендуем эскроу.' });
-    if(/кп|коммерч|оффер|прайс|quote/.test(t))
-      return RU({ kind:'quote', quote:{ title:'316L · 0.8 мм · Холоднокатаный', price:'$2.35/кг', moq:'1 т', lead:'14 дн.', valid:'до 18.05'} });
-    if(/образ|sample|сэмпл/.test(t))
-      return RU({ orig:'我们可以提供免费样品 200 克，运费到付。',
-                  tr:'Можем выслать бесплатный образец 200 г, доставка за ваш счёт.' });
-    if(/сертиф|cert|iso|качеств/.test(t))
-      return RU({ orig:'我们持有 ISO 9001、SGS 检测报告，可提供原产地证书。',
-                  tr:'У нас ISO 9001, отчёты SGS, можем предоставить сертификат происхождения.' });
-    if(/спасиб|благодар|thanks|thank/.test(t))
-      return RU({ orig:'不客气！如有其他问题，随时联系。',
-                  tr:'Пожалуйста! Если будут вопросы — пишите в любое время.' });
-    if(/привет|здравств|добр|hi |hello/.test(t))
-      return RU({ orig:'您好！很高兴再次与您交流。',
-                  tr:'Здравствуйте! Рады снова общаться.' });
-    return RU({ orig:'明白了，我们会在 1 小时内回复详细信息。',
-                tr:'Понял, пришлём подробности в течение часа.' });
-  }
-
-  function sendMessage(text){
-    const value = (text || '').trim();
-    if(!value) return;
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    const mine = { from:'me', time:`${hh}:${mm}`, text:value };
-    setMessages(prev=>[...prev, mine]);
-    setDraft('');
-    setShowHelpers(false);
-    // Supplier "types" then replies
-    setTimeout(()=>setTyping(true), 350);
-    setTimeout(()=>{
-      const reply = generateReply(value);
-      setTyping(false);
-      setMessages(prev=>[...prev, reply]);
-    }, 1500 + Math.random()*900);
-  }
-
-  function handleKeyDown(e){
-    if(e.key === 'Enter' && !e.shiftKey){
-      e.preventDefault();
-      sendMessage(draft);
-    }
-  }
+  ];
 
   const helpers = [
     { label:'Запросить КП',      text:'Пришлите официальное КП с условиями FOB и CIF Москва.' },
@@ -5145,7 +4452,7 @@ function Chat({ nav, ctx }) {
   ];
 
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
 
       {/* HEADER — supplier identity + translation status */}
       <div style={{
@@ -5205,7 +4512,7 @@ function Chat({ nav, ctx }) {
       </div>
 
       {/* MESSAGES SCROLL */}
-      <div ref={scrollRef} style={{flex:1, overflowY:'auto', padding:'14px 16px 12px', display:'flex', flexDirection:'column', gap:10}}>
+      <div style={{flex:1, overflowY:'auto', padding:'14px 16px 12px', display:'flex', flexDirection:'column', gap:10}}>
         <div style={{display:'flex', justifyContent:'center', margin:'2px 0 4px'}}>
           <span style={{fontSize:9.5, color:DS.muted, letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:700,
             background:DS.s1, border:`1px solid ${DS.border}`, borderRadius:6, padding:'3px 10px'}}>Сегодня</span>
@@ -5300,18 +4607,16 @@ function Chat({ nav, ctx }) {
           );
         })}
 
-        {typing && (
-          <div style={{alignSelf:'flex-start', display:'flex', alignItems:'center', gap:6, padding:'4px 12px',
-            background:`linear-gradient(160deg, #181B1F 0%, #101215 100%)`,
-            border:`1px solid ${DS.border}`, borderRadius:'12px 12px 12px 4px', height:28,
-          }}>
-            {[0,1,2].map(i=>(
-              <div key={i} style={{width:5, height:5, borderRadius:'50%', background:DS.muted,
-                animation:`tdot 1.2s ${i*0.18}s infinite ease-in-out`}}/>
-            ))}
-            <style>{`@keyframes tdot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}`}</style>
-          </div>
-        )}
+        <div style={{alignSelf:'flex-start', display:'flex', alignItems:'center', gap:6, padding:'4px 12px',
+          background:`linear-gradient(160deg, #181B1F 0%, #101215 100%)`,
+          border:`1px solid ${DS.border}`, borderRadius:'12px 12px 12px 4px', height:28,
+        }}>
+          {[0,1,2].map(i=>(
+            <div key={i} style={{width:5, height:5, borderRadius:'50%', background:DS.muted,
+              animation:`tdot 1.2s ${i*0.18}s infinite ease-in-out`}}/>
+          ))}
+          <style>{`@keyframes tdot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}`}</style>
+        </div>
       </div>
 
       {showHelpers && (
@@ -5360,10 +4665,8 @@ function Chat({ nav, ctx }) {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21.4 11l-9 9a6 6 0 01-8.5-8.5l9-9a4 4 0 015.7 5.7l-9 9a2 2 0 01-2.8-2.8L14.4 7" stroke={DS.sub} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
           <textarea
-            ref={inputRef}
             value={draft}
             onChange={e=>setDraft(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder="Написать сообщение"
             rows={1}
             style={{
@@ -5373,7 +4676,7 @@ function Chat({ nav, ctx }) {
               padding:'8px 0', letterSpacing:-0.05,
             }}
           />
-          <div onClick={()=>sendMessage(draft)} style={{
+          <div style={{
             width:38, height:38, borderRadius:10, flexShrink:0, cursor:'pointer',
             background: draft.trim() ? `linear-gradient(180deg, var(--accent) 0%, var(--accentDeep) 100%)` : 'rgba(255,255,255,0.06)',
             border: draft.trim() ? '1px solid transparent' : `1px solid ${DS.border}`,
@@ -5386,7 +4689,7 @@ function Chat({ nav, ctx }) {
         </div>
         <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:9, padding:'0 2px'}}>
           <div style={{display:'flex', gap:6}}>
-            <div onClick={()=>sendMessage('Пришлите официальное КП с условиями FOB и CIF Москва.')} style={{
+            <div onClick={()=>setDraft('Пришлите официальное КП с условиями FOB и CIF Москва.')} style={{
               fontSize:10.5, fontWeight:700, color:DS.sub, letterSpacing:-0.05,
               background:'rgba(255,255,255,0.03)', border:`1px solid ${DS.border}`,
               borderRadius:7, padding:'5px 9px', cursor:'pointer',
@@ -5430,7 +4733,7 @@ function Deal({ nav, ctx }) {
   const fmtRUB = v => v.toLocaleString('ru-RU').replace(/,/g,' ') + ' ₽';
 
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       {/* HEADER */}
       <div style={{flexShrink:0, padding:'4px 16px 12px',
         background:`linear-gradient(180deg, #14171B 0%, ${DS.bg} 100%)`,
@@ -5700,7 +5003,7 @@ function Tracking({ nav, ctx }) {
   };
 
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
       {/* HEADER */}
       <div style={{flexShrink:0, padding:'4px 16px 12px',
         background:`linear-gradient(180deg, #14171B 0%, ${DS.bg} 100%)`,
@@ -6023,7 +5326,7 @@ function AI({ nav, ctx }) {
   },[]);
 
   return (
-    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:16, overflow:'hidden'}}>
+    <div style={{height:'100%', background:DS.bg, display:'flex', flexDirection:'column', paddingTop:58, overflow:'hidden'}}>
 
       {/* HEADER */}
       <div style={{flexShrink:0, padding:'4px 14px 12px',
@@ -7106,59 +6409,28 @@ input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.30)!important}
 
 /* ── iOS-style navigation transitions ───────────────────── */
 @keyframes nav-push-in {
-  from {
-    transform: translate3d(100%, 0, 0);
-    box-shadow: -22px 0 44px rgba(0,0,0,0);
-  }
-  60% {
-    box-shadow: -22px 0 44px rgba(0,0,0,0.55);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-    box-shadow: -22px 0 44px rgba(0,0,0,0);
-  }
+  from { transform: translate3d(100%, 0, 0); box-shadow: -18px 0 32px rgba(0,0,0,0); }
+  to   { transform: translate3d(0,    0, 0); box-shadow: -18px 0 32px rgba(0,0,0,0.45); }
 }
 @keyframes nav-push-prev {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: brightness(1) saturate(1);
-    opacity: 1;
-  }
-  to {
-    transform: translate3d(-22%, 0, 0) scale(0.965);
-    filter: brightness(0.55) saturate(0.85);
-    opacity: 0.85;
-  }
+  from { transform: translate3d(0,      0, 0); filter: brightness(1); }
+  to   { transform: translate3d(-25%,   0, 0); filter: brightness(0.55); }
 }
 @keyframes nav-pop-out {
-  from {
-    transform: translate3d(0, 0, 0);
-    box-shadow: -22px 0 44px rgba(0,0,0,0.45);
-  }
-  to {
-    transform: translate3d(100%, 0, 0);
-    box-shadow: -22px 0 44px rgba(0,0,0,0);
-  }
+  from { transform: translate3d(0,    0, 0); box-shadow: -18px 0 32px rgba(0,0,0,0.45); }
+  to   { transform: translate3d(100%, 0, 0); box-shadow: -18px 0 32px rgba(0,0,0,0); }
 }
 @keyframes nav-pop-prev {
-  from {
-    transform: translate3d(-22%, 0, 0) scale(0.965);
-    filter: brightness(0.55) saturate(0.85);
-    opacity: 0.85;
-  }
-  to {
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: brightness(1) saturate(1);
-    opacity: 1;
-  }
+  from { transform: translate3d(-25%, 0, 0); filter: brightness(0.55); }
+  to   { transform: translate3d(0,    0, 0); filter: brightness(1); }
 }
 @keyframes nav-tab-in {
-  from { opacity: 0; transform: scale(1.015); filter: blur(2px); }
-  to   { opacity: 1; transform: scale(1);     filter: blur(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes nav-tab-out {
-  from { opacity: 1; transform: scale(1);     filter: blur(0); }
-  to   { opacity: 0; transform: scale(0.985); filter: blur(2px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 /* Modal sheet transitions (filter / sort) */
@@ -7212,7 +6484,6 @@ body::before{
 
 /* Screen nav jumper */
 .jumper{
-  display:none !important;
   position:fixed; top:16px; left:50%; transform:translateX(-50%);
   z-index:9998; display:flex; gap:4px; background:rgba(20,22,24,0.85);
   backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
@@ -7280,16 +6551,7 @@ function App(){
   const nav = React.useCallback((next, nctx={})=>{
     setLayers(prev=>{
       if(next === 'back'){
-        if(prev.length <= 1) {
-          // At root — fall back to 'home' so back button always does something
-          const cur = prev[0];
-          if(cur.screen === 'home') return prev;
-          const newKey = 'l' + (layerSeq.current++);
-          const newLayer = { key:newKey, screen:'home', ctx:{}, kind:'tab' };
-          setTrans({ dir:'pop', kind:'tab', fromKey: cur.key, toKey: newKey, started: Date.now() });
-          setTimeout(()=>setTrans(null), 280);
-          return [newLayer];
-        }
+        if(prev.length <= 1) return prev;
         const popping = prev[prev.length - 1];
         const target  = prev[prev.length - 2];
         // Mark transition: pop animation
@@ -7298,7 +6560,7 @@ function App(){
         setTimeout(()=>{
           setLayers(curr => curr.slice(0, -1));
           setTrans(null);
-        }, 380);
+        }, 360);
         return prev; // keep both mounted during animation
       }
       const cur = prev[prev.length - 1];
@@ -7308,14 +6570,14 @@ function App(){
         // Tab transition — replace top layer with cross-fade
         const newLayer = { key:newKey, screen:next, ctx:nctx, kind:'tab' };
         setTrans({ dir:'push', kind:'tab', fromKey: cur.key, toKey: newKey, started: Date.now() });
-        setTimeout(()=>setTrans(null), 280);
+        setTimeout(()=>setTrans(null), 220);
         // Reset stack to single layer (tabs are roots)
         return [newLayer];
       }
       // Push transition
       const newLayer = { key:newKey, screen:next, ctx:nctx, kind:'push' };
       setTrans({ dir:'push', kind:'push', fromKey: cur.key, toKey: newKey, started: Date.now() });
-      setTimeout(()=>setTrans(null), 420);
+      setTimeout(()=>setTrans(null), 380);
       return [...prev, newLayer];
     });
   }, []);
@@ -7403,7 +6665,6 @@ function App(){
       case 'deal':     return <Deal nav={nav} ctx={sctx}/>;
       case 'tracking': return <Tracking nav={nav} ctx={sctx}/>;
       case 'profile':  return window.Profile ? <window.Profile {...sprops}/> : <Placeholder title="Профиль" nav={nav}/>;
-      case 'promo':    return window.PromoScreen ? <window.PromoScreen {...sprops}/> : <Placeholder title="Промо" nav={nav}/>;
       default:         return <window.BuyerHome {...sprops}/>;
     }
   };
@@ -7420,28 +6681,27 @@ function App(){
             const t = trans;
             if(t){
               const isFromTab = t.kind === 'tab';
-              const dur = isFromTab ? '280ms' : '420ms';
-              const easeIn = 'cubic-bezier(0.22, 1, 0.36, 1)';
-              const easeOut = 'cubic-bezier(0.45, 0, 0.55, 1)';
+              const dur = isFromTab ? '220ms' : '360ms';
+              const ease = 'cubic-bezier(0.32, 0.72, 0, 1)';
               if(t.dir === 'push' && layer.key === t.toKey){
                 // Incoming: from right (push) or fade (tab)
                 layerStyle.animation = isFromTab
-                  ? `nav-tab-in ${dur} ${easeIn} both`
-                  : `nav-push-in ${dur} ${easeIn} both`;
+                  ? `nav-tab-in ${dur} ${ease} both`
+                  : `nav-push-in ${dur} ${ease} both`;
                 layerStyle.zIndex = 3;
               } else if(t.dir === 'push' && layer.key === t.fromKey){
                 // Outgoing previous: shift left + dim (push) or fade out (tab)
                 layerStyle.animation = isFromTab
-                  ? `nav-tab-out ${dur} ${easeOut} both`
-                  : `nav-push-prev ${dur} ${easeIn} both`;
+                  ? `nav-tab-out ${dur} ${ease} both`
+                  : `nav-push-prev ${dur} ${ease} both`;
                 layerStyle.zIndex = 2;
               } else if(t.dir === 'pop' && layer.key === t.fromKey){
                 // Popping out: slide right
-                layerStyle.animation = `nav-pop-out 380ms ${easeIn} both`;
+                layerStyle.animation = `nav-pop-out 360ms ${ease} both`;
                 layerStyle.zIndex = 3;
               } else if(t.dir === 'pop' && layer.key === t.toKey){
-                // Restoring previous: from -22% back to 0
-                layerStyle.animation = `nav-pop-prev 380ms ${easeIn} both`;
+                // Restoring previous: from -25% back to 0
+                layerStyle.animation = `nav-pop-prev 360ms ${ease} both`;
                 layerStyle.zIndex = 2;
               } else {
                 layerStyle.opacity = 0; layerStyle.pointerEvents = 'none';
