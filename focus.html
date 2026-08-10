@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Anchor · Тренировка фокуса</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:#070809;
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  font-family:-apple-system,"SF Pro Text","Inter",system-ui,sans-serif;
+  padding:32px 20px;
+  -webkit-font-smoothing:antialiased;
+  color:#fff;
+}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.30)!important}
+::-webkit-scrollbar{width:0;height:0}
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(60% 40% at 50% 110%, var(--accentDim), transparent 60%),
+    radial-gradient(60% 40% at 50% -10%, rgba(255,255,255,0.02), transparent 60%);
+}
+@keyframes breathe{
+  0%,100%{ transform:scale(0.72); }
+  45%,55%{ transform:scale(1.0); }
+}
+@keyframes haloPulse{
+  0%,100%{ opacity:0.35; transform:scale(1); }
+  50%{ opacity:0.7; transform:scale(1.08); }
+}
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// ═══════════════════════════════════════════════════════════
+// Design tokens
+// ═══════════════════════════════════════════════════════════
+const DS = {
+  bg:'#0B0C0E', bg2:'#0E1013', s0:'#101114', s1:'#141618', s2:'#1A1D20', s3:'#23272B',
+  border:'rgba(255,255,255,0.06)', border2:'rgba(255,255,255,0.10)', border3:'rgba(255,255,255,0.14)',
+  text:'#FFFFFF', sub:'rgba(255,255,255,0.60)', muted:'rgba(255,255,255,0.36)', faint:'rgba(255,255,255,0.18)',
+  green:'#34D399', red:'#F87171', warn:'#FBBF24',
+};
+// calm teal accent for a focus / meditation app
+const ACCENT = { hex:'#5EEAD4', dim:'rgba(94,234,212,0.12)', dim2:'rgba(94,234,212,0.22)', deep:'#0F4C46', on:'#062420' };
+
+// ═══════════════════════════════════════════════════════════
+// iOS 26 device frame (minimal)
+// ═══════════════════════════════════════════════════════════
+function StatusBar(){
+  const c='#fff';
+  return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+      padding:'21px 30px 8px',position:'relative',zIndex:20,width:'100%'}}>
+      <span style={{fontFamily:'-apple-system,"SF Pro",system-ui',fontWeight:590,fontSize:16,color:c,minWidth:54}}>9:41</span>
+      <div style={{display:'flex',alignItems:'center',gap:7}}>
+        <svg width="18" height="11" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/></svg>
+        <svg width="16" height="11" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/><path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill={c}/><circle cx="8.5" cy="10.5" r="1.5" fill={c}/></svg>
+        <svg width="26" height="12" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.35" fill="none"/><rect x="2" y="2" width="20" height="9" rx="2" fill={c}/><path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/></svg>
+      </div>
+    </div>
+  );
+}
+
+function IOSDevice({children}){
+  return (
+    <div style={{width:402,height:874,borderRadius:48,overflow:'hidden',position:'relative',
+      background:'#000',boxShadow:'0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.12)',
+      fontFamily:'-apple-system,system-ui,sans-serif',WebkitFontSmoothing:'antialiased'}}>
+      <div style={{position:'absolute',top:11,left:'50%',transform:'translateX(-50%)',
+        width:126,height:37,borderRadius:24,background:'#000',zIndex:50}}/>
+      <div style={{position:'absolute',top:0,left:0,right:0,zIndex:10}}><StatusBar/></div>
+      <div style={{height:'100%',display:'flex',flexDirection:'column',background:DS.bg}}>
+        <div style={{flex:1,overflow:'auto'}}>{children}</div>
+      </div>
+      <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,height:34,
+        display:'flex',justifyContent:'center',alignItems:'flex-end',paddingBottom:8,pointerEvents:'none'}}>
+        <div style={{width:139,height:5,borderRadius:100,background:'rgba(255,255,255,0.7)'}}/>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// Storage helpers
+// ═══════════════════════════════════════════════════════════
+const KEY='anchor.state.v1';
+const todayISO=(d=new Date())=>{ const x=new Date(d); x.setHours(0,0,0,0); return x.toISOString().slice(0,10); };
+function loadState(){
+  try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s) return s; }catch(e){}
+  return {
+    startDate: todayISO(),
+    sessions: [],          // {date, type:'fa'|'anchor', minutes, returns?}
+    anchor: {
+      minutes: 3,
+      steps: ['playlist','tea','light'],   // enabled ritual elements
+      task: '',
+    },
+  };
+}
+function saveState(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+
+// day index since first launch (0-based) → drives the progression 5→10→20
+function dayNumber(startDate){
+  const a=new Date(startDate), b=new Date(todayISO());
+  return Math.max(0, Math.round((b-a)/86400000));
+}
+function suggestedMinutes(startDate){
+  const w=Math.floor(dayNumber(startDate)/7); // week 0,1,2...
+  if(w<=0) return 5;
+  if(w===1) return 10;
+  return 20;
+}
+function weekLabel(startDate){
+  const w=Math.floor(dayNumber(startDate)/7)+1;
+  return `Неделя ${w}`;
+}
+// current consecutive-day streak counting any session
+function computeStreak(sessions){
+  const days=new Set(sessions.map(s=>s.date));
+  let streak=0; let cur=new Date(todayISO());
+  // allow today OR yesterday to start the streak
+  if(!days.has(todayISO())){
+    const y=new Date(cur); y.setDate(y.getDate()-1);
+    if(!days.has(todayISO(y))) return 0;
+    cur=y;
+  }
+  while(days.has(todayISO(cur))){ streak++; cur.setDate(cur.getDate()-1); }
+  return streak;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Small UI atoms
+// ═══════════════════════════════════════════════════════════
+function Tag({children, tone='accent', style={}}){
+  const tones={
+    accent:{bg:ACCENT.dim,color:ACCENT.hex,bd:ACCENT.dim2},
+    neutral:{bg:'rgba(255,255,255,0.05)',color:DS.sub,bd:'rgba(255,255,255,0.08)'},
+    green:{bg:'rgba(52,211,153,0.10)',color:DS.green,bd:'rgba(52,211,153,0.22)'},
+  };
+  const t=tones[tone]||tones.accent;
+  return <span style={{fontSize:10.5,fontWeight:700,color:t.color,background:t.bg,
+    border:`1px solid ${t.bd}`,borderRadius:6,padding:'3px 8px',letterSpacing:'0.05em',
+    textTransform:'uppercase',whiteSpace:'nowrap',...style}}>{children}</span>;
+}
+function Primary({children,onPress,style={},disabled}){
+  return <div onClick={disabled?undefined:onPress} style={{
+    height:54,borderRadius:16,background:disabled?DS.s2:ACCENT.hex,color:disabled?DS.muted:ACCENT.on,
+    display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+    fontSize:15,fontWeight:700,letterSpacing:-0.2,cursor:disabled?'default':'pointer',
+    boxShadow:disabled?'none':`0 6px 24px ${ACCENT.dim2}`,...style}}>{children}</div>;
+}
+function Secondary({children,onPress,style={}}){
+  return <div onClick={onPress} style={{
+    height:52,borderRadius:16,background:DS.s1,border:`1px solid ${DS.border2}`,color:DS.text,
+    display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+    fontSize:14.5,fontWeight:600,cursor:'pointer',...style}}>{children}</div>;
+}
+function Ghost({children,onPress,style={}}){
+  return <div onClick={onPress} style={{display:'inline-flex',alignItems:'center',gap:6,
+    color:DS.sub,fontSize:14,fontWeight:600,cursor:'pointer',...style}}>{children}</div>;
+}
+function Card({children,style={},onPress}){
+  return <div onClick={onPress} style={{background:DS.s1,border:`1px solid ${DS.border}`,
+    borderRadius:20,padding:18,cursor:onPress?'pointer':'default',...style}}>{children}</div>;
+}
+function fmt(sec){ const m=Math.floor(sec/60), s=sec%60; return `${m}:${String(s).padStart(2,'0')}`; }
+
+// ═══════════════════════════════════════════════════════════
+// Circular progress ring
+// ═══════════════════════════════════════════════════════════
+function Ring({size=260,stroke=6,progress=0,children}){
+  const r=(size-stroke)/2, c=2*Math.PI*r;
+  return (
+    <div style={{position:'relative',width:size,height:size}}>
+      <svg width={size} height={size} style={{transform:'rotate(-90deg)'}}>
+        <circle cx={size/2} cy={size/2} r={r} stroke="rgba(255,255,255,0.06)" strokeWidth={stroke} fill="none"/>
+        <circle cx={size/2} cy={size/2} r={r} stroke={ACCENT.hex} strokeWidth={stroke} fill="none"
+          strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c*(1-progress)}
+          style={{transition:'stroke-dashoffset 0.9s linear'}}/>
+      </svg>
+      <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',
+        alignItems:'center',justifyContent:'center'}}>{children}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════════
+function Home({state,nav}){
+  const streak=computeStreak(state.sessions);
+  const today=todayISO();
+  const todays=state.sessions.filter(s=>s.date===today);
+  const didFA=todays.some(s=>s.type==='fa');
+  const didAnchor=todays.some(s=>s.type==='anchor');
+  const sug=suggestedMinutes(state.startDate);
+  const hour=new Date().getHours();
+  const greeting=hour<11?'Доброе утро':hour<18?'Добрый день':'Добрый вечер';
+
+  return (
+    <div style={{padding:'8px 20px 40px'}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginTop:8,marginBottom:20}}>
+        <div>
+          <div style={{fontSize:14,color:DS.sub,fontWeight:500}}>{greeting}</div>
+          <div style={{fontSize:27,fontWeight:800,letterSpacing:-0.6,marginTop:2}}>Тренировка фокуса</div>
+        </div>
+        <div onClick={()=>nav('progress')} style={{width:44,height:44,borderRadius:14,background:DS.s1,
+          border:`1px solid ${DS.border}`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke={DS.sub} strokeWidth="1.8" strokeLinecap="round"/></svg>
+        </div>
+      </div>
+
+      {/* Streak banner */}
+      <Card style={{display:'flex',alignItems:'center',gap:14,marginBottom:16,
+        background:`linear-gradient(135deg, ${ACCENT.dim} 0%, ${DS.s1} 60%)`,borderColor:ACCENT.dim2}}>
+        <div style={{width:52,height:52,borderRadius:16,background:DS.bg,display:'flex',
+          alignItems:'center',justifyContent:'center',fontSize:26}}>🔥</div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:22,fontWeight:800,letterSpacing:-0.4}}>{streak} {plural(streak,'день','дня','дней')} подряд</div>
+          <div style={{fontSize:12.5,color:DS.sub,marginTop:1}}>Нейронный триггер крепнет каждый день</div>
+        </div>
+      </Card>
+
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'8px 2px 12px'}}>Сегодня · два протокола</div>
+
+      {/* FA card */}
+      <Card onPress={()=>nav('fa-intro')} style={{marginBottom:12,position:'relative',overflow:'hidden'}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <OrbMini/>
+          <div style={{flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              <div style={{fontSize:17,fontWeight:750,letterSpacing:-0.3}}>Направленное внимание</div>
+              {didFA && <Tag tone="green">✓ Готово</Tag>}
+            </div>
+            <div style={{fontSize:12.5,color:DS.sub,marginTop:3,lineHeight:1.4}}>
+              Дыхательная практика · {sug} мин · {weekLabel(state.startDate)}
+            </div>
+          </div>
+          <Chevron/>
+        </div>
+      </Card>
+
+      {/* Anchor card */}
+      <Card onPress={()=>nav('anchor-intro')} style={{marginBottom:20}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{width:48,height:48,borderRadius:14,flexShrink:0,
+            background:`linear-gradient(135deg, ${ACCENT.hex} 0%, ${ACCENT.deep} 100%)`,
+            display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="5" r="2.4" stroke={ACCENT.on} strokeWidth="1.8"/>
+              <path d="M12 7.5V21M6 12h12M12 21a7 7 0 0 0 7-7M12 21a7 7 0 0 1-7-7" stroke={ACCENT.on} strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              <div style={{fontSize:17,fontWeight:750,letterSpacing:-0.3}}>Якорь входа в работу</div>
+              {didAnchor && <Tag tone="green">✓ Готово</Tag>}
+            </div>
+            <div style={{fontSize:12.5,color:DS.sub,marginTop:3,lineHeight:1.4}}>
+              Ритуал {state.anchor.minutes} мин → сразу к задаче
+            </div>
+          </div>
+          <Chevron/>
+        </div>
+      </Card>
+
+      {/* Morning tip */}
+      <div style={{display:'flex',gap:10,padding:'14px 16px',borderRadius:16,
+        background:'rgba(255,255,255,0.03)',border:`1px dashed ${DS.border2}`}}>
+        <span style={{fontSize:16}}>☀️</span>
+        <div style={{fontSize:12.5,color:DS.sub,lineHeight:1.5}}>
+          Практикуйте утром, <b style={{color:DS.text}}>до проверки телефона</b> — так вы не даёте мозгу «дешёвый дофамин» и тренируетесь на чистом внимании.
+        </div>
+      </div>
+    </div>
+  );
+}
+function plural(n,one,few,many){
+  const m10=n%10,m100=n%100;
+  if(m10===1&&m100!==11) return one;
+  if(m10>=2&&m10<=4&&(m100<10||m100>=20)) return few;
+  return many;
+}
+function Chevron(){ return <svg width="8" height="14" viewBox="0 0 9 15" style={{flexShrink:0}}><path d="M1.5 1.5L7 7.5l-5.5 6" stroke={DS.muted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>; }
+function OrbMini(){
+  return (
+    <div style={{width:48,height:48,borderRadius:'50%',flexShrink:0,position:'relative',
+      background:`radial-gradient(circle at 38% 32%, ${ACCENT.hex}, ${ACCENT.deep} 78%)`,
+      boxShadow:`0 0 22px ${ACCENT.dim2}`}}>
+      <div style={{position:'absolute',top:9,left:11,width:12,height:8,borderRadius:'50%',
+        background:'rgba(255,255,255,0.55)',filter:'blur(2px)'}}/>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// FA — intro
+// ═══════════════════════════════════════════════════════════
+function FAIntro({state,nav,setDuration,duration}){
+  const options=[5,10,20];
+  const steps=[
+    ['1','Сядьте удобно','Спина прямая, глаза можно закрыть.'],
+    ['2','Сфокусируйтесь на дыхании','Ощущайте воздух в ноздрях или движение груди.'],
+    ['3','Заметьте отвлечение','Появилась мысль или желание — мягко отметьте её.'],
+    ['4','Верните фокус','Без самокритики верните внимание к дыханию. Это «подход».'],
+  ];
+  return (
+    <div style={{padding:'8px 20px 40px'}}>
+      <TopBar title="Направленное внимание" onBack={()=>nav('home')}/>
+      <div style={{display:'flex',justifyContent:'center',margin:'6px 0 20px'}}>
+        <div style={{width:120,height:120,borderRadius:'50%',position:'relative',
+          background:`radial-gradient(circle at 38% 32%, ${ACCENT.hex}, ${ACCENT.deep} 80%)`,
+          boxShadow:`0 0 50px ${ACCENT.dim2}`,animation:'breathe 8s ease-in-out infinite'}}>
+          <div style={{position:'absolute',top:22,left:28,width:26,height:16,borderRadius:'50%',
+            background:'rgba(255,255,255,0.5)',filter:'blur(4px)'}}/>
+        </div>
+      </div>
+
+      <div style={{fontSize:13,color:DS.sub,lineHeight:1.55,textAlign:'center',margin:'0 6px 22px'}}>
+        Тренируем «мышцу» концентрации: каждый раз, когда вы возвращаете внимание к дыханию — это повторение для вашего внутреннего диспетчера.
+      </div>
+
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'0 2px 10px'}}>Длительность</div>
+      <div style={{display:'flex',gap:10,marginBottom:6}}>
+        {options.map(m=>{
+          const on=duration===m;
+          const rec=suggestedMinutes(state.startDate)===m;
+          return (
+            <div key={m} onClick={()=>setDuration(m)} style={{
+              flex:1,borderRadius:16,padding:'16px 8px',textAlign:'center',cursor:'pointer',
+              background:on?ACCENT.dim:DS.s1,border:`1px solid ${on?ACCENT.dim2:DS.border}`,
+              boxShadow:on?`0 0 0 3px ${ACCENT.dim}`:'none',transition:'all .15s'}}>
+              <div style={{fontSize:24,fontWeight:800,color:on?ACCENT.hex:DS.text}}>{m}</div>
+              <div style={{fontSize:11,color:DS.sub,marginTop:1}}>мин</div>
+              {rec&&<div style={{fontSize:9.5,fontWeight:700,color:ACCENT.hex,marginTop:4,letterSpacing:'0.04em'}}>РЕКОМЕНДУЕМ</div>}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{fontSize:11.5,color:DS.muted,textAlign:'center',margin:'0 0 22px',lineHeight:1.4}}>
+        Новичкам — 5 мин. Через неделю → 10 мин, через две → 20 мин.
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:24}}>
+        {steps.map(([n,t,d])=>(
+          <div key={n} style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+            <div style={{width:26,height:26,borderRadius:9,flexShrink:0,background:DS.s2,
+              border:`1px solid ${DS.border2}`,display:'flex',alignItems:'center',justifyContent:'center',
+              fontSize:12.5,fontWeight:700,color:ACCENT.hex}}>{n}</div>
+            <div style={{paddingTop:1}}>
+              <div style={{fontSize:14,fontWeight:650}}>{t}</div>
+              <div style={{fontSize:12.5,color:DS.sub,marginTop:1,lineHeight:1.4}}>{d}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Primary onPress={()=>nav('fa-session')}>Начать · {duration} мин</Primary>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// FA — session (live timer)
+// ═══════════════════════════════════════════════════════════
+function FASession({duration,nav,onFinish}){
+  const total=duration*60;
+  const [left,setLeft]=React.useState(total);
+  const [returns,setReturns]=React.useState(0);
+  const [running,setRunning]=React.useState(true);
+  const [phase,setPhase]=React.useState('Вдох');
+  const finishedRef=React.useRef(false);
+
+  React.useEffect(()=>{
+    if(!running) return;
+    const id=setInterval(()=>{
+      setLeft(l=>{
+        if(l<=1){ clearInterval(id); return 0; }
+        return l-1;
+      });
+    },1000);
+    return ()=>clearInterval(id);
+  },[running]);
+
+  // breath phase label (8s cycle: 4s in / 4s out)
+  React.useEffect(()=>{
+    if(!running) return;
+    const id=setInterval(()=>setPhase(p=>p==='Вдох'?'Выдох':'Вдох'),4000);
+    return ()=>clearInterval(id);
+  },[running]);
+
+  React.useEffect(()=>{
+    if(left===0 && !finishedRef.current){
+      finishedRef.current=true;
+      onFinish({minutes:duration,returns});
+      nav('fa-done',{minutes:duration,returns});
+    }
+  },[left]);
+
+  const progress=(total-left)/total;
+
+  return (
+    <div style={{minHeight:'100%',display:'flex',flexDirection:'column',
+      background:`radial-gradient(80% 50% at 50% 20%, ${ACCENT.dim} 0%, ${DS.bg} 60%)`,padding:'12px 20px 40px'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:6}}>
+        <Ghost onPress={()=>nav('home')}>✕ Завершить</Ghost>
+        <Tag>{phase}</Tag>
+      </div>
+
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:34}}>
+        <Ring size={272} progress={progress}>
+          <div style={{width:150,height:150,borderRadius:'50%',position:'relative',
+            background:`radial-gradient(circle at 38% 32%, ${ACCENT.hex}, ${ACCENT.deep} 80%)`,
+            boxShadow:`0 0 60px ${ACCENT.dim2}`,
+            animation: running?'breathe 8s ease-in-out infinite':'none',
+            transform: running?undefined:'scale(0.86)'}}>
+            <div style={{position:'absolute',top:28,left:34,width:32,height:20,borderRadius:'50%',
+              background:'rgba(255,255,255,0.5)',filter:'blur(5px)'}}/>
+          </div>
+        </Ring>
+
+        <div style={{textAlign:'center'}}>
+          <div style={{fontSize:44,fontWeight:800,letterSpacing:-1,fontVariantNumeric:'tabular-nums'}}>{fmt(left)}</div>
+          <div style={{fontSize:13,color:DS.sub,marginTop:2}}>осталось · всего {duration} мин</div>
+        </div>
+      </div>
+
+      {/* Returns counter */}
+      <div style={{textAlign:'center',marginBottom:16}}>
+        <div style={{fontSize:13,color:DS.sub,marginBottom:10}}>
+          Отвлеклись? Заметьте мысль без осуждения и нажмите:
+        </div>
+        <div onClick={()=>setReturns(r=>r+1)} style={{
+          display:'inline-flex',alignItems:'center',gap:10,padding:'14px 26px',borderRadius:18,
+          background:DS.s1,border:`1px solid ${ACCENT.dim2}`,cursor:'pointer',userSelect:'none'}}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" stroke={ACCENT.hex} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <span style={{fontSize:15,fontWeight:700}}>Вернуть фокус</span>
+          <span style={{fontSize:15,fontWeight:800,color:ACCENT.hex,minWidth:22}}>{returns}</span>
+        </div>
+        <div style={{fontSize:11.5,color:DS.muted,marginTop:8}}>Каждое возвращение — «подход» для диспетчера</div>
+      </div>
+
+      <Secondary onPress={()=>setRunning(r=>!r)}>{running?'Пауза':'Продолжить'}</Secondary>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// FA — done
+// ═══════════════════════════════════════════════════════════
+function FADone({ctx,nav}){
+  const {minutes=5,returns=0}=ctx||{};
+  return (
+    <div style={{padding:'8px 20px 40px',minHeight:'100%',display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',textAlign:'center',
+      background:`radial-gradient(80% 50% at 50% 30%, ${ACCENT.dim} 0%, ${DS.bg} 55%)`}}>
+      <div style={{width:96,height:96,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',
+        background:`linear-gradient(135deg, ${ACCENT.hex}, ${ACCENT.deep})`,boxShadow:`0 0 50px ${ACCENT.dim2}`,
+        marginBottom:24,animation:'fadeUp .5s ease'}}>
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke={ACCENT.on} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </div>
+      <div style={{fontSize:26,fontWeight:800,letterSpacing:-0.5}}>Практика завершена</div>
+      <div style={{fontSize:14,color:DS.sub,marginTop:8,maxWidth:280,lineHeight:1.5}}>
+        {returns===0
+          ? 'Ни одного отвлечения — либо глубокий фокус, либо будьте честнее к себе в следующий раз 🙂'
+          : `Вы вернули внимание ${returns} ${plural(returns,'раз','раза','раз')}. Это ${returns} тренировочных подходов — именно они укрепляют фокус.`}
+      </div>
+
+      <div style={{display:'flex',gap:12,margin:'28px 0',width:'100%'}}>
+        <Stat big value={minutes} label="минут"/>
+        <Stat big value={returns} label={plural(returns,'подход','подхода','подходов')}/>
+      </div>
+
+      <div style={{width:'100%',display:'flex',flexDirection:'column',gap:10}}>
+        <Primary onPress={()=>nav('anchor-intro')}>Дальше · Якорь входа в работу</Primary>
+        <Ghost onPress={()=>nav('home')} style={{justifyContent:'center'}}>На главную</Ghost>
+      </div>
+    </div>
+  );
+}
+function Stat({value,label,big}){
+  return (
+    <div style={{flex:1,background:DS.s1,border:`1px solid ${DS.border}`,borderRadius:18,padding:'16px 8px',textAlign:'center'}}>
+      <div style={{fontSize:big?30:22,fontWeight:800,color:ACCENT.hex,letterSpacing:-0.5}}>{value}</div>
+      <div style={{fontSize:12,color:DS.sub,marginTop:2}}>{label}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANCHOR — intro / builder
+// ═══════════════════════════════════════════════════════════
+const RITUALS=[
+  {id:'playlist',icon:'🎧',t:'Плейлист',d:'Один и тот же трек для входа'},
+  {id:'tea',icon:'🍵',t:'Чашка чая',d:'Заварить и сделать глоток'},
+  {id:'light',icon:'💡',t:'Свет',d:'Настроить лампу / убрать верхний свет'},
+  {id:'desk',icon:'🧹',t:'Стол',d:'Убрать лишнее с рабочего места'},
+  {id:'snap',icon:'🫰',t:'Щелчок пальцами',d:'Физический жест-переключатель'},
+  {id:'breath',icon:'🌬️',t:'3 глубоких вдоха',d:'Сброс перед стартом'},
+];
+function AnchorIntro({state,setAnchor,nav}){
+  const a=state.anchor;
+  const toggle=(id)=>{
+    const has=a.steps.includes(id);
+    const steps=has?a.steps.filter(x=>x!==id):[...a.steps,id];
+    if(steps.length===0) return;
+    setAnchor({...a,steps});
+  };
+  return (
+    <div style={{padding:'8px 20px 40px'}}>
+      <TopBar title="Якорь входа в работу" onBack={()=>nav('home')}/>
+
+      <div style={{fontSize:13,color:DS.sub,lineHeight:1.55,margin:'2px 2px 20px'}}>
+        Стабильный ритуал перед работой становится триггером: мозг учится выключать «режим мечтательности» и включать исполнительную систему. Соберите свой якорь.
+      </div>
+
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'0 2px 12px'}}>Элементы ритуала</div>
+      <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:22}}>
+        {RITUALS.map(r=>{
+          const on=a.steps.includes(r.id);
+          return (
+            <div key={r.id} onClick={()=>toggle(r.id)} style={{display:'flex',alignItems:'center',gap:14,
+              padding:'14px 16px',borderRadius:16,cursor:'pointer',
+              background:on?ACCENT.dim:DS.s1,border:`1px solid ${on?ACCENT.dim2:DS.border}`,transition:'all .15s'}}>
+              <div style={{fontSize:22,width:30,textAlign:'center'}}>{r.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:15,fontWeight:650}}>{r.t}</div>
+                <div style={{fontSize:12,color:DS.sub,marginTop:1}}>{r.d}</div>
+              </div>
+              <Check on={on}/>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'0 2px 12px'}}>Длительность ритуала</div>
+      <div style={{display:'flex',gap:10,marginBottom:8}}>
+        {[2,3,5].map(m=>{
+          const on=a.minutes===m;
+          return (
+            <div key={m} onClick={()=>setAnchor({...a,minutes:m})} style={{flex:1,borderRadius:16,padding:'14px 8px',
+              textAlign:'center',cursor:'pointer',background:on?ACCENT.dim:DS.s1,
+              border:`1px solid ${on?ACCENT.dim2:DS.border}`}}>
+              <div style={{fontSize:22,fontWeight:800,color:on?ACCENT.hex:DS.text}}>{m}</div>
+              <div style={{fontSize:11,color:DS.sub}}>мин</div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{fontSize:11.5,color:DS.muted,textAlign:'center',marginBottom:22}}>
+        Ритуал должен быть коротким — 2–5 минут. Стабильность важнее длины.
+      </div>
+
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'0 2px 10px'}}>Задача после якоря</div>
+      <input value={a.task} onChange={e=>setAnchor({...a,task:e.target.value})}
+        placeholder="Например: написать раздел отчёта"
+        style={{width:'100%',height:52,borderRadius:16,background:DS.s1,border:`1px solid ${DS.border2}`,
+          color:DS.text,fontSize:14.5,padding:'0 16px',outline:'none',fontFamily:'inherit',
+          caretColor:ACCENT.hex,marginBottom:22}}/>
+
+      <Primary onPress={()=>nav('anchor-run')}>Запустить якорь</Primary>
+      <div style={{fontSize:11.5,color:DS.muted,textAlign:'center',marginTop:12,lineHeight:1.4}}>
+        После ритуала — <b style={{color:DS.sub}}>сразу</b> к задаче, не отвлекаясь на телефон.
+      </div>
+    </div>
+  );
+}
+function Check({on}){
+  return (
+    <div style={{width:26,height:26,borderRadius:8,flexShrink:0,
+      background:on?ACCENT.hex:'transparent',border:`1.5px solid ${on?ACCENT.hex:DS.border3}`,
+      display:'flex',alignItems:'center',justifyContent:'center'}}>
+      {on&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke={ACCENT.on} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANCHOR — run
+// ═══════════════════════════════════════════════════════════
+function AnchorRun({state,nav,onFinish}){
+  const a=state.anchor;
+  const items=RITUALS.filter(r=>a.steps.includes(r.id));
+  const total=a.minutes*60;
+  const [left,setLeft]=React.useState(total);
+  const [done,setDone]=React.useState([]); // ids checked
+  const [phase,setPhase]=React.useState('ritual'); // ritual | task
+  const savedRef=React.useRef(false);
+
+  React.useEffect(()=>{
+    if(phase!=='ritual') return;
+    const id=setInterval(()=>setLeft(l=>l<=1?0:l-1),1000);
+    return ()=>clearInterval(id);
+  },[phase]);
+
+  const goTask=()=>{
+    if(!savedRef.current){ savedRef.current=true; onFinish({minutes:a.minutes}); }
+    setPhase('task');
+  };
+
+  if(phase==='task'){
+    return (
+      <div style={{padding:'8px 20px 40px',minHeight:'100%',display:'flex',flexDirection:'column',
+        alignItems:'center',justifyContent:'center',textAlign:'center',
+        background:`radial-gradient(80% 50% at 50% 25%, ${ACCENT.dim} 0%, ${DS.bg} 55%)`}}>
+        <div style={{width:96,height:96,borderRadius:28,display:'flex',alignItems:'center',justifyContent:'center',
+          background:`linear-gradient(135deg, ${ACCENT.hex}, ${ACCENT.deep})`,boxShadow:`0 0 50px ${ACCENT.dim2}`,
+          marginBottom:22,animation:'fadeUp .5s ease'}}>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13H11l-1 9 8.5-11H12l1-9z" fill={ACCENT.on}/></svg>
+        </div>
+        <Tag>Режим работы включён</Tag>
+        <div style={{fontSize:24,fontWeight:800,letterSpacing:-0.5,marginTop:14}}>Приступайте к задаче</div>
+        <div style={{fontSize:16,color:ACCENT.hex,fontWeight:650,marginTop:10,padding:'0 10px'}}>
+          {a.task?`«${a.task}»`:'Ваша целевая задача'}
+        </div>
+        <div style={{fontSize:13,color:DS.sub,marginTop:14,maxWidth:280,lineHeight:1.5}}>
+          Телефон убран, окружение настроено. Начинайте прямо сейчас — не давайте сопротивлению шанса.
+        </div>
+        <div style={{width:'100%',marginTop:30,display:'flex',flexDirection:'column',gap:10}}>
+          <Primary onPress={()=>nav('home')}>Готово, я в работе</Primary>
+        </div>
+      </div>
+    );
+  }
+
+  const allChecked=items.every(i=>done.includes(i.id));
+  const progress=(total-left)/total;
+
+  return (
+    <div style={{padding:'12px 20px 40px',minHeight:'100%',display:'flex',flexDirection:'column',
+      background:`radial-gradient(80% 50% at 50% 12%, ${ACCENT.dim} 0%, ${DS.bg} 55%)`}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <Ghost onPress={()=>nav('anchor-intro')}>✕ Отмена</Ghost>
+        <Tag>Ритуал</Tag>
+      </div>
+
+      <div style={{display:'flex',justifyContent:'center',margin:'18px 0 8px'}}>
+        <Ring size={150} stroke={5} progress={progress}>
+          <div style={{fontSize:30,fontWeight:800,fontVariantNumeric:'tabular-nums'}}>{fmt(left)}</div>
+        </Ring>
+      </div>
+      <div style={{textAlign:'center',fontSize:13,color:DS.sub,marginBottom:20}}>
+        Выполните ритуал спокойно и по порядку
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:10,flex:1}}>
+        {items.map((r,i)=>{
+          const on=done.includes(r.id);
+          return (
+            <div key={r.id} onClick={()=>setDone(d=>on?d.filter(x=>x!==r.id):[...d,r.id])}
+              style={{display:'flex',alignItems:'center',gap:14,padding:'14px 16px',borderRadius:16,cursor:'pointer',
+                background:on?ACCENT.dim:DS.s1,border:`1px solid ${on?ACCENT.dim2:DS.border}`,
+                opacity:on?1:0.96,transition:'all .15s'}}>
+              <div style={{fontSize:22,width:30,textAlign:'center',
+                filter:on?'none':'grayscale(0.3)'}}>{r.icon}</div>
+              <div style={{flex:1,fontSize:15,fontWeight:650,
+                textDecoration:on?'line-through':'none',color:on?DS.sub:DS.text}}>{r.t}</div>
+              <Check on={on}/>
+            </div>
+          );
+        })}
+      </div>
+
+      <Primary style={{marginTop:16}} onPress={goTask}>Приступить к задаче →</Primary>
+      <div style={{fontSize:11.5,color:DS.muted,textAlign:'center',marginTop:10}}>
+        {allChecked?'Все шаги выполнены':`Отмечено ${done.length} из ${items.length}`}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════════
+function Progress({state,nav}){
+  const streak=computeStreak(state.sessions);
+  const daysWithAny=new Set(state.sessions.map(s=>s.date));
+  const totalMin=state.sessions.filter(s=>s.type==='fa').reduce((a,s)=>a+(s.minutes||0),0);
+  const totalReturns=state.sessions.reduce((a,s)=>a+(s.returns||0),0);
+  // neural trigger formation: 21-day horizon
+  const uniqueDays=daysWithAny.size;
+  const triggerPct=Math.min(1,uniqueDays/21);
+
+  // last 21 days grid
+  const cells=[];
+  for(let i=20;i>=0;i--){
+    const d=new Date(todayISO()); d.setDate(d.getDate()-i);
+    const iso=todayISO(d);
+    cells.push({iso,active:daysWithAny.has(iso),isToday:iso===todayISO()});
+  }
+
+  return (
+    <div style={{padding:'8px 20px 40px'}}>
+      <TopBar title="Прогресс" onBack={()=>nav('home')}/>
+
+      {/* Neural trigger progress */}
+      <Card style={{marginBottom:16,background:`linear-gradient(135deg, ${ACCENT.dim} 0%, ${DS.s1} 65%)`,borderColor:ACCENT.dim2}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+          <div style={{fontSize:15,fontWeight:700}}>Формирование триггера</div>
+          <div style={{fontSize:13,color:ACCENT.hex,fontWeight:700}}>{uniqueDays} / 21 дн.</div>
+        </div>
+        <div style={{height:10,borderRadius:6,background:'rgba(255,255,255,0.08)',marginTop:12,overflow:'hidden'}}>
+          <div style={{height:'100%',width:`${triggerPct*100}%`,borderRadius:6,
+            background:`linear-gradient(90deg, ${ACCENT.deep}, ${ACCENT.hex})`,transition:'width .6s'}}/>
+        </div>
+        <div style={{fontSize:12,color:DS.sub,marginTop:12,lineHeight:1.5}}>
+          {uniqueDays>=21
+            ? 'Триггер закреплён 🎉 Ритуал и фокус теперь работают почти автоматически.'
+            : `2–3 недели повторений создают устойчивый нейронный триггер. Осталось ${21-uniqueDays} ${plural(21-uniqueDays,'день','дня','дней')}.`}
+        </div>
+      </Card>
+
+      {/* Stats row */}
+      <div style={{display:'flex',gap:12,marginBottom:16}}>
+        <Stat value={streak} label={plural(streak,'день','дня','дней')+' подряд'}/>
+        <Stat value={totalMin} label="минут фокуса"/>
+        <Stat value={totalReturns} label="подходов"/>
+      </div>
+
+      {/* 21-day grid */}
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'6px 2px 12px'}}>Последние 3 недели</div>
+      <Card style={{marginBottom:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:8}}>
+          {cells.map((c,i)=>(
+            <div key={i} title={c.iso} style={{aspectRatio:'1',borderRadius:9,
+              background:c.active?ACCENT.hex:DS.s3,
+              border:c.isToday?`1.5px solid ${ACCENT.hex}`:`1px solid ${DS.border}`,
+              opacity:c.active?1:0.5,
+              display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {c.active&&<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke={ACCENT.on} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+            </div>
+          ))}
+        </div>
+        <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:DS.muted,marginTop:12}}>
+          <span>3 недели назад</span><span>Сегодня</span>
+        </div>
+      </Card>
+
+      {/* Session log */}
+      <div style={{fontSize:12,fontWeight:700,color:DS.muted,letterSpacing:'0.08em',
+        textTransform:'uppercase',margin:'6px 2px 12px'}}>Журнал</div>
+      {state.sessions.length===0 && (
+        <div style={{fontSize:13,color:DS.sub,textAlign:'center',padding:'24px 0'}}>
+          Пока пусто. Завершите первую практику — она появится здесь.
+        </div>
+      )}
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {[...state.sessions].reverse().slice(0,12).map((s,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',
+            borderRadius:14,background:DS.s1,border:`1px solid ${DS.border}`}}>
+            <div style={{fontSize:18,width:26,textAlign:'center'}}>{s.type==='fa'?'🧘':'⚓'}</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13.5,fontWeight:600}}>{s.type==='fa'?'Направленное внимание':'Якорь входа'}</div>
+              <div style={{fontSize:11.5,color:DS.muted}}>{fmtDate(s.date)}</div>
+            </div>
+            <div style={{fontSize:12.5,color:DS.sub}}>
+              {s.minutes} мин{s.type==='fa'?` · ${s.returns||0} подх.`:''}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+function fmtDate(iso){
+  const d=new Date(iso), t=todayISO();
+  if(iso===t) return 'Сегодня';
+  const y=new Date(t); y.setDate(y.getDate()-1);
+  if(iso===todayISO(y)) return 'Вчера';
+  const months=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TopBar
+// ═══════════════════════════════════════════════════════════
+function TopBar({title,onBack}){
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:12,margin:'6px 0 18px'}}>
+      <div onClick={onBack} style={{width:38,height:38,borderRadius:12,background:DS.s1,
+        border:`1px solid ${DS.border}`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5L2 7.5l5.5 6" stroke={DS.sub} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </div>
+      <div style={{fontSize:18,fontWeight:750,letterSpacing:-0.3}}>{title}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// App root
+// ═══════════════════════════════════════════════════════════
+function App(){
+  const [state,setState]=React.useState(loadState);
+  const [screen,setScreen]=React.useState('home');
+  const [ctx,setCtx]=React.useState({});
+  const [duration,setDuration]=React.useState(suggestedMinutes(loadState().startDate));
+
+  React.useEffect(()=>saveState(state),[state]);
+
+  const nav=(s,c={})=>{ setCtx(c); setScreen(s); document.getElementById('scroll')?.scrollTo(0,0); };
+
+  const addSession=(sess)=>setState(st=>({...st,sessions:[...st.sessions,{date:todayISO(),...sess}]}));
+  const setAnchor=(a)=>setState(st=>({...st,anchor:a}));
+
+  let content;
+  switch(screen){
+    case 'home': content=<Home state={state} nav={nav}/>; break;
+    case 'fa-intro': content=<FAIntro state={state} nav={nav} duration={duration} setDuration={setDuration}/>; break;
+    case 'fa-session': content=<FASession duration={duration} nav={nav} onFinish={(r)=>addSession({type:'fa',...r})}/>; break;
+    case 'fa-done': content=<FADone ctx={ctx} nav={nav}/>; break;
+    case 'anchor-intro': content=<AnchorIntro state={state} setAnchor={setAnchor} nav={nav}/>; break;
+    case 'anchor-run': content=<AnchorRun state={state} nav={nav} onFinish={(r)=>addSession({type:'anchor',...r})}/>; break;
+    case 'progress': content=<Progress state={state} nav={nav}/>; break;
+    default: content=<Home state={state} nav={nav}/>;
+  }
+
+  return (
+    <div style={{position:'relative',zIndex:1}}>
+      <IOSDevice>
+        <div id="scroll" style={{height:'100%'}}>{content}</div>
+      </IOSDevice>
+    </div>
+  );
+}
+
+function boot(){
+  if(!window.React||!window.ReactDOM){ setTimeout(boot,40); return; }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+}
+boot();
+</script>
+</body>
+</html>
