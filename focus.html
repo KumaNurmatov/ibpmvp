@@ -83,7 +83,9 @@ function IOSDevice({children}){
       <div style={{position:'absolute',top:11,left:'50%',transform:'translateX(-50%)',
         width:126,height:37,borderRadius:24,background:'#000',zIndex:50}}/>
       <div style={{position:'absolute',top:0,left:0,right:0,zIndex:10}}><StatusBar/></div>
-      <div style={{height:'100%',display:'flex',flexDirection:'column',background:DS.bg}}>
+      {/* paddingTop clears the absolutely-positioned status bar, which would
+          otherwise sit on top of the first row of every screen */}
+      <div style={{height:'100%',display:'flex',flexDirection:'column',background:DS.bg,paddingTop:50}}>
         <div style={{flex:1,overflow:'auto'}}>{children}</div>
       </div>
       <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,height:34,
