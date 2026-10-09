@@ -15,6 +15,7 @@ const POSTERS = [
     id: '01-sokrat',
     hero: 'assets/photo-facade-brick.jpg',
     focus: 'center 45%',
+    font: 'cormorant',          // Cormorant Garamond, курсив
     quote: '«Заговори, чтобы я тебя увидел»',
     author: 'Сократ',
   },
@@ -22,6 +23,7 @@ const POSTERS = [
     id: '02-platon',
     hero: 'assets/photo-townhouse.jpg',
     focus: 'center 50%',
+    font: 'playfair',           // Playfair Display
     quote: '«Хорошее начало — половина дела»',
     author: 'Платон',
   },
@@ -29,6 +31,7 @@ const POSTERS = [
     id: '03-aitmatov',
     hero: 'assets/photo-interior.jpg',
     focus: 'center 50%',
+    font: 'roadradio',          // Road Radio (только прописные)
     quote: '«Человек, лишённый памяти прошлого, перестаёт быть человеком»',
     author: 'Чынгыз Айтматов',
   },
@@ -41,6 +44,7 @@ function url(p, bleedMm) {
     bleed: String(bleedMm),
   });
   if (p.focus) q.set('focus', p.focus);
+  if (p.font) q.set('font', p.font);
   if (p.kicker) q.set('kicker', p.kicker);
   if (p.fleft) q.set('fleft', p.fleft);
   if (p.fright) q.set('fright', p.fright);

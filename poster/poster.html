@@ -65,14 +65,36 @@
     padding-top:18mm;
   }
   .quote .rule{ width:48mm; height:0.7mm; background:var(--ink); margin-bottom:12mm; }
-  blockquote{
+  blockquote{ text-wrap:balance; }
+
+  /* --- на каждом постере свой шрифт цитаты --- */
+
+  /* 1. Cormorant Garamond — классическая антиква, курсив */
+  blockquote.f-cormorant{
     font-family:'Cormorant Garamond', 'Liberation Serif', serif;
     font-weight:400;
     font-style:italic;
     font-size:32mm;
     line-height:1.18;
     letter-spacing:-0.005em;
-    text-wrap:balance;
+  }
+
+  /* 2. Playfair Display — контрастная дидона, прямое начертание */
+  blockquote.f-playfair{
+    font-family:'Playfair Display', 'Liberation Serif', serif;
+    font-weight:500;
+    font-size:26mm;
+    line-height:1.24;
+    letter-spacing:-0.012em;
+  }
+
+  /* 3. Road Radio — геометрический гротеск, только капитель */
+  blockquote.f-roadradio{
+    font-family:'Road Radio', 'Inter', sans-serif;
+    font-weight:400;
+    font-size:19mm;
+    line-height:1.34;
+    letter-spacing:0.012em;
   }
   .author{
     margin-top:16mm;
@@ -125,6 +147,7 @@
   document.documentElement.style.setProperty('--bleed', (p.get('bleed') || '0') + 'mm');
   document.getElementById('hero').src = p.get('hero');
   if (p.get('focus')) document.getElementById('hero').style.objectPosition = p.get('focus');
+  document.getElementById('quote').className = 'f-' + (p.get('font') || 'cormorant');
   set('quote',  p.get('quote'));
   set('author', p.get('author'));
   set('kicker', p.get('kicker'));
