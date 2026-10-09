@@ -1,0 +1,70 @@
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/f3e17e0bf4.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(assets/fonts/ce4061d0c3.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/f63dc2fe9b.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/fonts/7dd5730226.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(assets/fonts/2a7acbaee9.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(assets/fonts/07dabb19b1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/5a66f8ceb7.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/fonts/efef4d9d61.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(assets/fonts/3604d9d49b.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(assets/fonts/02384cdf43.ttf) format('truetype');
+}

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>LOFT — A1 poster</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  /* ---------- A1: 594 x 841 mm. Bleed is added via --bleed (0 or 3mm). ---------- */
+  :root{
+    --bleed: 0mm;
+    --ink:   #1F1D1B;   /* логотипный графит */
+    --paper: #F2EDE5;   /* тёплый офф-вайт   */
+    --muted: #8A8176;
+    --line:  #D6CCBE;
+  }
+
+  @page { size: calc(594mm + var(--bleed)*2) calc(841mm + var(--bleed)*2); margin: 0; }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html,body{ background:#fff; }
+
+  .page{
+    position: relative;
+    width:  calc(594mm + var(--bleed)*2);
+    height: calc(841mm + var(--bleed)*2);
+    padding: calc(36mm + var(--bleed)) calc(38mm + var(--bleed)) calc(34mm + var(--bleed));
+    background: var(--paper);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---------- шапка ---------- */
+  header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom: 20mm;
+  }
+  header img{ height: 26mm; width:auto; display:block; }
+  .kicker{
+    font-family:'Inter', sans-serif;
+    font-weight:500;
+    font-size:5.2mm;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--muted);
+    text-align:right;
+    padding-top:3mm;
+    white-space:pre-line;
+    line-height:1.7;
+  }
+
+  /* ---------- фотоблок: крупное вертикальное фото + два фото в колонку ---------- */
+  .grid{ display:flex; gap:8mm; height:540mm; }
+  .grid .main{ flex:0 0 318mm; overflow:hidden; background:#ddd5c8; }
+  .grid .side{ flex:1; display:flex; flex-direction:column; gap:8mm; }
+  .grid .side figure{ flex:1; overflow:hidden; background:#ddd5c8; }
+  .grid img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* ---------- цитата ---------- */
+  .quote{
+    flex:1;
+    display:flex; flex-direction:column; justify-content:center;
+    padding-top:18mm;
+  }
+  .quote .rule{ width:48mm; height:0.7mm; background:var(--ink); margin-bottom:12mm; }
+  blockquote{
+    font-family:'Cormorant Garamond', 'Liberation Serif', serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:32mm;
+    line-height:1.18;
+    letter-spacing:-0.005em;
+    text-wrap:balance;
+  }
+  .author{
+    margin-top:16mm;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:7mm;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  footer{
+    margin-top:14mm;
+    border-top:0.4mm solid var(--line);
+    padding-top:6mm;
+    display:flex; justify-content:space-between;
+    font-family:'Inter', sans-serif;
+    font-weight:400;
+    font-size:4.6mm;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img id="logo" src="assets/logo.png" alt="LOFT">
+      <div class="kicker" id="kicker"></div>
+    </header>
+
+    <div class="grid">
+      <figure class="main"><img id="hero" src=""></figure>
+      <div class="side">
+        <figure><img id="s1" src=""></figure>
+        <figure><img id="s2" src=""></figure>
+      </div>
+    </div>
+
+    <div class="quote">
+      <div class="rule"></div>
+      <blockquote id="quote"></blockquote>
+      <div class="author" id="author"></div>
+    </div>
+
+    <footer>
+      <span id="f-left"></span>
+      <span id="f-right"></span>
+    </footer>
+  </div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const set = (id, v) => { const el = document.getElementById(id); if (v !== null) el.textContent = v; };
+  document.documentElement.style.setProperty('--bleed', (p.get('bleed') || '0') + 'mm');
+  document.getElementById('hero').src = p.get('hero');
+  document.getElementById('s1').src  = p.get('s1');
+  document.getElementById('s2').src  = p.get('s2');
+  set('quote',  p.get('quote'));
+  set('author', p.get('author'));
+  set('kicker', p.get('kicker'));
+  set('f-left', p.get('fleft'));
+  set('f-right', p.get('fright'));
+  if (!p.get('fleft') && !p.get('fright')) document.querySelector('footer').style.display = 'none';
+</script>
+</body>
+</html>
