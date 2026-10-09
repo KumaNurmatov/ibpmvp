@@ -9,31 +9,32 @@ const fs = require('fs');
 const MM_TO_PX = 96 / 25.4;      // CSS-пиксели на мм
 const BLEED_MM = 3;              // вылеты под обрез
 
-// Один постер — одно фото. focus: точка кадрирования (object-position).
+// Один постер — одно фото и один факт про лофты.
+// focus — точка кадрирования фото (object-position), font — шрифт факта.
 const POSTERS = [
   {
-    id: '01-sokrat',
+    id: '01-cherdak',
     hero: 'assets/photo-facade-brick.jpg',
     focus: 'center 45%',
     font: 'cormorant',          // Cormorant Garamond, курсив
-    quote: '«Заговори, чтобы я тебя увидел»',
-    author: 'Сократ',
+    quote: 'Loft по-английски — чердак. Первые лофты и были чердаками: художники занимали пустые фабричные этажи за копейки',
+    author: 'Нью-Йорк, 1950-е',
   },
   {
-    id: '02-platon',
+    id: '02-svet',
     hero: 'assets/photo-townhouse.jpg',
     focus: 'center 50%',
     font: 'playfair',           // Playfair Display
-    quote: '«Хорошее начало — половина дела»',
-    author: 'Платон',
+    quote: 'Высокие потолки и окна во всю стену придумали не дизайнеры — до электричества цеху нужен был дневной свет',
+    author: 'Откуда это взялось',
   },
   {
-    id: '03-aitmatov',
+    id: '03-loft-law',
     hero: 'assets/photo-interior.jpg',
     focus: 'center 50%',
     font: 'roadradio',          // Road Radio (только прописные)
-    quote: '«Человек, лишённый памяти прошлого, перестаёт быть человеком»',
-    author: 'Чынгыз Айтматов',
+    quote: 'В 1982 году Нью-Йорк разрешил жить в бывших фабриках',
+    author: 'Loft Law, 1982',
   },
 ];
 
