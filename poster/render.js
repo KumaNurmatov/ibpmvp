@@ -9,28 +9,26 @@ const fs = require('fs');
 const MM_TO_PX = 96 / 25.4;      // CSS-пиксели на мм
 const BLEED_MM = 3;              // вылеты под обрез
 
+// Один постер — одно фото. focus: точка кадрирования (object-position).
 const POSTERS = [
   {
     id: '01-sokrat',
     hero: 'assets/photo-facade-brick.jpg',
-    s1:   'assets/photo-townhouse.jpg',
-    s2:   'assets/photo-interior.jpg',
+    focus: 'center 45%',
     quote: '«Заговори, чтобы я тебя увидел»',
     author: 'Сократ',
   },
   {
     id: '02-platon',
     hero: 'assets/photo-townhouse.jpg',
-    s1:   'assets/photo-interior.jpg',
-    s2:   'assets/photo-facade-brick.jpg',
+    focus: 'center 50%',
     quote: '«Хорошее начало — половина дела»',
     author: 'Платон',
   },
   {
     id: '03-aitmatov',
     hero: 'assets/photo-interior.jpg',
-    s1:   'assets/photo-facade-brick.jpg',
-    s2:   'assets/photo-townhouse.jpg',
+    focus: 'center 50%',
     quote: '«Человек, лишённый памяти прошлого, перестаёт быть человеком»',
     author: 'Чынгыз Айтматов',
   },
@@ -38,10 +36,11 @@ const POSTERS = [
 
 function url(p, bleedMm) {
   const q = new URLSearchParams({
-    hero: p.hero, s1: p.s1, s2: p.s2,
+    hero: p.hero,
     quote: p.quote, author: p.author,
     bleed: String(bleedMm),
   });
+  if (p.focus) q.set('focus', p.focus);
   if (p.kicker) q.set('kicker', p.kicker);
   if (p.fleft) q.set('fleft', p.fleft);
   if (p.fright) q.set('fright', p.fright);

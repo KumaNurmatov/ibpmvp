@@ -54,12 +54,9 @@
     line-height:1.7;
   }
 
-  /* ---------- фотоблок: крупное вертикальное фото + два фото в колонку ---------- */
-  .grid{ display:flex; gap:8mm; height:540mm; }
-  .grid .main{ flex:0 0 318mm; overflow:hidden; background:#ddd5c8; }
-  .grid .side{ flex:1; display:flex; flex-direction:column; gap:8mm; }
-  .grid .side figure{ flex:1; overflow:hidden; background:#ddd5c8; }
-  .grid img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* ---------- фотоблок: одно фото на постер ---------- */
+  .photo{ width:100%; height:540mm; overflow:hidden; background:#ddd5c8; }
+  .photo img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
 
   /* ---------- цитата ---------- */
   .quote{
@@ -108,13 +105,7 @@
       <div class="kicker" id="kicker"></div>
     </header>
 
-    <div class="grid">
-      <figure class="main"><img id="hero" src=""></figure>
-      <div class="side">
-        <figure><img id="s1" src=""></figure>
-        <figure><img id="s2" src=""></figure>
-      </div>
-    </div>
+    <figure class="photo"><img id="hero" src=""></figure>
 
     <div class="quote">
       <div class="rule"></div>
@@ -133,8 +124,7 @@
   const set = (id, v) => { const el = document.getElementById(id); if (v !== null) el.textContent = v; };
   document.documentElement.style.setProperty('--bleed', (p.get('bleed') || '0') + 'mm');
   document.getElementById('hero').src = p.get('hero');
-  document.getElementById('s1').src  = p.get('s1');
-  document.getElementById('s2').src  = p.get('s2');
+  if (p.get('focus')) document.getElementById('hero').style.objectPosition = p.get('focus');
   set('quote',  p.get('quote'));
   set('author', p.get('author'));
   set('kicker', p.get('kicker'));
