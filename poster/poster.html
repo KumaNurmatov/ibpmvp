@@ -6,12 +6,36 @@
 <link rel="stylesheet" href="fonts.css">
 <style>
   /* ---------- A1: 594 x 841 mm. Bleed is added via --bleed (0 or 3mm). ---------- */
-  :root{
-    --bleed: 0mm;
-    --ink:   #F0EBE3;   /* тёплый светлый — текст и логотип */
-    --paper: #1B1A18;   /* подложка под бетонную текстуру  */
-    --muted: #9A9086;
-    --line:  #4A443D;
+  :root{ --bleed: 0mm; }
+
+  /* ---------- три фона серии ---------- */
+
+  /* тёмный опалубочный бетон */
+  .page.t-concrete-dark{
+    --ink:#F0EBE3; --paper:#1B1A18; --muted:#9A9086; --line:#4A443D;
+    --frame: rgba(240,235,227,.14);
+  }
+  .page.t-concrete-dark::before{
+    background:
+      linear-gradient(180deg, rgba(14,13,12,.45) 0%, rgba(14,13,12,.20) 42%, rgba(14,13,12,.62) 100%),
+      url('assets/concrete.jpg') center / cover no-repeat;
+  }
+
+  /* просто белое */
+  .page.t-white{
+    --ink:#171614; --paper:#FFFFFF; --muted:#8C867E; --line:#E2DED8;
+    --frame: rgba(23,22,20,.12);
+  }
+
+  /* светлая бетонная штукатурка */
+  .page.t-concrete-light{
+    --ink:#1C1B19; --paper:#CFCCC6; --muted:#6B675F; --line:#AEAAA3;
+    --frame: rgba(28,27,25,.14);
+  }
+  .page.t-concrete-light::before{
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.10) 45%, rgba(255,255,255,.34) 100%),
+      url('assets/concrete-light.jpg') center / cover no-repeat;
   }
 
   @page { size: calc(594mm + var(--bleed)*2) calc(841mm + var(--bleed)*2); margin: 0; }
@@ -33,13 +57,10 @@
     print-color-adjust: exact;
   }
 
-  /* бетонная стена как фон + лёгкое затемнение, чтобы текст не спорил с фактурой */
+  /* текстура стены + лёгкая растяжка, чтобы текст не спорил с фактурой */
   .page::before{
     content:'';
     position:absolute; inset:0;
-    background:
-      linear-gradient(180deg, rgba(14,13,12,.45) 0%, rgba(14,13,12,.20) 42%, rgba(14,13,12,.62) 100%),
-      url('assets/concrete.jpg') center / cover no-repeat;
     z-index:0;
   }
   .page > *{ position:relative; z-index:1; }
@@ -67,7 +88,7 @@
 
   /* ---------- фотоблок: одно фото на постер ---------- */
   .photo{ width:100%; height:540mm; overflow:hidden; background:#2A2724;
-          outline:0.4mm solid rgba(240,235,227,.14); outline-offset:-0.2mm; }
+          outline:0.4mm solid var(--frame); outline-offset:-0.2mm; }
   .photo img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
 
   /* ---------- цитата ---------- */
@@ -166,6 +187,13 @@
   const p = new URLSearchParams(location.search);
   const set = (id, v) => { const el = document.getElementById(id); if (v !== null) el.textContent = v; };
   document.documentElement.style.setProperty('--bleed', (p.get('bleed') || '0') + 'mm');
+  // тема постера: concrete-dark | white | concrete-light
+  const theme = p.get('theme') || 'concrete-dark';
+  const page = document.querySelector('.page');
+  page.classList.add('t-' + theme);
+  // на тёмном фоне логотип светлый, на светлых — исходный чёрный
+  document.getElementById('logo').src =
+    theme === 'concrete-dark' ? 'assets/logo-light.png' : 'assets/logo.png';
   document.getElementById('hero').src = p.get('hero');
   if (p.get('focus')) document.getElementById('hero').style.objectPosition = p.get('focus');
   document.getElementById('quote').className = 'f-' + (p.get('font') || 'cormorant');

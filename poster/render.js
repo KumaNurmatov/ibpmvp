@@ -16,6 +16,7 @@ const POSTERS = [
     id: '01-cherdak',
     hero: 'assets/photo-facade-brick.jpg',
     focus: 'center 45%',
+    theme: 'concrete-dark',     // тёмный опалубочный бетон
     font: 'cormorant',          // Cormorant Garamond, курсив
     quote: 'Loft по-английски — чердак. Первые лофты и были чердаками: художники занимали пустые фабричные этажи за копейки',
     author: 'Нью-Йорк, 1950-е',
@@ -24,6 +25,7 @@ const POSTERS = [
     id: '02-svet',
     hero: 'assets/photo-townhouse.jpg',
     focus: 'center 50%',
+    theme: 'white',             // просто белое
     font: 'playfair',           // Playfair Display
     quote: 'Высокие потолки и окна во всю стену придумали не дизайнеры — до электричества цеху нужен был дневной свет',
     author: 'Откуда это взялось',
@@ -32,6 +34,7 @@ const POSTERS = [
     id: '03-loft-law',
     hero: 'assets/photo-interior.jpg',
     focus: 'center 50%',
+    theme: 'concrete-light',    // светлая бетонная штукатурка
     font: 'roadradio',          // Road Radio (только прописные)
     quote: 'В 1982 году Нью-Йорк разрешил жить в бывших фабриках',
     author: 'Loft Law, 1982',
@@ -46,6 +49,7 @@ function url(p, bleedMm) {
   });
   if (p.focus) q.set('focus', p.focus);
   if (p.font) q.set('font', p.font);
+  if (p.theme) q.set('theme', p.theme);
   if (p.kicker) q.set('kicker', p.kicker);
   if (p.fleft) q.set('fleft', p.fleft);
   if (p.fright) q.set('fright', p.fright);
