@@ -164,9 +164,9 @@
       },
       "acceptance": {
         "accepted_qty": 706,
-        "rejected_qty": 4,
+        "rejected_qty": null,
         "date": "",
-        "reason": "хз"
+        "reason": ""
       },
       "payments": [
         {
