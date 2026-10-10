@@ -7,7 +7,13 @@
  * может записать. И у каждой правки остаётся история: видно, кто и когда
  * поменял цифру, чего в таблице не было.
  */
-const DATA_PATH = "data/orders.json";
+// Файл один, но адресуется он по-разному, и это легко перепутать: страница
+// лежит внутри web/, поэтому читает соседний data/orders.json, а GitHub API
+// знает только путь в репозитории — web/data/orders.json. Пока здесь было
+// одно значение на оба случая, запись уходила в корень репозитория, в файл,
+// которого сайт не видит: правки «сохранялись» и пропадали.
+export const SITE_PATH = "data/orders.json";       // рядом со страницей
+export const REPO_PATH = "web/data/orders.json";   // в дереве репозитория
 const TOKEN_KEY = "ibp.githubToken";
 const REPO_KEY = "ibp.repo";
 const DEFAULT_REPO = "KumaNurmatov/ibpmvp";
@@ -31,11 +37,21 @@ export function setToken(value) {
 
 export const canEdit = () => Boolean(token());
 
+/**
+ * Версия файла, которую страница видела при открытии. Нужна, чтобы при
+ * сохранении отличить «я правлю то, что читал» от «пока я возился, файл
+ * изменился». Без неё страница, открытая час назад, молча затирала всё,
+ * что успели записать за это время.
+ */
+let baseline = null;
+
 /** Прочитать данные. Без токена — как обычный файл рядом со страницей. */
 export async function load() {
-  const response = await fetch(`./${DATA_PATH}?t=${Date.now()}`, { cache: "no-store" });
+  const response = await fetch(`./${SITE_PATH}?t=${Date.now()}`, { cache: "no-store" });
   if (!response.ok) throw new Error(`не удалось прочитать данные (${response.status})`);
   const data = await response.json();
+  // Запоминаем версию в репозитории — она может быть свежее выложенной.
+  if (token()) baseline = (await head(token()).catch(() => ({}))).sha ?? null;
   return normalize(data);
 }
 
@@ -48,6 +64,12 @@ export async function save(data, message) {
   if (!auth) throw new Error("нет токена — сохранять некуда");
 
   const current = await head(auth);
+  // Кто-то записал файл после того, как мы его прочитали: продолжать —
+  // значит стереть чужую правку. Лучше сказать и попросить обновиться.
+  if (baseline !== null && current.sha && current.sha !== baseline) {
+    throw new Error("данные изменились после открытия страницы — обновите её (F5) " +
+                    "и внесите правку заново, иначе чужая запись потеряется");
+  }
   const body = {
     message: message || `Обновить данные заказов (${new Date().toISOString().slice(0, 16)})`,
     content: toBase64(JSON.stringify({ ...data, updated: today() }, null, 2) + "\n"),
@@ -64,7 +86,8 @@ export async function save(data, message) {
   }
   if (!response.ok) throw new Error(await describe(response));
   const result = await response.json();
-  return { sha: result.content?.sha, commit: result.commit?.html_url };
+  baseline = result.content?.sha ?? null;      // дальше правим уже от своей записи
+  return { sha: baseline, commit: result.commit?.html_url };
 }
 
 /** Текущая версия файла в репозитории: нужен её sha и дата последней правки. */
@@ -78,7 +101,7 @@ async function head(auth) {
 
 /** Кто и когда правил данные — для подписи «обновлено». */
 export async function lastCommit() {
-  const url = `${API}/repos/${repo()}/commits?path=${encodeURIComponent(DATA_PATH)}&per_page=1`;
+  const url = `${API}/repos/${repo()}/commits?path=${encodeURIComponent(REPO_PATH)}&per_page=1`;
   const response = await fetch(url, { headers: headers(token()) });
   if (!response.ok) return null;
   const [commit] = await response.json();
@@ -90,7 +113,7 @@ export async function lastCommit() {
   };
 }
 
-const contentsUrl = () => `${API}/repos/${repo()}/contents/${DATA_PATH}`;
+const contentsUrl = () => `${API}/repos/${repo()}/contents/${REPO_PATH}`;
 
 function headers(auth) {
   const out = { accept: "application/vnd.github+json" };
