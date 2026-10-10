@@ -65,6 +65,7 @@ nav a {
 }
 nav a:hover { background: var(--bg); }
 nav a[aria-current="page"] { background: var(--drop); color: var(--accent); font-weight: 500; }
+nav a.new { color: var(--accent); border: 1px solid var(--accent); }
 .role {
   font-size: 12px; padding: 3px 10px; border-radius: 99px;
   border: 1px solid var(--line); color: var(--muted);
@@ -122,11 +123,70 @@ input, select, textarea {
   border: 1px solid var(--line); background: var(--bg); color: var(--ink);
 }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+::placeholder { color: var(--faint); opacity: 1; font-style: italic; }
 label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 5px; }
 .grid { display: grid; gap: 12px; }
 .grid.c2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .grid.c3 { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .grid.c4 { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+
+/* ── воронка процесса ──────────────────────────────────────────────── */
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: stretch; }
+.step {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 14px; text-decoration: none; color: inherit; display: block;
+  position: relative;
+}
+.step:hover { border-color: var(--axis); }
+.step .n { display: block; font-size: 12px; color: var(--faint); }
+.step .name { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.step b { font-size: 22px; display: block; font-variant-numeric: tabular-nums; }
+.step .sum { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.step.warn { border-color: var(--warn); }
+.step.bad { border-color: var(--bad); }
+.step.ok .name { color: var(--ok); }
+.step.empty { opacity: .55; }
+.step.bad b { color: var(--bad); }
+.step.warn b { color: var(--warn); }
+
+/* ── список дел ────────────────────────────────────────────────────── */
+.todo { display: grid; gap: 8px; }
+.todo .item {
+  background: var(--card); border: 1px solid var(--line); border-left-width: 3px;
+  border-radius: 12px; padding: 12px 14px;
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: baseline;
+}
+.todo .item.error { border-left-color: var(--bad); }
+.todo .item.warn { border-left-color: var(--warn); }
+/* Колонки назначены явно: ячейка с суммой занимает две строки, а при
+   автоматической раскладке такие ячейки встают раньше остальных и забирают
+   себе первый столбец. */
+.todo .item .what { grid-column: 1; grid-row: 1; font-weight: 600; }
+.todo .item .who { grid-column: 1; grid-row: 2; font-size: 13px; color: var(--muted); }
+.todo .item .sum { grid-column: 2; grid-row: 1 / span 2; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.todo .item.error .sum { color: var(--bad); }
+
+/* ── карточка-«таблица» ────────────────────────────────────────────── */
+table.sheet { font-size: 14px; }
+table.sheet tr.block th {
+  font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--faint); padding-top: 18px;
+}
+table.sheet tr.block:first-child th { padding-top: 0; }
+table.sheet th.key { width: 240px; color: var(--muted); font-weight: 400; }
+table.sheet td { padding: 3px 0; }
+table.sheet td.val { border-top: 1px solid var(--line); }
+table.sheet tr.calc td, table.sheet tr.calc th { background: var(--drop); }
+table.sheet tr.calc .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+table.sheet tr.calc .formula { color: var(--faint); font-size: 12px; margin-left: 8px; }
+table.sheet input, table.sheet select { border-color: transparent; background: transparent; }
+table.sheet input:hover, table.sheet select:hover { border-color: var(--line); }
+table.sheet input:focus, table.sheet select:focus { background: var(--card); }
+.sheet-rows { width: 100%; border-collapse: collapse; font-size: 14px; }
+.sheet-rows th { font-size: 12px; color: var(--faint); font-weight: 400; padding: 0 8px 2px 0; }
+.sheet-rows td { border-top: 1px solid var(--line); padding: 2px 8px 2px 0; }
+.sheet-rows td.drop { width: 34px; }
+.sheet-rows button { padding: 4px 9px; }
 
 /* ── графики ───────────────────────────────────────────────────────── */
 .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; }
@@ -149,9 +209,17 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
 .tooltip .r { display: flex; gap: 10px; justify-content: space-between; }
 .tooltip .r span { color: var(--muted); }
 
+@media (max-width: 900px) {
+  .flow { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
 @media (max-width: 640px) {
   .wrap { padding: 16px 16px 56px; }
   h1 { font-size: 19px; }
   .charts { grid-template-columns: 1fr; }
   table.wide { display: block; overflow-x: auto; }
+  table.sheet th.key { width: auto; }
+  table.sheet, table.sheet tbody, table.sheet tr, table.sheet th, table.sheet td { display: block; }
+  table.sheet th.key { padding-bottom: 0; }
+  table.sheet td.val { border-top: 0; padding-bottom: 10px; }
+  table.sheet input, table.sheet select { border-color: var(--line); background: var(--bg); }
 }

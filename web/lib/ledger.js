@@ -446,7 +446,7 @@ function checkCompleteness(order) {
     .filter(([name]) => order.get(name) === null).map(([, label]) => label);
   if (missing.length) {
     order.flags.push({ level: "error", code: "missing_fields",
-      message: `Не найдено в документах: ${missing.join(", ")}.` });
+      message: `Не хватает данных: ${missing.join(", ")}.` });
   }
   const types = new Set(order.documents.map((d) => d.doc_type));
   // У заказа, заведённого руками, документов нет вовсе — спрашивать с него

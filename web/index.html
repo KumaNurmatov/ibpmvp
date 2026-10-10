@@ -9,13 +9,20 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Дашборд</h1>
+  <h1>Где сейчас деньги</h1>
   <p class="sub" id="updated">Загружаю…</p>
 
-  <div class="tiles" id="tiles"></div>
+  <h2 style="margin-top:0">Процесс</h2>
+  <p class="src" style="margin:-8px 0 12px">
+    Предоплата → пошив → отгрузка → постоплата → сверка. Нажмите ступень,
+    чтобы увидеть её заказы.
+  </p>
+  <div class="flow" id="flow"></div>
 
-  <h2>Требует внимания</h2>
-  <div id="attention"></div>
+  <div class="tiles" id="tiles" style="margin-top:12px"></div>
+
+  <h2>Что делать <span class="src" id="todo-count"></span></h2>
+  <div class="todo" id="todo"></div>
 
   <h2>По месяцам</h2>
   <div class="charts">
@@ -25,12 +32,16 @@
 
   <h2>Самые крупные долги</h2>
   <div class="card"><table class="wide" id="top"></table></div>
+
+  <h2>Замечания по документам</h2>
+  <div id="attention"></div>
 </div>
 
 <script type="module">
 import { byMonth, groupedBars, lineChart } from "./lib/charts.js";
 import { money } from "./lib/ledger.js";
-import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated, status } from "./lib/shell.js";
+import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
 
 mountHeader("index.html");
 
@@ -38,7 +49,7 @@ try {
   const { data, orders } = await loadOrders();
   showUpdated(document.querySelector("#updated"), data?.updated);
   if (!orders.length) {
-    fatal("Заказов пока нет. Добавьте первый на странице «Редактирование».");
+    fatal("Заказов пока нет. Первый добавляется на странице «Карточки» кнопкой «Новый заказ».");
   }
   render(orders);
 } catch (err) {
@@ -46,45 +57,42 @@ try {
 }
 
 function render(orders) {
+  drawFlow(orders);
+  drawTiles(orders);
+  drawTodo(orders);
+  drawCharts(orders);
+  drawTop(orders);
+  drawAttention(orders);
+}
+
+/** Ступени процесса: счёт заказов и деньги, которые на ступени стоят. */
+function drawFlow(orders) {
+  document.querySelector("#flow").innerHTML = funnel(orders).map((s, i) =>
+    `<a class="step ${s.count ? s.cls : "empty"}" href="./orders.html?stage=${s.key}">
+       <span class="n">${i + 1}</span>
+       <span class="name">${escapeHtml(s.name)}</span>
+       <b>${s.count}</b>
+       <span class="sum">${s.sum ? money(s.sum) : escapeHtml(s.hint)}</span>
+     </a>`).join("");
+}
+
+function drawTiles(orders) {
+  const open = orders.filter((o) => stageOf(o) !== "closed");
   const debt = orders.reduce((s, o) => s + (o.computed.remainder || 0), 0);
   const units = orders.reduce((s, o) => s + (o.computed.remainder_units || 0), 0);
-  const noPostpay = orders.filter((o) => status(o).name === "Нет постоплаты");
-  const closed = orders.filter((o) => status(o).name === "Закрыт");
   const late = orders.filter((o) => (o.computed.overdue_days || 0) > 0);
   const penalty = late.reduce((s, o) => s + (o.computed.penalty || 0), 0);
+  const shipped = orders.reduce((s, o) => s + (o.computed.shipment_sum || 0), 0);
+  const paid = orders.reduce((s, o) => s + (o.computed.paid || 0), 0);
 
   tiles([
-    ["Остаток к перечислению", money(debt), `${qty(Math.round(units))} шт по текущим ценам`, debt > 0 ? "bad" : ""],
-    ["Заказов в работе", qty(orders.length - closed.length), `закрыто ${closed.length} из ${orders.length}`, ""],
-    ["Без постоплаты", qty(noPostpay.length),
-      noPostpay.length ? money(noPostpay.reduce((s, o) => s + (o.computed.remainder || 0), 0)) : "таких нет",
-      noPostpay.length ? "bad" : ""],
+    ["Остаток к перечислению", money(debt), `${qty(Math.round(units))} шт по текущим ценам`,
+      debt > 0.5 ? "bad" : ""],
+    ["Отгружено всего", money(shipped), `оплачено ${money(paid)}`, ""],
+    ["Заказов открыто", qty(open.length), `закрыто ${orders.length - open.length} из ${orders.length}`, ""],
     ["Просрочено отгрузок", qty(late.length),
       penalty ? `неустойка по условиям ${money(penalty)}` : "в срок", late.length ? "warn" : ""],
   ]);
-
-  attention(orders);
-
-  const months = byMonth(orders);
-  if (months.length) {
-    groupedBars(document.querySelector("#chart-flow"), {
-      rows: months,
-      series: [{ key: "shipped", name: "Отгружено", color: "--series-1" },
-               { key: "paid", name: "Оплачено", color: "--series-2" }],
-      caption: "Отгружено и оплачено по месяцам",
-      lede: "Разрыв между столбцами одного месяца — то, что в этом месяце не доплатили.",
-    });
-    lineChart(document.querySelector("#chart-debt"), {
-      rows: months, key: "debt",
-      caption: "Долг нарастающим итогом",
-      lede: "Сумма всех отгрузок минус все поступления на конец месяца.",
-    });
-  } else {
-    document.querySelector("#chart-flow").innerHTML =
-      '<div class="card src">Пока нет ни отгрузок, ни платежей с датами.</div>';
-  }
-
-  topDebtors(orders);
 }
 
 function tiles(items) {
@@ -93,7 +101,77 @@ function tiles(items) {
      <div class="hint">${escapeHtml(hint)}</div></div>`).join("");
 }
 
-function attention(orders) {
+/** Список дел: по одной строке на незакрытый заказ, самое срочное сверху. */
+function drawTodo(orders) {
+  const rows = tasks(orders);
+  document.querySelector("#todo-count").textContent =
+    rows.length ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` : "";
+
+  document.querySelector("#todo").innerHTML = rows.length
+    ? rows.map(({ order, level, title, detail, amount, stage: key }) => `
+      <div class="item ${level}">
+        <div class="what">${escapeHtml(title)}</div>
+        <div class="sum">${amount ? money(amount) : ""}
+          <div class="src">${escapeHtml(stage(key).name)}</div></div>
+        <div class="who">
+          <a href="./order.html?id=${encodeURIComponent(order.key)}">${
+            escapeHtml(order.get("order_no") || order.key)}</a>
+          · ${escapeHtml(order.get("item") || "изделие не указано")}
+          · ${escapeHtml(detail)}
+        </div>
+      </div>`).join("")
+    : '<div class="card src">Всё закрыто — ни одного заказа в работе.</div>';
+}
+
+function plural(n, one, few, many) {
+  const t = n % 10, h = n % 100;
+  if (t === 1 && h !== 11) return one;
+  if (t >= 2 && t <= 4 && (h < 12 || h > 14)) return few;
+  return many;
+}
+
+function drawCharts(orders) {
+  const months = byMonth(orders);
+  if (!months.length) {
+    document.querySelector("#chart-flow").innerHTML =
+      '<div class="card src">Пока нет ни отгрузок, ни платежей с датами.</div>';
+    return;
+  }
+  groupedBars(document.querySelector("#chart-flow"), {
+    rows: months,
+    series: [{ key: "shipped", name: "Отгружено", color: "--series-1" },
+             { key: "paid", name: "Оплачено", color: "--series-2" }],
+    caption: "Отгружено и оплачено по месяцам",
+    lede: "Разрыв между столбцами одного месяца — то, что в этом месяце не доплатили.",
+  });
+  lineChart(document.querySelector("#chart-debt"), {
+    rows: months, key: "debt",
+    caption: "Долг нарастающим итогом",
+    lede: "Сумма всех отгрузок минус все поступления на конец месяца.",
+  });
+}
+
+function drawTop(orders) {
+  const rows = orders
+    .filter((o) => (o.computed.remainder || 0) > 0.5)
+    .sort((a, b) => b.computed.remainder - a.computed.remainder)
+    .slice(0, 10);
+
+  document.querySelector("#top").innerHTML = rows.length
+    ? `<tr><th>Заказ</th><th>Изделие</th><th>Отгрузка</th><th>Стадия</th>
+         <th class="num">Остаток</th><th class="num">В штуках</th></tr>` +
+      rows.map((o) => `<tr class="row">
+        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.get("order_no") || o.key)}</a>
+            <div class="src">${escapeHtml(o.contract_no || "")}</div></td>
+        <td>${escapeHtml(o.get("item") || "—")}</td>
+        <td>${dateRu(o.get("shipment_date"))}</td>
+        <td><span class="pill ${stage(stageOf(o)).cls}">${stage(stageOf(o)).name}</span></td>
+        <td class="num"><b>${money(o.computed.remainder)}</b></td>
+        <td class="num">${qty(o.computed.remainder_units)}</td></tr>`).join("")
+    : '<tr><td class="src">Долгов нет.</td></tr>';
+}
+
+function drawAttention(orders) {
   const rows = orders
     .map((o) => ({ order: o, flags: o.flags.filter((f) => f.level !== "info") }))
     .filter((r) => r.flags.length)
@@ -104,31 +182,11 @@ function attention(orders) {
         <div class="row-line">
           <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.get("order_no") || order.key)}</b></a>
           <span class="pill">договор ${escapeHtml(order.contract_no || "—")}</span>
-          <span class="pill ${status(order).cls}">${status(order).name}</span>
           <span class="src">${escapeHtml(order.get("item") || "")}</span>
         </div>
         ${flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}
       </div>`).join("")
     : '<div class="card src">Замечаний нет — все заказы сходятся.</div>';
-}
-
-function topDebtors(orders) {
-  const rows = orders
-    .filter((o) => (o.computed.remainder || 0) > 0.5)
-    .sort((a, b) => b.computed.remainder - a.computed.remainder)
-    .slice(0, 10);
-
-  document.querySelector("#top").innerHTML = rows.length
-    ? `<tr><th>Заказ</th><th>Изделие</th><th>Отгрузка</th>
-         <th class="num">Остаток</th><th class="num">В штуках</th></tr>` +
-      rows.map((o) => `<tr class="row">
-        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.get("order_no") || o.key)}</a>
-            <div class="src">${escapeHtml(o.contract_no || "")}</div></td>
-        <td>${escapeHtml(o.get("item") || "—")}</td>
-        <td>${dateRu(o.get("shipment_date"))}</td>
-        <td class="num"><b>${money(o.computed.remainder)}</b></td>
-        <td class="num">${qty(o.computed.remainder_units)}</td></tr>`).join("")
-    : '<tr><td class="src">Долгов нет.</td></tr>';
 }
 </script>
 </body>

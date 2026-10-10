@@ -22,6 +22,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { tasks } from "./lib/stages.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, status } from "./lib/shell.js";
 
 mountHeader("orders.html");
@@ -57,6 +58,8 @@ function render(o) {
     <p class="sub">${escapeHtml(o.get("item") || "изделие не указано")}${
       o.get("item_color") ? ` · ${escapeHtml(o.get("item_color"))}` : ""}${
       o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}</p>
+
+    ${todo(o)}
 
     <div class="tiles">
       ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
@@ -122,6 +125,17 @@ function render(o) {
 
 // Объявлениями функций, а не const: render() вызывается выше по файлу, и
 // стрелочные константы к тому моменту ещё не инициализированы.
+/** Что по этому заказу делать — то же правило, что строит список на дашборде. */
+function todo(o) {
+  const [task] = tasks([o]);
+  if (!task) return "";
+  return `<div class="todo"><div class="item ${task.level}">
+    <div class="what">${escapeHtml(task.title)}</div>
+    <div class="sum">${task.amount ? money(task.amount) : ""}</div>
+    <div class="who">${escapeHtml(task.detail)}</div>
+  </div></div>`;
+}
+
 function tile(name, value, hint, cls = "") {
   return `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
    <div class="hint">${escapeHtml(hint)}</div></div>`;

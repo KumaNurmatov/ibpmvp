@@ -1,11 +1,12 @@
 /** Общая обвязка страниц: шапка, роль, загрузка данных, мелкое форматирование. */
 import { orderFromRecord } from "./ledger.js";
 import { canEdit, lastCommit, load } from "./store.js";
+import { stage, stageOf } from "./stages.js";
 
 const PAGES = [
   ["index.html", "Дашборд"],
   ["orders.html", "Заказы"],
-  ["admin.html", "Редактирование"],
+  ["admin.html", "Карточки"],
   ["parse.html", "Разбор документов"],
 ];
 
@@ -17,7 +18,8 @@ export function mountHeader(current) {
     <b>Заказы Айзада (Az)</b>
     <span class="role ${admin ? "admin" : ""}">${admin ? "режим редактирования" : "только просмотр"}</span>
     <nav>${PAGES.map(([href, name]) =>
-      `<a href="./${href}"${href === current ? ' aria-current="page"' : ""}>${name}</a>`).join("")}</nav>
+      `<a href="./${href}"${href === current ? ' aria-current="page"' : ""}>${name}</a>`).join("")}
+      ${admin ? '<a class="new" href="./admin.html?new=1">+ Новый заказ</a>' : ""}</nav>
   </div>`;
   document.body.prepend(header);
 
@@ -71,14 +73,12 @@ export const dateRu = (v) => {
 export const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 
-/** Статус заказа — то же правило, что раскладывает книгу по листам. */
-export function status(order) {
-  const remainder = order.computed.remainder;
-  if (remainder === null || remainder === undefined) return { name: "К сверке", cls: "warn" };
-  const hasPostpay = order.payments.some((p) => p.kind.startsWith("постоплата") || p.kind.startsWith("доп"));
-  if (Math.abs(remainder) <= 0.5) return { name: "Закрыт", cls: "ok" };
-  return hasPostpay ? { name: "К сверке", cls: "warn" } : { name: "Нет постоплаты", cls: "bad" };
-}
+/**
+ * Статус заказа — это его стадия в процессе. Два названия из пяти совпадают
+ * с листами книги («нет постоплат», «недоплата» → «К сверке»), остальные три
+ * в таблице приходилось держать в голове.
+ */
+export const status = (order) => stage(stageOf(order));
 
 export const severity = (order) =>
   order.flags.some((f) => f.level === "error") ? 2
