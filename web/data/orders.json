@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "updated": "2026-10-10",
+  "contractor": "Айзада (Az)",
+  "orders": [
+    {
+      "id": "666",
+      "order_no": "Аи 13.04.26/4",
+      "contract_no": "666/1-1",
+      "item": "Костюм летний с шортами сингапур",
+      "item_color": "оливковый",
+      "item_article": "КОСТЛЕТШ01сингапур/олива",
+      "ordered_qty": 750,
+      "unit_price": 400,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-05",
+        "qty": 812,
+        "places": 8,
+        "weight_gross": 282,
+        "driver": "Ташыкулов Элмир Койчубаевич",
+        "vehicle_plate": "04KG227AON"
+      },
+      "payments": [
+        { "kind": "предоплата", "date": "2026-04-16", "amount": 150000, "doc_number": "291",
+          "purpose": "дог.666/1-1 от 13.04.2026, по спец.1 от 13.04.26, за текст.изд.(костюм)" },
+        { "kind": "постоплата", "date": "2026-06-25", "amount": 174800, "doc_number": "", "purpose": "" }
+      ],
+      "terms": { "prepay_percent": 50, "lead_time_days": 7, "penalty_percent_per_day": 1, "postpay_days": 20 },
+      "links": [
+        { "title": "Папка заказа", "url": "https://drive.google.com/drive/folders/14WXPFIq_emuFipzVRwFI9TiOwtGCsMHY" },
+        { "title": "Спецификация", "url": "https://drive.google.com/file/d/1PBHhgi3q7OqAtE1F8RFTrf1LmZSucgrM/view" },
+        { "title": "Отправка", "url": "https://drive.google.com/file/d/1Omirnm78BmzFs9yUDFdy_N-sI2PDPJki/view" }
+      ],
+      "note": "Графа 24 CMR (груз получен) не заполнена, акта приёмки нет."
+    }
+  ]
+}

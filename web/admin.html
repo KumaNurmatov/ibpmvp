@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Редактирование заказов</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>✏️</text></svg>">
+<link rel="stylesheet" href="./styles.css">
+<style>
+  .pane { display: grid; grid-template-columns: 260px 1fr; gap: 12px; align-items: start; }
+  .list { max-height: 72vh; overflow: auto; }
+  .list button { width: 100%; text-align: left; border: 0; border-radius: 8px; padding: 8px 10px; background: none; }
+  .list button:hover { background: var(--bg); }
+  .list button[aria-current="true"] { background: var(--drop); color: var(--accent); }
+  .list .src { display: block; }
+  .rows { display: grid; gap: 8px; }
+  .rows .line { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr auto; gap: 8px; align-items: end; }
+  .rows .line.link { grid-template-columns: 1fr 2.4fr auto; }
+  .saved { color: var(--ok); }
+  @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .rows .line { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Редактирование</h1>
+  <p class="sub" id="updated"></p>
+
+  <div class="card" id="access">
+    <div class="grid c2">
+      <div>
+        <label for="repo">Репозиторий</label>
+        <input id="repo" placeholder="владелец/репозиторий">
+      </div>
+      <div>
+        <label for="token">Токен GitHub с правом записи</label>
+        <input id="token" type="password" placeholder="github_pat_…" autocomplete="off">
+      </div>
+    </div>
+    <div class="row-line" style="margin-top:12px">
+      <button id="save-token" class="primary">Сохранить доступ</button>
+      <button id="drop-token">Выйти из режима правки</button>
+      <span class="src" id="access-state"></span>
+    </div>
+    <p class="src" style="margin:12px 0 0">
+      Токен хранится только в этом браузере и уходит только на api.github.com.
+      Создать: GitHub → Settings → Developer settings → Personal access tokens →
+      Fine-grained → доступ к этому репозиторию, право <b>Contents: Read and write</b>.
+      Без токена страница работает как просмотр: сохранять будет некуда.
+    </p>
+  </div>
+
+  <div class="pane" id="pane">
+    <div class="card list">
+      <button id="new" class="primary" style="color:#fff;text-align:center;margin-bottom:8px">+ Новый заказ</button>
+      <div id="list"></div>
+    </div>
+    <div id="editor"></div>
+  </div>
+</div>
+
+<script type="module">
+import { money, orderFromRecord } from "./lib/ledger.js";
+import { blankOrder, canEdit, repo, save, setRepo, setToken, token } from "./lib/store.js";
+import { escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated, status } from "./lib/shell.js";
+
+mountHeader("admin.html");
+
+let data = null;
+let current = null;   // id редактируемого заказа, "" — новый
+
+document.querySelector("#repo").value = repo();
+document.querySelector("#token").value = token();
+showAccess();
+
+document.querySelector("#save-token").onclick = () => {
+  setRepo(document.querySelector("#repo").value);
+  setToken(document.querySelector("#token").value);
+  showAccess();
+  location.reload();
+};
+document.querySelector("#drop-token").onclick = () => {
+  setToken("");
+  location.reload();
+};
+document.querySelector("#new").onclick = () => {
+  current = null;
+  drawEditor(blankOrder());
+  drawList();
+};
+
+try {
+  const loaded = await loadOrders();
+  data = loaded.data;
+  showUpdated(document.querySelector("#updated"), data?.updated);
+  drawList();
+  const wanted = new URLSearchParams(location.search).get("id");
+  const first = data.orders.find((o) => o.id === wanted) || data.orders[0];
+  if (first) { current = first.id; drawEditor(first); drawList(); }
+} catch (err) {
+  fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+
+function showAccess() {
+  const node = document.querySelector("#access-state");
+  node.textContent = canEdit() ? "доступ есть, можно сохранять" : "токена нет — только просмотр";
+  node.className = canEdit() ? "src saved" : "src";
+}
+
+function drawList() {
+  document.querySelector("#list").innerHTML = (data?.orders || []).map((o) => {
+    const computed = orderFromRecord(o);
+    return `<button data-id="${escapeHtml(o.id)}" aria-current="${o.id === current}">
+      ${escapeHtml(o.order_no || o.id)}
+      <span class="src">${escapeHtml(o.contract_no || "")} · ${money(computed.computed.remainder)}</span>
+    </button>`;
+  }).join("") || '<span class="src">Пока пусто.</span>';
+
+  for (const button of document.querySelectorAll("#list button[data-id]")) {
+    button.onclick = () => {
+      current = button.dataset.id;
+      drawEditor(data.orders.find((o) => o.id === current));
+      drawList();
+    };
+  }
+}
+
+function drawEditor(record) {
+  const r = structuredClone(record);
+  const editor = document.querySelector("#editor");
+
+  editor.innerHTML = `
+    <div class="card">
+      <div class="grid c3">
+        ${field("id", "Ключ (обычно номер договора)", r.id)}
+        ${field("order_no", "Номер заказа", r.order_no)}
+        ${field("contract_no", "Договор", r.contract_no)}
+      </div>
+      <div class="grid c3" style="margin-top:12px">
+        ${field("item", "Изделие", r.item)}
+        ${field("item_color", "Цвет", r.item_color)}
+        ${field("item_article", "Артикул", r.item_article)}
+      </div>
+      <div class="grid c3" style="margin-top:12px">
+        ${field("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
+        ${field("unit_price", "Цена пошива, ₽", r.unit_price, "number")}
+        ${field("workshop", "Цех", r.workshop)}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Отправка</h2>
+      <div class="grid c3">
+        ${field("shipment.date", "Дата", r.shipment.date, "date")}
+        ${field("shipment.qty", "Кол-во, шт", r.shipment.qty, "number")}
+        ${field("shipment.places", "Мест", r.shipment.places, "number")}
+      </div>
+      <div class="grid c3" style="margin-top:12px">
+        ${field("shipment.weight_gross", "Вес брутто, кг", r.shipment.weight_gross, "number")}
+        ${field("shipment.driver", "Водитель", r.shipment.driver)}
+        ${field("shipment.vehicle_plate", "Госномер", r.shipment.vehicle_plate)}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Платежи</h2>
+      <div class="rows" id="pays"></div>
+      <button id="add-pay" style="margin-top:10px">+ Платёж</button>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Ссылки на документы</h2>
+      <div class="rows" id="links"></div>
+      <button id="add-link" style="margin-top:10px">+ Ссылка</button>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Условия</h2>
+      <div class="grid c4">
+        ${field("terms.prepay_percent", "Предоплата, %", r.terms.prepay_percent, "number")}
+        ${field("terms.lead_time_days", "Срок, дней", r.terms.lead_time_days, "number")}
+        ${field("terms.penalty_percent_per_day", "Неустойка, %/день", r.terms.penalty_percent_per_day, "number")}
+        ${field("terms.postpay_days", "Постоплата, дней", r.terms.postpay_days, "number")}
+      </div>
+      <div style="margin-top:12px">
+        <label for="f-note">Заметка</label>
+        <textarea id="f-note" rows="2">${escapeHtml(r.note)}</textarea>
+      </div>
+    </div>
+
+    <div class="card" id="preview"></div>
+
+    <div class="row-line">
+      <button id="do-save" class="primary" ${canEdit() ? "" : "disabled"}>Сохранить в репозиторий</button>
+      ${record.id ? '<button id="do-delete" class="danger">Удалить заказ</button>' : ""}
+      <span class="src" id="save-state">${canEdit() ? "" : "нужен токен"}</span>
+    </div>`;
+
+  drawRows(r);
+  editor.addEventListener("input", () => { collect(r); preview(r); });
+  document.querySelector("#add-pay").onclick = () => {
+    r.payments.push({ kind: "предоплата", date: "", amount: null, doc_number: "", purpose: "" });
+    drawRows(r);
+  };
+  document.querySelector("#add-link").onclick = () => {
+    r.links.push({ title: "", url: "" });
+    drawRows(r);
+  };
+  document.querySelector("#do-save").onclick = () => persist(r);
+  const del = document.querySelector("#do-delete");
+  if (del) del.onclick = () => remove(r);
+  preview(r);
+
+  function drawRows(rec) {
+    document.querySelector("#pays").innerHTML = rec.payments.map((p, i) => `
+      <div class="line">
+        <div><label>Вид</label><select data-pay="${i}" data-k="kind">
+          ${["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"].map((k) =>
+            `<option${k === p.kind ? " selected" : ""}>${k}</option>`).join("")}
+        </select></div>
+        <div><label>Дата</label><input type="date" data-pay="${i}" data-k="date" value="${escapeHtml(p.date)}"></div>
+        <div><label>Сумма, ₽</label><input type="number" step="0.01" data-pay="${i}" data-k="amount" value="${p.amount ?? ""}"></div>
+        <div><label>Документ</label><input data-pay="${i}" data-k="doc_number" value="${escapeHtml(p.doc_number)}"></div>
+        <button data-drop-pay="${i}">✕</button>
+      </div>`).join("") || '<span class="src">Платежей нет.</span>';
+
+    document.querySelector("#links").innerHTML = rec.links.map((l, i) => `
+      <div class="line link">
+        <div><label>Название</label><input data-link="${i}" data-k="title" value="${escapeHtml(l.title)}"></div>
+        <div><label>Адрес</label><input data-link="${i}" data-k="url" value="${escapeHtml(l.url)}" placeholder="https://drive.google.com/…"></div>
+        <button data-drop-link="${i}">✕</button>
+      </div>`).join("") || '<span class="src">Ссылок нет.</span>';
+
+    for (const b of document.querySelectorAll("[data-drop-pay]")) {
+      b.onclick = () => { rec.payments.splice(+b.dataset.dropPay, 1); drawRows(rec); preview(rec); };
+    }
+    for (const b of document.querySelectorAll("[data-drop-link]")) {
+      b.onclick = () => { rec.links.splice(+b.dataset.dropLink, 1); drawRows(rec); preview(rec); };
+    }
+  }
+}
+
+/** Собрать запись из полей формы. */
+function collect(r) {
+  for (const input of document.querySelectorAll("#editor [id^='f-']")) {
+    const path = input.id.slice(2).replace(/-/g, ".");
+    setPath(r, path, input.type === "number" ? numOrNull(input.value) : input.value);
+  }
+  for (const input of document.querySelectorAll("#editor [data-pay]")) {
+    const pay = r.payments[+input.dataset.pay];
+    if (pay) pay[input.dataset.k] = input.dataset.k === "amount" ? numOrNull(input.value) : input.value;
+  }
+  for (const input of document.querySelectorAll("#editor [data-link]")) {
+    const link = r.links[+input.dataset.link];
+    if (link) link[input.dataset.k] = input.value;
+  }
+  return r;
+}
+
+function preview(r) {
+  const o = orderFromRecord(r);
+  const c = o.computed;
+  const st = status(o);
+  document.querySelector("#preview").innerHTML = `
+    <h2 style="margin-top:0">Как это посчитается <span class="pill ${st.cls}">${st.name}</span></h2>
+    <table>
+      <tr><th>Сумма заказа</th><td class="num">${money(c.order_sum)}</td>
+          <th>Сумма отгрузки</th><td class="num">${money(c.shipment_sum)}</td></tr>
+      <tr><th>Оплачено</th><td class="num">${money(c.paid)}</td>
+          <th>Остаток</th><td class="num"><b>${money(c.remainder)}</b> ${
+            c.remainder_units != null ? `<span class="src">≈ ${qty(c.remainder_units)} шт</span>` : ""}</td></tr>
+    </table>
+    ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}`;
+}
+
+async function persist(r) {
+  collect(r);
+  const state = document.querySelector("#save-state");
+  if (!r.id.trim()) { state.textContent = "нужен ключ заказа"; return; }
+
+  const i = data.orders.findIndex((o) => o.id === (current ?? r.id));
+  if (i >= 0) data.orders[i] = r; else data.orders.push(r);
+  current = r.id;
+
+  state.textContent = "сохраняю…";
+  state.className = "src";
+  try {
+    const result = await save(data, `Заказ ${r.order_no || r.id}: правка через дашборд`);
+    state.innerHTML = `сохранено${result.commit
+      ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}
+      · на сайте появится через пару минут`;
+    state.className = "src saved";
+    drawList();
+  } catch (err) {
+    state.textContent = err.message;
+    state.className = "src";
+    fatal(`Сохранить не удалось: ${err.message}`);
+  }
+}
+
+async function remove(r) {
+  if (!confirm(`Удалить заказ ${r.order_no || r.id}? Он останется в истории правок репозитория.`)) return;
+  data.orders = data.orders.filter((o) => o.id !== r.id);
+  try {
+    await save(data, `Удалить заказ ${r.order_no || r.id}`);
+    current = data.orders[0]?.id ?? null;
+    drawList();
+    if (current) drawEditor(data.orders[0]); else document.querySelector("#editor").innerHTML = "";
+  } catch (err) {
+    fatal(`Удалить не удалось: ${err.message}`);
+  }
+}
+
+function field(path, label, value, type = "text") {
+  const id = `f-${path.replace(/\./g, "-")}`;
+  return `<div><label for="${id}">${escapeHtml(label)}</label>
+    <input id="${id}" type="${type}" value="${value === null || value === undefined ? "" : escapeHtml(value)}"></div>`;
+}
+
+function setPath(target, path, value) {
+  const parts = path.split(".");
+  let node = target;
+  while (parts.length > 1) node = node[parts.shift()] ??= {};
+  node[parts[0]] = value;
+}
+
+function numOrNull(v) {
+  return v === "" || v === null ? null : Number(v);
+}
+</script>
+</body>
+</html>
