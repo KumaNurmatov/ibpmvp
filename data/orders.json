@@ -2624,41 +2624,6 @@
         }
       ],
       "note": ""
-    },
-    {
-      "id": "лкдалпд",
-      "order_no": "",
-      "contract_no": "лкдалпд",
-      "order_date": "",
-      "item": "",
-      "item_article": "",
-      "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
-      "workshops": [],
-      "photo": "",
-      "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
-        "driver": "",
-        "driver_phone": ""
-      },
-      "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
-        "date": "",
-        "reason": ""
-      },
-      "payments": [],
-      "terms": {
-        "prepay_percent": 50,
-        "lead_time_days": null,
-        "postpay_days": null
-      },
-      "links": [],
-      "note": ""
     }
   ]
 }
