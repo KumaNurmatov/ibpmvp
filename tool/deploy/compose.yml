@@ -1,0 +1,38 @@
+# Свой сервер: приложение + Caddy, который сам выписывает сертификат на домен.
+# docker compose -f tool/deploy/compose.yml up -d
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: tool/Dockerfile
+    restart: unless-stopped
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?задайте ключ в .env}
+      IBP_ACCESS_TOKEN: ${IBP_ACCESS_TOKEN:?задайте пароль в .env}
+      IBP_DATA: /data
+      PORT: 8000
+    volumes:
+      # Здесь живут пакеты и кэш распознавания — переживают перезапуск.
+      - ibp-data:/data
+    expose:
+      - "8000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?укажите домен в .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  ibp-data:
+  caddy-data:
+  caddy-config:

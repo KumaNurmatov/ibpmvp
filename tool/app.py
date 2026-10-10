@@ -5,16 +5,19 @@
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import logging
+import os
 import shutil
 import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from .pipeline import export_xlsx, process, to_json
@@ -23,13 +26,70 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("ibp")
 
 ROOT = Path(__file__).parent
-DATA = Path(__file__).parent / "data"
+DATA = Path(os.environ.get("IBP_DATA") or ROOT / "data")
 CACHE = DATA / "_cache"
 MAX_FILE_BYTES = 64 * 1024 * 1024
 MAX_FILES = 200
 
+# Пароль на вход. Публичный адрес без него означает, что любой прохожий
+# тратит ваш ключ к API и читает ваши накладные.
+ACCESS_TOKEN = os.environ.get("IBP_ACCESS_TOKEN", "").strip()
+# В куку кладём не сам пароль, а его отпечаток: заголовки обязаны быть ASCII,
+# а пароль может быть кириллицей, и сам пароль не должен ездить по сети обратно.
+SESSION_VALUE = hashlib.sha256(ACCESS_TOKEN.encode()).hexdigest() if ACCESS_TOKEN else ""
+COOKIE = "ibp_token"
+OPEN_PATHS = {"/login", "/healthz", "/favicon.ico"}
+
 app = FastAPI(title="Разбор документов по заказам")
 _lock = threading.Lock()
+
+
+@app.middleware("http")
+async def guard(request: Request, call_next):
+    """Пускаем либо по куке, либо по заголовку Authorization: Bearer."""
+    if not ACCESS_TOKEN or request.url.path in OPEN_PATHS:
+        return await call_next(request)
+    if _authorized(request):
+        return await call_next(request)
+    if request.url.path.startswith("/api/"):
+        return JSONResponse({"detail": "нужен вход"}, status_code=401)
+    return RedirectResponse("/login", status_code=303)
+
+
+def _authorized(request: Request) -> bool:
+    """Годится и кука с отпечатком, и Bearer — с паролем или с его отпечатком."""
+    supplied = request.cookies.get(COOKIE, "")
+    header = request.headers.get("authorization", "")
+    if header.lower().startswith("bearer "):
+        supplied = header[7:].strip()
+    if not supplied:
+        return False
+    # Сравниваем байтами: compare_digest не принимает строки с не-ASCII,
+    # а пароль вполне может быть кириллицей.
+    given = supplied.encode()
+    return (hmac.compare_digest(given, SESSION_VALUE.encode())
+            or hmac.compare_digest(given, ACCESS_TOKEN.encode()))
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_form() -> str:
+    return (ROOT / "static" / "login.html").read_text(encoding="utf-8")
+
+
+@app.post("/login")
+async def login(request: Request):
+    form = await request.form()
+    if not hmac.compare_digest(str(form.get("token", "")).encode(), ACCESS_TOKEN.encode()):
+        return RedirectResponse("/login?e=1", status_code=303)
+    response = RedirectResponse("/", status_code=303)
+    response.set_cookie(COOKIE, SESSION_VALUE, httponly=True, samesite="lax",
+                        secure=request.url.scheme == "https", max_age=30 * 24 * 3600)
+    return response
+
+
+@app.get("/healthz")
+def healthz() -> dict:
+    return {"ok": True, "auth": bool(ACCESS_TOKEN)}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -162,6 +222,10 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-DATA.mkdir(exist_ok=True)
-CACHE.mkdir(exist_ok=True)
+DATA.mkdir(parents=True, exist_ok=True)
+CACHE.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
+
+if not ACCESS_TOKEN:
+    log.warning("IBP_ACCESS_TOKEN не задан — вход открыт всем. "
+                "Для публичного адреса задайте его обязательно.")
