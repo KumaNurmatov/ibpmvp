@@ -166,6 +166,26 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 5px; }
 .todo .item .sum { grid-column: 2; grid-row: 1 / span 2; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
 .todo .item.error .sum { color: var(--bad); }
 
+/* ── шторка ────────────────────────────────────────────────────────── */
+details.shutter { margin: 8px 0 12px; }
+details.shutter > summary {
+  cursor: pointer; list-style: none; padding: 12px 14px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+}
+details.shutter > summary::-webkit-details-marker { display: none; }
+details.shutter > summary::before {
+  content: "▸"; color: var(--faint); margin-right: 2px;
+}
+details.shutter[open] > summary::before { content: "▾"; }
+details.shutter > summary:hover { border-color: var(--axis); }
+details.shutter[open] > summary { border-radius: 12px 12px 0 0; border-bottom: 0; }
+details.shutter[open] > div { border: 1px solid var(--line); border-top: 0;
+  border-radius: 0 0 12px 12px; padding: 4px 14px 14px; }
+details.shutter[open] > div > .card { border: 0; padding: 12px 0; margin: 0;
+  border-top: 1px solid var(--line); border-radius: 0; }
+details.shutter[open] > div > .card:first-child { border-top: 0; }
+
 /* ── карточка-«таблица» ────────────────────────────────────────────── */
 table.sheet { font-size: 14px; }
 table.sheet tr.block th {

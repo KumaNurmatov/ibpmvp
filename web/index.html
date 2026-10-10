@@ -33,8 +33,10 @@
   <h2>Самые крупные долги</h2>
   <div class="card"><table class="wide" id="top"></table></div>
 
-  <h2>Замечания по документам</h2>
-  <div id="attention"></div>
+  <details class="shutter" id="attention">
+    <summary><b>Замечания по документам</b> <span class="src" id="attention-count"></span></summary>
+    <div id="attention-body"></div>
+  </details>
 </div>
 
 <script type="module">
@@ -44,6 +46,9 @@ import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
 
 mountHeader("index.html");
+
+// Сколько дел показать сразу; остальные уезжают за шторку.
+const TODO_HEAD = 8;
 
 try {
   const { data, orders } = await loadOrders();
@@ -107,20 +112,36 @@ function drawTodo(orders) {
   document.querySelector("#todo-count").textContent =
     rows.length ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` : "";
 
-  document.querySelector("#todo").innerHTML = rows.length
-    ? rows.map(({ order, level, title, detail, amount, stage: key }) => `
-      <div class="item ${level}">
-        <div class="what">${escapeHtml(title)}</div>
-        <div class="sum">${amount ? money(amount) : ""}
-          <div class="src">${escapeHtml(stage(key).name)}</div></div>
-        <div class="who">
-          <a href="./order.html?id=${encodeURIComponent(order.key)}">${
-            escapeHtml(order.get("order_no") || order.key)}</a>
-          · ${escapeHtml(order.get("item") || "изделие не указано")}
-          · ${escapeHtml(detail)}
-        </div>
-      </div>`).join("")
-    : '<div class="card src">Всё закрыто — ни одного заказа в работе.</div>';
+  if (!rows.length) {
+    document.querySelector("#todo").innerHTML =
+      '<div class="card src">Всё закрыто — ни одного заказа в работе.</div>';
+    return;
+  }
+
+  // Срочное — на экран, хвост — за шторку: со всеми заказами список занимает
+  // несколько экранов, и важное в нём теряется.
+  const head = rows.slice(0, TODO_HEAD).map(item).join("");
+  const tail = rows.slice(TODO_HEAD);
+  document.querySelector("#todo").innerHTML = head + (tail.length
+    ? `<details class="shutter"><summary><b>Остальные ${tail.length}</b>
+         <span class="src">· ${plural(tail.length, "заказ ждёт", "заказа ждут", "заказов ждут")} своей очереди</span></summary>
+       <div class="todo">${tail.map(item).join("")}</div></details>`
+    : "");
+}
+
+
+function item({ order, level, title, detail, amount, stage: key }) {
+  return `<div class="item ${level}">
+    <div class="what">${escapeHtml(title)}</div>
+    <div class="sum">${amount ? money(amount) : ""}
+      <div class="src">${escapeHtml(stage(key).name)}</div></div>
+    <div class="who">
+      <a href="./order.html?id=${encodeURIComponent(order.key)}">${
+        escapeHtml(order.get("order_no") || order.key)}</a>
+      · ${escapeHtml(order.get("item") || "изделие не указано")}
+      · ${escapeHtml(detail)}
+    </div>
+  </div>`;
 }
 
 function plural(n, one, few, many) {
@@ -171,13 +192,26 @@ function drawTop(orders) {
     : '<tr><td class="src">Долгов нет.</td></tr>';
 }
 
+/**
+ * Замечания живут за шторкой: их много, они по документам, а не по деньгам,
+ * и первым экраном должно быть не это. Счёт в заголовке показывает, сколько
+ * их там, — закрытая шторка не должна скрывать сам факт.
+ */
 function drawAttention(orders) {
   const rows = orders
     .map((o) => ({ order: o, flags: o.flags.filter((f) => f.level !== "info") }))
     .filter((r) => r.flags.length)
     .sort((a, b) => b.flags.length - a.flags.length);
 
-  document.querySelector("#attention").innerHTML = rows.length
+  const count = rows.reduce((s, r) => s + r.flags.length, 0);
+  const errors = rows.reduce((s, r) => s + r.flags.filter((f) => f.level === "error").length, 0);
+  document.querySelector("#attention-count").textContent = count
+    ? `· ${count} ${plural(count, "замечание", "замечания", "замечаний")} ` +
+      `по ${rows.length} ${plural(rows.length, "заказу", "заказам", "заказам")}` +
+      (errors ? `, из них ${errors} ${plural(errors, "важное", "важных", "важных")}` : "")
+    : "· их нет";
+
+  document.querySelector("#attention-body").innerHTML = rows.length
     ? rows.map(({ order, flags }) => `<div class="card">
         <div class="row-line">
           <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.get("order_no") || order.key)}</b></a>

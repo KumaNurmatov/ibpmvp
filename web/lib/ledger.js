@@ -424,7 +424,11 @@ function checkQuantities(order, qty, shipped) {
 function checkDeadline(order, c, prepay) {
   const shipDate = parseDate(order.get("shipment_date"));
   if (!prepay || !prepay.date || !shipDate) return;
-  const lead = Math.trunc(order.terms.lead_time_days ?? 7);
+  // Срок исполнения берётся только из условий заказа. Подставлять сюда
+  // «обычные» семь дней нельзя: просрочка — это претензия и неустойка, и
+  // заявлять её по умолчанию, не видя договора, значит выдумывать.
+  if (order.terms.lead_time_days === null || order.terms.lead_time_days === undefined) return;
+  const lead = Math.trunc(order.terms.lead_time_days);
   const due = new Date(prepay.date.getTime() + lead * DAY_MS);
   const overdue = Math.round((shipDate - due) / DAY_MS);
   c.due_date = iso(due);

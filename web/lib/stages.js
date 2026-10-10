@@ -168,7 +168,9 @@ function taskFor(order, key, today) {
 function lateness(order, today) {
   const prepay = order.payments.find(isPrepay);
   if (!prepay?.date) return 0;
-  const lead = Math.trunc(order.terms.lead_time_days ?? 7);
+  // Без срока из условий заказа просрочки нет: см. checkDeadline в ledger.js.
+  if (order.terms.lead_time_days === null || order.terms.lead_time_days === undefined) return 0;
+  const lead = Math.trunc(order.terms.lead_time_days);
   const due = new Date(prepay.date.getTime() + lead * DAY_MS);
   order.computed.due_date = due.toISOString().slice(0, 10);
   return Math.max(0, Math.round((startOfDay(today) - due) / DAY_MS));

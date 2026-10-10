@@ -139,7 +139,9 @@ function normalize(data) {
       })),
       terms: {
         prepay_percent: o.terms?.prepay_percent ?? 50,
-        lead_time_days: o.terms?.lead_time_days ?? 7,
+        // Срок не подставляется: без него просрочка просто не считается, а
+        // подставленный «обычный» срок означал бы выдуманную претензию.
+        lead_time_days: o.terms?.lead_time_days ?? null,
         penalty_percent_per_day: o.terms?.penalty_percent_per_day ?? null,
         postpay_days: o.terms?.postpay_days ?? null,
       },

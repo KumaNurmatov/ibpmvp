@@ -100,6 +100,16 @@ describe("список дел", () => {
     assert.equal(task.amount, 30000);   // 300 000 × 1% × 10
   });
 
+  it("без срока в условиях просрочки не бывает", () => {
+    // Реестр сроков не хранит: заявлять по ним просрочку и неустойку значило
+    // бы выдумывать претензию.
+    const noTerms = order({ shipment: {}, payments: [PREPAY], terms: { prepay_percent: 50 } });
+    const [task] = tasks([noTerms], new Date("2027-01-01T00:00:00Z"));
+    assert.equal(task.level, "info");
+    assert.equal(task.title, "Ждём отгрузку");
+    assert.equal(noTerms.computed.overdue_days, undefined);
+  });
+
   it("срок ещё не вышел — заказ просто ждёт отгрузки", () => {
     const waiting = order({ shipment: {}, payments: [PREPAY] });
     const [task] = tasks([waiting], new Date("2026-04-20T00:00:00Z"));

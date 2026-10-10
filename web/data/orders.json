@@ -22,17 +22,2286 @@
         "vehicle_plate": "04KG227AON"
       },
       "payments": [
-        { "kind": "предоплата", "date": "2026-04-16", "amount": 150000, "doc_number": "291",
-          "purpose": "дог.666/1-1 от 13.04.2026, по спец.1 от 13.04.26, за текст.изд.(костюм)" },
-        { "kind": "постоплата", "date": "2026-06-25", "amount": 174800, "doc_number": "", "purpose": "" }
+        {
+          "kind": "предоплата",
+          "date": "2026-04-16",
+          "amount": 150000,
+          "doc_number": "291",
+          "purpose": "дог.666/1-1 от 13.04.2026, по спец.1 от 13.04.26, за текст.изд.(костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 174800,
+          "doc_number": "",
+          "purpose": ""
+        }
       ],
-      "terms": { "prepay_percent": 50, "lead_time_days": 7, "penalty_percent_per_day": 1, "postpay_days": 20 },
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": 7,
+        "penalty_percent_per_day": 1,
+        "postpay_days": 20
+      },
       "links": [
-        { "title": "Папка заказа", "url": "https://drive.google.com/drive/folders/14WXPFIq_emuFipzVRwFI9TiOwtGCsMHY" },
-        { "title": "Спецификация", "url": "https://drive.google.com/file/d/1PBHhgi3q7OqAtE1F8RFTrf1LmZSucgrM/view" },
-        { "title": "Отправка", "url": "https://drive.google.com/file/d/1Omirnm78BmzFs9yUDFdy_N-sI2PDPJki/view" }
+        {
+          "title": "Папка заказа",
+          "url": "https://drive.google.com/drive/folders/14WXPFIq_emuFipzVRwFI9TiOwtGCsMHY"
+        },
+        {
+          "title": "Спецификация",
+          "url": "https://drive.google.com/file/d/1PBHhgi3q7OqAtE1F8RFTrf1LmZSucgrM/view"
+        },
+        {
+          "title": "Отправка",
+          "url": "https://drive.google.com/file/d/1Omirnm78BmzFs9yUDFdy_N-sI2PDPJki/view"
+        }
       ],
       "note": "Графа 24 CMR (груз получен) не заполнена, акта приёмки нет."
+    },
+    {
+      "id": "399",
+      "order_no": "Аи 29.01.26/2",
+      "contract_no": "399/1-1",
+      "item": "Костюм (летний с шортами, Сингапур)",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1120.0,
+      "unit_price": 373.33,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-02-27",
+        "qty": 842.0,
+        "places": 5.0,
+        "weight_gross": 346.5,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-02",
+          "amount": 209064.8,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-04-02",
+          "amount": 101919.09,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 1493.32,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "отправка 399.pdf",
+          "url": "https://drive.google.com/file/d/1DylhnWfv2N88ZRBvK0EbLJbtN0t9xrwe/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "397",
+      "order_no": "Аи 28.01.26",
+      "contract_no": "397/1-1",
+      "item": "Костюм (летний с шортами и футболкой поло)",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 620.0,
+      "unit_price": 471.11,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-02-28",
+        "qty": 710.0,
+        "places": 6.0,
+        "weight_gross": 344.88,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-02",
+          "amount": 141333.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-04-02",
+          "amount": 188915.11,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 2355.55,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (1) (1).pdf",
+          "url": "https://drive.google.com/file/d/1vqaGJUiWesr7fdjTdg33tTpPqAeswChF/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 397.pdf",
+          "url": "https://drive.google.com/file/d/1mdkHOCpEOd1i-lILlif0fnE3dPiYpNbi/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "411",
+      "order_no": "Аи 30.01.26/1",
+      "contract_no": "411/1-1",
+      "item": "Костюм (юбка-шорты, Сингапур)",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 800.0,
+      "unit_price": 473.68,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-02-28",
+        "qty": 688.0,
+        "places": 6.0,
+        "weight_gross": 334.12,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-03",
+          "amount": 113683.2,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-04-02",
+          "amount": 204156.08,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 2842.08,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "отправка 411.pdf",
+          "url": "https://drive.google.com/file/d/1QPLEwlhFCRwUxIqNI8yWICWszwshn4Ac/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "448",
+      "order_no": "Аи 13.02.2026/1",
+      "contract_no": "448/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 2590.0,
+      "unit_price": 222.22,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-03-06",
+        "qty": 2699.0,
+        "places": 5.0,
+        "weight_gross": 323.5,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-17",
+          "amount": 287774.9,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-04-08",
+          "amount": 307552.48,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "отправка 448.pdf",
+          "url": "https://drive.google.com/file/d/1AC68v21O06WSoM-ZF-m0t59uNdpRedRI/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "434",
+      "order_no": "Аи 06.02.2026/1",
+      "contract_no": "434/1-1",
+      "item": "двойка с шортами",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1876.0,
+      "unit_price": 318.39,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-03-09",
+        "qty": 1904.0,
+        "places": 8.0,
+        "weight_gross": 523.5,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-17",
+          "amount": 297694.65,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-03",
+          "amount": 299605.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "отправка 434.pdf",
+          "url": "https://drive.google.com/file/d/1pkg7vq8ptNCghK_gcM1jh4cgM6xforg_/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "449",
+      "order_no": "Аи 13.02.2026/2",
+      "contract_no": "449/1-1",
+      "item": "фукра костюм",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 980.0,
+      "unit_price": 844.44,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-03-12",
+        "qty": 982.0,
+        "places": 13.0,
+        "weight_gross": 820.3,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-02-17",
+          "amount": 413775.6,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-04-08",
+          "amount": 412086.72,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "отправка 449.pdf",
+          "url": "https://drive.google.com/file/d/12D6PXm3A2tiyxVBEfORpzxwVq7mONIg7/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "513",
+      "order_no": "Аи 27.02.26/1",
+      "contract_no": "513/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 4440.0,
+      "unit_price": 222.22,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-03-16",
+        "qty": 4602.0,
+        "places": 7.0,
+        "weight_gross": 565.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-04",
+          "amount": 493328.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-10",
+          "amount": 460439.84,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "513 дог_Учет Бишкек (NEW) - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/12njEiXP0RpeSqSBUT2yO3hG8nLIPH5sw/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 513.pdf",
+          "url": "https://drive.google.com/file/d/1Ysmkb2Op30IKkRl3HGxeOWzkDOoQkQ6p/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "554",
+      "order_no": "Аи 13.03.26",
+      "contract_no": "554/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 5650.0,
+      "unit_price": 231.48,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-03",
+        "qty": 5812.0,
+        "places": 9.0,
+        "weight_gross": 774.6,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-18",
+          "amount": 653931.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-20",
+          "amount": 504626.4,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 13.03.26 - 1 - Айзада.pdf",
+          "url": "https://drive.google.com/file/d/1PS1Ug42Ak3bGmRKXfNHslU9Gao9UK7l8/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 554.pdf",
+          "url": "https://drive.google.com/file/d/1bnFL_OoizdsO0aGjBeWpst7aLWn-TeIk/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "558",
+      "order_no": "Аи 13.03.26/1",
+      "contract_no": "558/1-1",
+      "item": "фукра костюм",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1640.0,
+      "unit_price": 879.63,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-03",
+        "qty": 1191.0,
+        "places": 16.0,
+        "weight_gross": 1041.3,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-19",
+          "amount": 721296.6,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-20",
+          "amount": 248935.29,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 13.03.26 -2-Айзада .pdf",
+          "url": "https://drive.google.com/file/d/1Y_ywUBYvBIFRR6d9JqV76IUbTLa5lSqJ/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 558.pdf",
+          "url": "https://drive.google.com/file/d/1kbHZI-jyywumr1bi3vD4hOuk6odx9dZ4/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "559",
+      "order_no": "Аи 13.03.26/2",
+      "contract_no": "559/1-1",
+      "item": "футболка с шортами сингапур",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 960.0,
+      "unit_price": 328.7,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-03",
+        "qty": 1044.0,
+        "places": 2.0,
+        "weight_gross": 181.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-19",
+          "amount": 157776.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-26",
+          "amount": 176511.9,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 13.03.26 -3-Айзада .pdf",
+          "url": "https://drive.google.com/file/d/1-RWVEr5nl1DvmjRqdcMf-tl-JRpKuWIS/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 559.pdf",
+          "url": "https://drive.google.com/file/d/11U74UTwm5RD-YzUi6H2HjXzPTCuCRFhg/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "602",
+      "order_no": "Аи 24.03.26",
+      "contract_no": "602/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 4910.0,
+      "unit_price": 234.74,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-14",
+        "qty": 4954.0,
+        "places": 8.0,
+        "weight_gross": 609.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-25",
+          "amount": 576286.7,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-20",
+          "amount": 515958.52,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 24.03.26 - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/1rmvYQOWgGchbQQo9nrVjKlUwwEPMytiE/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 602.pdf",
+          "url": "https://drive.google.com/file/d/1uRE5c63fFJT83H5L8tk_n2zSOuEiQyf2/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "631",
+      "order_no": "Аи 02.04.26/1",
+      "contract_no": "631/1-1",
+      "item": "брюки шоколад",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1000.0,
+      "unit_price": 232.56,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-14",
+        "qty": 990.0,
+        "places": 5.0,
+        "weight_gross": 219.6,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-03",
+          "amount": 116280.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-13",
+          "amount": 108140.4,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Айзада (Az) к дог 631 брюки сингапур.pdf",
+          "url": "https://drive.google.com/file/d/1P1QXTw-bO4tur2flDdtFDdu8JkV5rx_B/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 631.pdf",
+          "url": "https://drive.google.com/file/d/1_Af3I-ffDY7ZYpDRqVWBZBpw1wTALvhq/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "560",
+      "order_no": "Аи 13.03.26/3",
+      "contract_no": "560/1-1",
+      "item": "рубашка с шортами сингапур",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 3000.0,
+      "unit_price": 416.67,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-22",
+        "qty": 2960.0,
+        "places": 15.0,
+        "weight_gross": 1033.4,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-03-19",
+          "amount": 583335.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-04",
+          "amount": 535007.28,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 13.03.26 -4-Айзада .pdf",
+          "url": "https://drive.google.com/file/d/1Rs6vf-ajugBOkYWZUWf8_uGfISyd-oG3/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 560.pdf",
+          "url": "https://drive.google.com/file/d/1qdbkpHqk0QhGECtLXFHIoxce0yayuIw9/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "647",
+      "order_no": "Аи 07.04.26/2",
+      "contract_no": "647/1-1",
+      "item": "брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 7500.0,
+      "unit_price": 227.27,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-30",
+        "qty": 6987.0,
+        "places": 36.0,
+        "weight_gross": 2200.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-09",
+          "amount": 852262.5,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-10",
+          "amount": 71362.78,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-07-03",
+          "amount": 578856.69,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 14336.28,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 07.04.26 -2 - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/1aO1jHghN_wh0eFz-2W_UE58cZ0XN6e0j/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 647.pdf",
+          "url": "https://drive.google.com/file/d/1wL7kE3gs4rY11eLQ8SmKFN48waHso97P/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "648",
+      "order_no": "Аи 07.04.26/3",
+      "contract_no": "648/1-1",
+      "item": "брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 8000.0,
+      "unit_price": 227.27,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-06",
+        "qty": 8080.0,
+        "places": 45.0,
+        "weight_gross": 2136.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-09",
+          "amount": 909080.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-03",
+          "amount": 909080.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 12954.39,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "заказ от 07.04.26 -3 - Айзада (Az) (1).pdf",
+          "url": "https://drive.google.com/file/d/1GqSgvsw7E6EinJl8jDLztIkat1s1eWrN/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 648.pdf",
+          "url": "https://drive.google.com/file/d/1zr7mTiTav8pcJVzHcQmYWhkpR9WI25Tu/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "665",
+      "order_no": "Аи 13.04.26/3",
+      "contract_no": "665/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 7200.0,
+      "unit_price": 222.22,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-06",
+        "qty": 6126.0,
+        "places": 12.0,
+        "weight_gross": 730.4,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-17",
+          "amount": 799992.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-05-26",
+          "amount": 559105.52,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Блузки_кор_рук_прада_Учет_Бишкек_NEW_Айзада_Az.pdf",
+          "url": "https://drive.google.com/file/d/15bQoj58FlY8kbRoHeMFU6NpuaWXC9jIo/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 665.pdf",
+          "url": "https://drive.google.com/file/d/1U3VCh9LaW0oKXoi1lNfJXar6m0G4uo1D/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "624",
+      "order_no": "Аи 01.04.26",
+      "contract_no": "624/1-1",
+      "item": "поло летний",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 2400.0,
+      "unit_price": 495.33,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-07",
+        "qty": 2419.0,
+        "places": 35.0,
+        "weight_gross": 1273.7,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 576000.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-03",
+          "amount": 589440.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Айзада_Azк_дог_624_костюм_с_шортами_пукра.pdf",
+          "url": "https://drive.google.com/file/d/1EPJ7UgQQdu_LV5kBKQZyfkfTfANI3MVe/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 624.pdf",
+          "url": "https://drive.google.com/file/d/1VTY89doCHDTLjV2TqQ9pma9cZfU7e-lH/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "736",
+      "order_no": "Аи 24.04.26/2",
+      "contract_no": "736/1-1",
+      "item": "рубашка в клетку",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 580.0,
+      "unit_price": 440.53,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-15",
+        "qty": 590.0,
+        "places": 7.0,
+        "weight_gross": 270.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-28",
+          "amount": 127753.7,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-10",
+          "amount": 127313.17,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (12).pdf",
+          "url": "https://drive.google.com/file/d/1pTUgn1QsXJu_hO4UivrPsK-xMv_ZnNPN/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 736.pdf",
+          "url": "https://drive.google.com/file/d/1nzByMFcnvp-Mry3ZRVCNr8sz8c1KEKki/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "728",
+      "order_no": "Аи 24.04.26/1",
+      "contract_no": "728/1-1",
+      "item": "брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 5120.0,
+      "unit_price": 218.34,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-19",
+        "qty": 4806.0,
+        "places": 24.0,
+        "weight_gross": 1360.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-28",
+          "amount": 558950.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-07-10",
+          "amount": 265938.12,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-07-16",
+          "amount": 111571.74,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (11).pdf",
+          "url": "https://drive.google.com/file/d/1l4rsJFTZGz4UayFYPd2co8x__6AkTNxv/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 728.pdf",
+          "url": "https://drive.google.com/file/d/1lpaQo6vrexsM2r7RfkM_nEpeWWanhddb/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "712",
+      "order_no": "Аи 20.04.26/2",
+      "contract_no": "712/1-1",
+      "item": "двойные шорты",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 3410.0,
+      "unit_price": 473.68,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-22",
+        "qty": 3410.0,
+        "places": 34.0,
+        "weight_gross": 1290.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-21",
+          "amount": 807624.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-09",
+          "amount": 203682.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-07-02",
+          "amount": 447627.6,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (7).pdf",
+          "url": "https://drive.google.com/file/d/1g4RV9--nHu6fRBYUqAHU8baJ7koEVmiw/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 712.pdf",
+          "url": "https://drive.google.com/file/d/1QF_Xouh-aX7s7OBO9MVf-96Oi8BQW0Sy/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "713",
+      "order_no": "Аи 20.04.26/3",
+      "contract_no": "713/1-1",
+      "item": "двойные шорты",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 3520.0,
+      "unit_price": 473.68,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-22",
+        "qty": 3520.0,
+        "places": 36.0,
+        "weight_gross": 1305.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-22",
+          "amount": 833676.8,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-09",
+          "amount": 805256.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-06-17",
+          "amount": 21789.28,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (8).pdf",
+          "url": "https://drive.google.com/file/d/13xfpYkkyKdc0yjohe-N3QqZqimdj4S_g/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 713.pdf",
+          "url": "https://drive.google.com/file/d/1L88qnRHFN3IYRyB7174QhI3mFjS-vc8a/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "766",
+      "order_no": "Аи 04.05.26/3",
+      "contract_no": "766/1-1",
+      "item": "брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 8354.0,
+      "unit_price": 221.24,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-28",
+        "qty": 8315.0,
+        "places": 63.0,
+        "weight_gross": 2352.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 923013.28,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-17",
+          "amount": 358851.28,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-07-10",
+          "amount": 380532.8,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (17).pdf",
+          "url": "https://drive.google.com/file/d/1JJcAzh4chLp7hS5UV2YvYLwj0hABpmPM/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 766.pdf",
+          "url": "https://drive.google.com/file/d/11pTa9-HfdHcKYLVSWkMzlx2EAq5KasJn/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "787",
+      "order_no": "Аи 04.05.26/4",
+      "contract_no": "787/1-1",
+      "item": "блузка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 5098.0,
+      "unit_price": 221.24,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-05-28",
+        "qty": 5263.0,
+        "places": 13.0,
+        "weight_gross": 655.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 563940.76,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-17",
+          "amount": 425002.04,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "неизвестно",
+          "date": "2026-08-04",
+          "amount": 155089.24,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (18).pdf",
+          "url": "https://drive.google.com/file/d/1hyarf6p7Eg3n3jSeCieWXYbL4FB2n23A/view?usp=drive_link"
+        },
+        {
+          "title": "Scan (11).pdf",
+          "url": "https://drive.google.com/file/d/19B2Ax-AFqYoTzWOdKR-Dm2LWyLKYutqu/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "737",
+      "order_no": "Аи 24.04.26/3",
+      "contract_no": "737/1-1",
+      "item": "двойные шорты",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 2200.0,
+      "unit_price": 475.77,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-01",
+        "qty": 2327.0,
+        "places": 22.0,
+        "weight_gross": 800.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-28",
+          "amount": 523347.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 570924.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (13).pdf",
+          "url": "https://drive.google.com/file/d/1En5tmpQ9e0pW0Yw8JlVo7EJqFwsIAFAO/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 737.pdf",
+          "url": "https://drive.google.com/file/d/18LtOEggYBkrw4xMVi79Hm6zsQgW4E_F0/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "764",
+      "order_no": "Аи 04.05.26/1",
+      "contract_no": "764/1-1",
+      "item": "рубашка с шортами сингапур",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 6750.0,
+      "unit_price": 398.23,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-01",
+        "qty": 6693.0,
+        "places": 60.0,
+        "weight_gross": 2311.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 1482074.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 1156996.21,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-09-09",
+          "amount": 7964.6,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (15).pdf",
+          "url": "https://drive.google.com/file/d/1Ox2FGq7ZBogw06W2feCpgrxTPUr-ui8n/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 764.pdf",
+          "url": "https://drive.google.com/file/d/1O6QDFdbnH6SawKrJq08KGr6DZi4XCdNO/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "809",
+      "order_no": "Аи 04.05.26/1",
+      "contract_no": "809/1-1",
+      "item": "рубашка с шортами сингапур",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1225.0,
+      "unit_price": 398.23,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-01",
+        "qty": 1196.0,
+        "places": 10.0,
+        "weight_gross": 390.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 243915.97,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 173827.4,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (15).pdf",
+          "url": "https://drive.google.com/file/d/1Ox2FGq7ZBogw06W2feCpgrxTPUr-ui8n/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 809.pdf",
+          "url": "https://drive.google.com/file/d/15RDFWyoTG8wYjNudZRJ0ZsldojON7G96/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "706",
+      "order_no": "Аи 21.04.26/1",
+      "contract_no": "706/1-1",
+      "item": "рубашка с шортами сингапур",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 4400.0,
+      "unit_price": 506.55,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-02",
+        "qty": 3000.0,
+        "places": 31.0,
+        "weight_gross": 1330.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-11",
+          "amount": 1114410.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-07-02",
+          "amount": 384471.45,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (9).pdf",
+          "url": "https://drive.google.com/file/d/1pKDgu1pJG2PmGoi3Q7t6rxC0gH2e46nN/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 706.pdf",
+          "url": "https://drive.google.com/file/d/1tkKIJyQvhhXPpF00OYv7moc6bdco_STl/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "808",
+      "order_no": "Аи 06.05.26/2",
+      "contract_no": "808/1-1",
+      "item": "брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 5100.0,
+      "unit_price": 221.24,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-02",
+        "qty": 4569.0,
+        "places": 28.0,
+        "weight_gross": 1250.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 564162.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-07-02",
+          "amount": 445134.88,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (1).pdf",
+          "url": "https://drive.google.com/file/d/14J6R3z5WVLCezmFfAf2cTKUjpLU5GoiB/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 808.pdf",
+          "url": "https://drive.google.com/file/d/15M_WgnxtJlXVh0Nz6fdr3GXwvCJ6S2Zf/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "662",
+      "order_no": "Аи 13.04.26/2",
+      "contract_no": "662/1-1",
+      "item": "двойные шорты",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1000.0,
+      "unit_price": 480.0,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-05",
+        "qty": 812.0,
+        "places": 10.0,
+        "weight_gross": 376.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-17",
+          "amount": 240000.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 136282.68,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (5).pdf",
+          "url": "https://drive.google.com/file/d/1tjDHiLWASj0Fxq6FAL6_w189iYectb89/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 662.pdf",
+          "url": "https://drive.google.com/file/d/1P3L_6NgPRWoYty4eFX44IMTHFJEg_fee/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "797",
+      "order_no": "Аи 06.05.26/3",
+      "contract_no": "797/1-1",
+      "item": "двойка лапша",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 4720.0,
+      "unit_price": 442.48,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-05",
+        "qty": 4771.0,
+        "places": 32.0,
+        "weight_gross": 2780.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-13",
+          "amount": 1044252.8,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-06-25",
+          "amount": 1008854.4,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (19).pdf",
+          "url": "https://drive.google.com/file/d/1czKqe0OxbdYQ2DjrQ3mFiIYxo9yQQAMy/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 797.pdf",
+          "url": "https://drive.google.com/file/d/1szpA6mmfC9FvUXWo0diVzecoZWfbsHuC/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "818",
+      "order_no": "Аи 21.05.26/1",
+      "contract_no": "818/1-1",
+      "item": "блузка с высоким горлом",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1760.0,
+      "unit_price": 190.08,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-06-24",
+        "qty": 2255.0,
+        "places": 11.0,
+        "weight_gross": 287.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-05-26",
+          "amount": 167270.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-08-04",
+          "amount": 257368.32,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/14wVw0NiAfc14aZ5uhWQlLh0vlO_rkWpw/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 818",
+          "url": "https://drive.google.com/file/d/1BdXzHFigpQqRcSYkEB_8wcrb2u_2RQ5Q/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "827",
+      "order_no": "Аи 11.06.26/1",
+      "contract_no": "827/1-1",
+      "item": "рубашка клетка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 785.0,
+      "unit_price": 418.41,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-01",
+        "qty": 693.0,
+        "places": 11.0,
+        "weight_gross": 295.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-18",
+          "amount": 164225.93,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-08-04",
+          "amount": 120711.31,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "ZAKAZ_RUBAShKA_TEPLAYa_AJZADA.pdf",
+          "url": "https://drive.google.com/file/d/1h76hrYuV6lZHhQqA6yW1hw0B1Sq2piUq/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 827",
+          "url": "https://drive.google.com/file/d/1IgS2Yd8oyr-UQMjH1tiN7K4fM_KnZYqT/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "832",
+      "order_no": "Аи 16.06.26/1",
+      "contract_no": "832/1-1",
+      "item": "фукра костюм",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1120.0,
+      "unit_price": 808.51,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-01",
+        "qty": 1065.0,
+        "places": 26.0,
+        "weight_gross": 940.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-18",
+          "amount": 452765.6,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-07-16",
+          "amount": 396170.57,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (1).pdf",
+          "url": "https://drive.google.com/file/d/1hmQa-ZVHpDz4SNpdpB3haPpjZiq4I2Z8/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 832",
+          "url": "https://drive.google.com/file/d/1L_8azZcU0x_h5irrawwom9oFKj354-Df/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "823",
+      "order_no": "Аи 29.05.26/1",
+      "contract_no": "823/1-1",
+      "item": "брюки палаццо",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 7670.0,
+      "unit_price": 232.37,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-02",
+        "qty": 5594.0,
+        "places": 52.0,
+        "weight_gross": 2020.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-10",
+          "amount": 891138.95,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-07-20",
+          "amount": 403134.1,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (21) (1).pdf",
+          "url": "https://drive.google.com/file/d/16qD3LZ3uG0reJPJPyEWxRDWCVU--o_--/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 823",
+          "url": "https://drive.google.com/file/d/1hLTXyySOAfXLNcn0O55mAU3j9Hrei023/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "831",
+      "order_no": "Аи 15.06.26/2",
+      "contract_no": "831/1-1",
+      "item": "костюм зип/брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1000.0,
+      "unit_price": 835.44,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-13",
+        "qty": 995.0,
+        "places": 26.0,
+        "weight_gross": 935.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-18",
+          "amount": 417720.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-09-09",
+          "amount": 409368.61,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/1AqEO8OsjXBK7O3x5GG-de6g7YJhdm0JB/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 831",
+          "url": "https://drive.google.com/file/d/1ie9pIJ1-EVfbGCZT8WYsL33F0tyGP3Jw/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "628",
+      "order_no": "Аи 01.04.26/1",
+      "contract_no": "628/1-1",
+      "item": "рубашка в клетку",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 2000.0,
+      "unit_price": 467.29,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-04-30",
+        "qty": 1984.0,
+        "places": 27.0,
+        "weight_gross": 892.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-04-02",
+          "amount": 467290.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Айзада_Az_к_дог_628_теплая_рубашка.pdf",
+          "url": "https://drive.google.com/file/d/1M4UKBdDB3SgydMEKk7sWu4_G_vdSP0BK/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 628.pdf",
+          "url": "https://drive.google.com/file/d/1cJC6_81_UQUCjSX8PMFsnhd6_Wbrc-oy/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "821",
+      "order_no": "Аи 27.05.26/1",
+      "contract_no": "821/1-1",
+      "item": "рубашка клетка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1080.0,
+      "unit_price": 410.04,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-13",
+        "qty": 1090.0,
+        "places": 9.0,
+        "weight_gross": 293.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-10",
+          "amount": 221421.6,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (20).pdf",
+          "url": "https://drive.google.com/file/d/1BikJJF2v4S0RfULqFk6SFQc-NclDETth/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 821",
+          "url": "https://drive.google.com/file/d/1xQ0uYcoiHmPsc-OOZf3sawChwh7nPXEW/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "839",
+      "order_no": "Аи 17.06.26/1",
+      "contract_no": "839/1-1",
+      "item": "костюм зип/брюки",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 960.0,
+      "unit_price": 1162.16,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-07-21",
+        "qty": 1018.0,
+        "places": 32.0,
+        "weight_gross": 1065.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-24",
+          "amount": 526977.6,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (2).pdf",
+          "url": "https://drive.google.com/file/d/18YCB28KqS3xovjYJT5sgx2sKaYdSlIqk/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 839",
+          "url": "https://drive.google.com/file/d/1pJANKviLEj6AhkIZi776DaOFGvY_bDgB/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "881",
+      "order_no": "Аи 03.07.26/1",
+      "contract_no": "881/1-1",
+      "item": "водолазка",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 420.0,
+      "unit_price": 346.53,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-08-12",
+        "qty": 657.0,
+        "places": 4.0,
+        "weight_gross": 150.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-07-07",
+          "amount": 72771.3,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (4).pdf",
+          "url": "https://drive.google.com/file/d/1egFGvYRp3WE4QcQxqhNUSQmQadurQflj/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 881.pdf",
+          "url": "https://drive.google.com/file/d/1hUjGd09yQ6IB1EcbcC8LVj4gfzXbmD7t/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "848",
+      "order_no": "Аи 18.06.26/1",
+      "contract_no": "848/1-1",
+      "item": "костюм джерси",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1080.0,
+      "unit_price": 1171.17,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-08-13",
+        "qty": 916.0,
+        "places": 25.0,
+        "weight_gross": 1131.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-06-23",
+          "amount": 626783.4,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az) (22).pdf",
+          "url": "https://drive.google.com/file/d/1vC8G9dIYUIr38-iI2WnStg3SPTiDmXjX/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 848.pdf",
+          "url": "https://drive.google.com/file/d/13FoXaL__Bmlhn6MUQs2yyzF8-9zVC2GR/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "879",
+      "order_no": "Аи 02.07.26/1",
+      "contract_no": "879/1-1",
+      "item": "костюм оксфорд",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 975.0,
+      "unit_price": 1165.05,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-08-13",
+        "qty": 777.0,
+        "places": 20.0,
+        "weight_gross": 694.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-07-07",
+          "amount": 567961.88,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "_Учет Бишкек (NEW) - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/1eiScxvDgosV8XJweXU33xVAwsrl5V_A6/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 879.pdf",
+          "url": "https://drive.google.com/file/d/1XQkIT9wGs3x7TxG2RONHTIiy_WBg4t0S/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "901",
+      "order_no": "Аи 13.07.26/1",
+      "contract_no": "901/1-1",
+      "item": "блузка 1 цв",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 275.0,
+      "unit_price": 223.3,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-08-13",
+        "qty": 330.0,
+        "places": 2.0,
+        "weight_gross": 65.9,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-07-16",
+          "amount": 30703.75,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "БИШКЕК NEW - Айзада (Az).pdf",
+          "url": "https://drive.google.com/file/d/1RX4oCsLtGxrj-FzwJNfGde712EUTzV8a/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 901.pdf",
+          "url": "https://drive.google.com/file/d/1npNlBvEjqimkwneo0mTCVktaqsgfQd0w/view?usp=drive_link"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "912",
+      "order_no": "Аи 13.07.26/3",
+      "contract_no": "912/1-1",
+      "item": "брюки 3 цв",
+      "item_color": "",
+      "item_article": "",
+      "ordered_qty": 1830.0,
+      "unit_price": 271.84,
+      "workshop": "",
+      "shipment": {
+        "date": "2026-08-13",
+        "qty": 1697.0,
+        "places": 16.0,
+        "weight_gross": 617.0,
+        "driver": "",
+        "vehicle_plate": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-07-16",
+          "amount": 248733.6,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "penalty_percent_per_day": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "БИШКЕК NEW - Айзада (Az) (2).pdf",
+          "url": "https://drive.google.com/file/d/1QGXvXn8irYeT2PdGepz8zFPk9GPTf0d4/view?usp=drive_link"
+        },
+        {
+          "title": "отправка 912.pdf",
+          "url": "https://drive.google.com/file/d/1hnTnxCFdib_NhFxxoSz2E_ao0mbHUty1/view?usp=drive_link"
+        }
+      ],
+      "note": ""
     }
   ]
 }

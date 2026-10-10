@@ -439,7 +439,12 @@ def _check_deadline(order: Order, c: dict, prepay: Payment | None) -> None:
     ship_date = _date(order.get("shipment_date"))
     if prepay is None or not prepay.date or not ship_date:
         return
-    lead = int(order.terms.get("lead_time_days") or 7)
+    # Срок исполнения берётся только из условий заказа: просрочка — это
+    # претензия и неустойка, и заявлять её по умолчанию, не видя договора,
+    # значит выдумывать.
+    if order.terms.get("lead_time_days") is None:
+        return
+    lead = int(order.terms["lead_time_days"])
     due = prepay.date + timedelta(days=lead)
     overdue = (ship_date - due).days
     c["due_date"] = due.isoformat()
