@@ -449,7 +449,9 @@ function checkCompleteness(order) {
       message: `Не найдено в документах: ${missing.join(", ")}.` });
   }
   const types = new Set(order.documents.map((d) => d.doc_type));
-  if (order.get("shipped_qty") !== null &&
+  // У заказа, заведённого руками, документов нет вовсе — спрашивать с него
+  // накладную не за что.
+  if (order.documents.length && order.get("shipped_qty") !== null &&
       !["waybill", "cmr", "invoice"].some((t) => types.has(t))) {
     order.flags.push({ level: "info", code: "no_shipping_doc",
       message: "Отгрузка есть, но накладной или CMR среди документов нет." });
@@ -472,6 +474,61 @@ function checkConflicts(order) {
         : `Поле «${name}» расходится: ${variants}.`,
     });
   }
+}
+
+/**
+ * Заказ из записи, заведённой руками.
+ *
+ * Те же поля и те же расчёты, что у заказа, собранного из документов, —
+ * просто источник один и называется «ручной ввод». Благодаря этому дашборд
+ * и разбор документов считают одинаково и проверяются одними тестами.
+ */
+export function orderFromRecord(record) {
+  const order = new Order(String(record.id ?? record.contract_no ?? "без номера"));
+  order.contract_no = record.contract_no ?? null;
+  const src = record.source || "ручной ввод";
+
+  const set = (name, value) => {
+    if (value === null || value === undefined || value === "") return;
+    order.fields.set(name, new Value(value, src, "manual"));
+  };
+  set("order_no", record.order_no);
+  set("item", record.item);
+  set("item_color", record.item_color);
+  set("item_article", record.item_article);
+  set("ordered_qty", num(record.ordered_qty));
+  set("unit_price", num(record.unit_price));
+  set("workshop", record.workshop);
+
+  const sh = record.shipment || {};
+  set("shipment_date", sh.date);
+  set("shipped_qty", num(sh.qty));
+  set("places", num(sh.places));
+  set("weight_gross", num(sh.weight_gross));
+  set("driver", sh.driver);
+  set("vehicle_plate", sh.vehicle_plate);
+
+  for (const [name, value] of Object.entries(record.terms || {})) {
+    const parsed = num(value);
+    if (parsed !== null) order.terms[name] = parsed;
+  }
+
+  for (const pay of record.payments || []) {
+    const amount = num(pay.amount);
+    if (amount === null) continue;
+    const stated = (pay.kind || "неизвестно").toLowerCase();
+    order.payments.push({
+      kind: stated, kind_stated: stated, date: parseDate(pay.date), amount,
+      source: src, purpose: pay.purpose ?? null, doc_number: pay.doc_number ?? null,
+      inferred_from: null,
+    });
+  }
+  order.payments.sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
+
+  order.links = (record.links || []).filter((l) => l && l.url);
+  order.note = record.note || "";
+  order.record = record;
+  return compute(order);
 }
 
 // --------------------------------------------------------------------- мелочи

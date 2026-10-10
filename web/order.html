@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Карточка заказа</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🧾</text></svg>">
+<link rel="stylesheet" href="./styles.css">
+<style>
+  /* Расчёт показываем с формулой: видно, откуда взялась цифра, как в таблице. */
+  .calc td:first-child { color: var(--muted); }
+  .calc .formula { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .calc tr.total td { border-top: 2px solid var(--axis); font-size: 16px; }
+  .links a { display: inline-block; margin: 0 10px 8px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="sub"><a href="./orders.html">← ко всем заказам</a></p>
+  <div id="body"></div>
+</div>
+
+<script type="module">
+import { money } from "./lib/ledger.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, status } from "./lib/shell.js";
+
+mountHeader("orders.html");
+
+const id = new URLSearchParams(location.search).get("id");
+
+try {
+  const { orders } = await loadOrders();
+  const order = orders.find((o) => o.key === id);
+  if (!order) {
+    fatal(`Заказ «${id || "без номера"}» не найден.`);
+  } else {
+    document.title = `${order.get("order_no") || order.key} — карточка заказа`;
+    render(order);
+  }
+} catch (err) {
+  fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+
+function render(o) {
+  const c = o.computed;
+  const st = status(o);
+  const price = o.get("unit_price");
+  const edit = `<a class="btn" href="./admin.html?id=${encodeURIComponent(o.key)}">Править</a>`;
+
+  document.querySelector("#body").innerHTML = `
+    <div class="row-line" style="margin-bottom:6px">
+      <h1 style="margin:0">${escapeHtml(o.get("order_no") || o.key)}</h1>
+      <span class="pill">договор ${escapeHtml(o.contract_no || "—")}</span>
+      <span class="pill ${st.cls}">${st.name}</span>
+      <span style="margin-left:auto">${edit}</span>
+    </div>
+    <p class="sub">${escapeHtml(o.get("item") || "изделие не указано")}${
+      o.get("item_color") ? ` · ${escapeHtml(o.get("item_color"))}` : ""}${
+      o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}</p>
+
+    <div class="tiles">
+      ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
+      ${tile("Сумма отгрузки", money(c.shipment_sum), `${qty(o.get("shipped_qty"))} × ${money(price)}`)}
+      ${tile("Оплачено", money(c.paid), `${o.payments.length} ${plural(o.payments.length)}`)}
+      ${tile("Остаток", money(c.remainder),
+             c.remainder_units != null ? `≈ ${qty(c.remainder_units)} шт` : "нет данных об отгрузке",
+             (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
+    </div>
+
+    <h2>Расчёт</h2>
+    <div class="card"><table class="calc">
+      ${calcRow("Сумма заказа", c.order_sum, `${qty(o.get("ordered_qty"))} шт × ${money(price)}`)}
+      ${calcRow("Сумма отгрузки", c.shipment_sum, `${qty(o.get("shipped_qty"))} шт × ${money(price)}`)}
+      ${calcRow("Оплачено", c.paid, o.payments.map((p) => money(p.amount)).join(" + ") || "платежей нет")}
+      ${c.transfers ? calcRow("Подтверждённые переносы", c.transfers, "со знаком + в заказ, − из него") : ""}
+      ${calcRow("Остаток", c.remainder,
+                `${money(c.shipment_sum)} − ${money(c.paid)}`, true)}
+      ${c.remainder_units != null
+        ? calcRow("Предположительно не принято", c.remainder_units,
+                  `${money(c.remainder)} ÷ ${money(price)}`, false, "шт") : ""}
+    </table></div>
+
+    <h2>Отправка</h2>
+    <div class="card"><table>
+      <tr><th>Дата</th><td>${dateRu(o.get("shipment_date"))}</td>
+          <th>Мест</th><td>${qty(o.get("places"))}</td></tr>
+      <tr><th>Количество</th><td>${qty(o.get("shipped_qty"))} шт</td>
+          <th>Вес брутто</th><td>${qty(o.get("weight_gross"))} кг</td></tr>
+      <tr><th>Водитель</th><td colspan="3">${escapeHtml(o.get("driver") || "—")}${
+        o.get("vehicle_plate") ? ` · ${escapeHtml(o.get("vehicle_plate"))}` : ""}</td></tr>
+      ${o.get("workshop") ? `<tr><th>Цех</th><td colspan="3">${escapeHtml(o.get("workshop"))}</td></tr>` : ""}
+    </table></div>
+
+    <h2>Платежи</h2>
+    <div class="card">${o.payments.length ? `<table>
+      <tr><th>Вид</th><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
+      ${o.payments.map((p) => `<tr>
+        <td>${escapeHtml(p.kind)}${p.inferred_from
+            ? `<div class="src">${escapeHtml(p.inferred_from)}</div>` : ""}</td>
+        <td>${dateRu(p.date)}</td>
+        <td class="num">${money(p.amount)}</td>
+        <td>${escapeHtml(p.doc_number || "—")}${p.purpose
+            ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
+      </table>` : '<span class="src">Платежей нет.</span>'}</div>
+
+    ${o.links.length ? `<h2>Документы</h2><div class="card links">
+      ${o.links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
+        ${escapeHtml(l.title)} ↗</a>`).join("")}</div>` : ""}
+
+    ${o.flags.length ? `<h2>Проверки</h2><div class="card">
+      ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}
+      </div>` : ""}
+
+    ${o.note ? `<h2>Заметка</h2><div class="card">${escapeHtml(o.note)}</div>` : ""}
+
+    <p class="src" style="margin-top:20px">Сроки по условиям: предоплата ${
+      o.terms.prepay_percent ?? 50}%, исполнение ${o.terms.lead_time_days ?? 7} дн.${
+      o.terms.penalty_percent_per_day ? `, неустойка ${o.terms.penalty_percent_per_day}%/день` : ""}.${
+      c.due_date ? ` Срок сдачи ${dateRu(c.due_date)}.` : ""}</p>
+  `;
+}
+
+// Объявлениями функций, а не const: render() вызывается выше по файлу, и
+// стрелочные константы к тому моменту ещё не инициализированы.
+function tile(name, value, hint, cls = "") {
+  return `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
+   <div class="hint">${escapeHtml(hint)}</div></div>`;
+}
+
+function calcRow(name, value, formula, total = false, unit = "") {
+  return `<tr class="${total ? "total" : ""}"><td>${escapeHtml(name)}
+     <div class="formula">${escapeHtml(formula)}</div></td>
+   <td class="num">${unit ? `${qty(value)} ${unit}` : money(value)}</td></tr>`;
+}
+
+function plural(n) {
+  const t = n % 10, h = n % 100;
+  if (t === 1 && h !== 11) return "платёж";
+  if (t >= 2 && t <= 4 && (h < 12 || h > 14)) return "платежа";
+  return "платежей";
+}
+</script>
+</body>
+</html>
