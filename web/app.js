@@ -2,8 +2,9 @@
  * Склейка: файлы → разбор → заказы → книга. Всё в браузере пользователя.
  */
 import { load } from "./lib/docs.js";
-import { ExtractionError, Extractor } from "./lib/extract.js";
+import { DEFAULT_MODEL, ExtractionError, Extractor } from "./lib/extract.js";
 import { build as buildOrders, money } from "./lib/ledger.js";
+import { cost, formatTokens, formatUsd, totalUsage } from "./lib/pricing.js";
 import { build as buildWorkbook, classify } from "./lib/workbook.js";
 
 const KEY_STORAGE = "ibp.apiKey";
@@ -98,7 +99,7 @@ export async function run({ extractor = null, fileList = null } = {}) {
   setProgress(chosen.length, chosen.length, "сводим заказы");
 
   const { orders, orphans } = buildOrders(extractions);
-  lastResult = { orders, orphans, failed };
+  lastResult = { orders, orphans, failed, extractions, model: worker.model || DEFAULT_MODEL };
 
   $("#progress").classList.add("hide");
   $("#go").disabled = false;
@@ -113,7 +114,7 @@ function setProgress(done, total, text) {
 
 // --------------------------------------------------------------------- вывод
 
-function render({ orders, orphans, failed }) {
+function render({ orders, orphans, failed, extractions = [], model = DEFAULT_MODEL }) {
   $("#result").classList.remove("hide");
 
   const remainder = orders.reduce((s, o) => s + (o.computed.remainder || 0), 0);
@@ -126,6 +127,7 @@ function render({ orders, orphans, failed }) {
     ["Предупреждений", count("warn")],
   ].map(([k, v]) => `<div class="tile"><span>${k}</span><b>${v}</b></div>`).join("");
 
+  $("#spend").innerHTML = spendBlock(extractions, model);
   $("#orders").innerHTML = orders.map(card).join("");
 
   const bad = [...failed.map((f) => `${f.file}: ${f.error}`),
@@ -134,6 +136,39 @@ function render({ orders, orphans, failed }) {
     ? `<div class="card"><h3>Не разобрано</h3>${
         bad.map((b) => `<div class="flag error">${esc(b)}</div>`).join("")}</div>`
     : "";
+}
+
+/** Во что обошёлся разбор: итог и разбивка по файлам. */
+function spendBlock(extractions, model) {
+  const usage = totalUsage(extractions);
+  if (!usage.documents) return "";
+  const spent = cost(usage, model);
+  const rows = extractions
+    .filter((ex) => ex._usage)
+    .map((ex) => {
+      const own = cost(ex._usage, model);
+      return `<tr><td>${esc(ex._source_file)}</td>
+        <td class="num">${formatTokens(ex._usage.input)}</td>
+        <td class="num">${formatTokens(ex._usage.output)}</td>
+        <td class="num">${formatUsd(own?.total)}</td></tr>`;
+    }).join("");
+
+  return `<div class="card">
+    <h3>Стоимость разбора
+      <span class="pill">${esc(model)}</span>
+      <span class="pill">${spent ? formatUsd(spent.total) : "цена модели неизвестна"}</span></h3>
+    <table>
+      <tr><th>Документ</th><th class="num">Входных</th><th class="num">Ответ</th><th class="num">Стоимость</th></tr>
+      ${rows}
+      <tr><th>Итого за ${usage.documents}</th>
+          <th class="num">${formatTokens(usage.input)}</th>
+          <th class="num">${formatTokens(usage.output)}</th>
+          <th class="num">${spent ? formatUsd(spent.total) : "—"}</th></tr>
+    </table>
+    <p class="src" style="margin:10px 0 0">Токены считает API, цена — по прейскуранту
+      на октябрь 2026. Повторная загрузка того же файла стоит столько же:
+      кэша в браузерной версии пока нет.</p>
+  </div>`;
 }
 
 function card(order) {
@@ -207,7 +242,7 @@ $("#export").onclick = async () => {
 $("#again").onclick = () => location.reload();
 
 // Доступ для браузерных тестов: подменить распознавание и забрать результат.
-window.__ibp = { run, buildWorkbook, buildOrders, getResult: () => lastResult };
+window.__ibp = { run, render, buildWorkbook, buildOrders, getResult: () => lastResult };
 
 $("#key").value = storedKey();
 showKeyState();
