@@ -31,6 +31,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { stage } from "./lib/stages.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, severity, showUpdated, status } from "./lib/shell.js";
 
 mountHeader("orders.html");
@@ -70,6 +71,7 @@ try {
   all = orders;
   showUpdated(document.querySelector("#updated"), data?.updated);
   fillFilters(orders);
+  preselectStage();
   for (const id of ["q", "st", "ws", "mo", "only"]) {
     document.querySelector(`#${id}`).addEventListener("input", draw);
   }
@@ -89,6 +91,16 @@ function fillFilters(orders) {
   add("#st", orders.map((o) => status(o).name));
   add("#ws", orders.map((o) => o.get("workshop")));
   add("#mo", orders.map((o) => (o.get("shipment_date") || "").slice(0, 7)));
+}
+
+/** Со ступени воронки на дашборде приходят с ?stage=…: открываем уже отобранным. */
+function preselectStage() {
+  const key = new URLSearchParams(location.search).get("stage");
+  if (!key) return;
+  const name = stage(key).name;
+  const select = document.querySelector("#st");
+  if (![...select.options].some((o) => o.value === name)) select.append(new Option(name, name));
+  select.value = name;
 }
 
 function filtered() {

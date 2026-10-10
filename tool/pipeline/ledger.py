@@ -462,7 +462,7 @@ def _check_completeness(order: Order) -> None:
     ) if order.get(name) is None]
     if missing:
         order.flags.append(Flag("error", "missing_fields",
-                                "Не найдено в документах: " + ", ".join(missing) + "."))
+                                "Не хватает данных: " + ", ".join(missing) + "."))
     types = {d["doc_type"] for d in order.documents}
     if order.get("shipped_qty") is not None and not ({"waybill", "cmr", "invoice"} & types):
         order.flags.append(Flag("info", "no_shipping_doc",

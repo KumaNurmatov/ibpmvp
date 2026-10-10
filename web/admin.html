@@ -3,26 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Редактирование заказов</title>
+<title>Карточки заказов</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>✏️</text></svg>">
 <link rel="stylesheet" href="./styles.css">
 <style>
-  .pane { display: grid; grid-template-columns: 260px 1fr; gap: 12px; align-items: start; }
-  .list { max-height: 72vh; overflow: auto; }
-  .list button { width: 100%; text-align: left; border: 0; border-radius: 8px; padding: 8px 10px; background: none; }
-  .list button:hover { background: var(--bg); }
-  .list button[aria-current="true"] { background: var(--drop); color: var(--accent); }
+  .pane { display: grid; grid-template-columns: 250px 1fr; gap: 12px; align-items: start; }
+  .list { max-height: 74vh; overflow: auto; position: sticky; top: 70px; }
+  .list button.pick { width: 100%; text-align: left; border: 0; border-radius: 8px; padding: 8px 10px; background: none; }
+  .list button.pick:hover { background: var(--bg); }
+  .list button.pick[aria-current="true"] { background: var(--drop); color: var(--accent); }
   .list .src { display: block; }
-  .rows { display: grid; gap: 8px; }
-  .rows .line { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr auto; gap: 8px; align-items: end; }
-  .rows .line.link { grid-template-columns: 1fr 2.4fr auto; }
   .saved { color: var(--ok); }
-  @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .rows .line { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Редактирование</h1>
+  <h1>Карточки заказов</h1>
   <p class="sub" id="updated"></p>
 
   <div class="card" id="access">
@@ -59,14 +56,17 @@
 </div>
 
 <script type="module">
-import { money, orderFromRecord } from "./lib/ledger.js";
+import { money, normalizeContract, orderFromRecord } from "./lib/ledger.js";
 import { blankOrder, canEdit, repo, save, setRepo, setToken, token } from "./lib/store.js";
-import { escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated, status } from "./lib/shell.js";
+import { stage, stageOf } from "./lib/stages.js";
+import { escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
 
 mountHeader("admin.html");
 
+const KINDS = ["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"];
+
 let data = null;
-let current = null;   // id редактируемого заказа, "" — новый
+let current = null;   // id правимого заказа; null — новый, ещё не сохранённый
 
 document.querySelector("#repo").value = repo();
 document.querySelector("#token").value = token();
@@ -75,29 +75,43 @@ showAccess();
 document.querySelector("#save-token").onclick = () => {
   setRepo(document.querySelector("#repo").value);
   setToken(document.querySelector("#token").value);
-  showAccess();
   location.reload();
 };
 document.querySelector("#drop-token").onclick = () => {
   setToken("");
   location.reload();
 };
-document.querySelector("#new").onclick = () => {
-  current = null;
-  drawEditor(blankOrder());
-  drawList();
-};
+document.querySelector("#new").onclick = startNew;
 
 try {
   const loaded = await loadOrders();
   data = loaded.data;
   showUpdated(document.querySelector("#updated"), data?.updated);
+  const params = new URLSearchParams(location.search);
   drawList();
-  const wanted = new URLSearchParams(location.search).get("id");
-  const first = data.orders.find((o) => o.id === wanted) || data.orders[0];
-  if (first) { current = first.id; drawEditor(first); drawList(); }
+  if (params.get("new")) {
+    startNew();
+  } else {
+    const first = data.orders.find((o) => o.id === params.get("id")) || data.orders[0];
+    if (first) { current = first.id; drawEditor(first); drawList(); } else startNew();
+  }
 } catch (err) {
   fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+
+/**
+ * Новый заказ — это пустая карточка с заранее размеченными строками: в
+ * таблице новый блок приходилось копировать у соседа вместе с его формулами,
+ * а потом вычищать его цифры. Здесь строки уже на месте, заполняются нужные.
+ */
+function startNew() {
+  current = null;
+  const blank = blankOrder();
+  blank.payments = [{ kind: "предоплата", date: "", amount: null, doc_number: "", purpose: "" }];
+  blank.links = [{ title: "", url: "" }];
+  drawEditor(blank);
+  drawList();
+  document.querySelector("#editor input")?.focus();
 }
 
 function showAccess() {
@@ -107,13 +121,17 @@ function showAccess() {
 }
 
 function drawList() {
-  document.querySelector("#list").innerHTML = (data?.orders || []).map((o) => {
+  const items = (data?.orders || []).map((o) => {
     const computed = orderFromRecord(o);
-    return `<button data-id="${escapeHtml(o.id)}" aria-current="${o.id === current}">
+    const st = stage(stageOf(computed));
+    return `<button class="pick" data-id="${escapeHtml(o.id)}" aria-current="${o.id === current}">
       ${escapeHtml(o.order_no || o.id)}
-      <span class="src">${escapeHtml(o.contract_no || "")} · ${money(computed.computed.remainder)}</span>
+      <span class="src">${escapeHtml(st.name)} · ${money(computed.computed.remainder)}</span>
     </button>`;
-  }).join("") || '<span class="src">Пока пусто.</span>';
+  }).join("");
+  document.querySelector("#list").innerHTML =
+    (current === null ? '<div class="src" style="padding:8px 10px">новый заказ (не сохранён)</div>' : "") +
+    (items || '<span class="src">Пока пусто.</span>');
 
   for (const button of document.querySelectorAll("#list button[data-id]")) {
     button.onclick = () => {
@@ -124,122 +142,201 @@ function drawList() {
   }
 }
 
+// ── карточка как лист таблицы ──────────────────────────────────────────
+// Слева подпись строки, справа значение. Серые строки — считаемые: в них
+// видно и результат, и из чего он получился. Править их нельзя, как и
+// формулу в ячейке.
+
 function drawEditor(record) {
   const r = structuredClone(record);
-  const editor = document.querySelector("#editor");
+  const fresh = !record.id;
 
-  editor.innerHTML = `
+  // Содержимое целиком пересобирается, поэтому слушатели вешаются на свежий
+  // #sheet, а не на переживающий перерисовку #editor: иначе от каждой
+  // перерисовки оставался бы слушатель со старой, уже ничейной записью.
+  document.querySelector("#editor").innerHTML = `<div id="sheet">
     <div class="card">
-      <div class="grid c3">
-        ${field("id", "Ключ (обычно номер договора)", r.id)}
-        ${field("order_no", "Номер заказа", r.order_no)}
-        ${field("contract_no", "Договор", r.contract_no)}
-      </div>
-      <div class="grid c3" style="margin-top:12px">
-        ${field("item", "Изделие", r.item)}
-        ${field("item_color", "Цвет", r.item_color)}
-        ${field("item_article", "Артикул", r.item_article)}
-      </div>
-      <div class="grid c3" style="margin-top:12px">
-        ${field("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
-        ${field("unit_price", "Цена пошива, ₽", r.unit_price, "number")}
-        ${field("workshop", "Цех", r.workshop)}
-      </div>
+      <table class="sheet">
+        ${block("Заказ")}
+        ${row("order_no", "Заказ №", r.order_no, "text", "например, Аи 13.04.26/4")}
+        ${row("contract_no", "Договор", r.contract_no, "text", "например, 666/1-1")}
+        ${row("id", "Ключ карточки", r.id, "text", "подставится из договора")}
+        ${row("item", "Изделие", r.item, "text", "например, Костюм летний с шортами")}
+        ${row("item_color", "Цвет", r.item_color)}
+        ${row("item_article", "Артикул", r.item_article)}
+        ${row("workshop", "Цех", r.workshop)}
+        ${row("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
+        ${row("unit_price", "Цена пошива, ₽", r.unit_price, "number")}
+        ${calc("order_sum", "Сумма заказа")}
+
+        ${block("Отправка")}
+        ${row("shipment.date", "Дата отправки", r.shipment.date, "date")}
+        ${row("shipment.qty", "Отправлено, шт", r.shipment.qty, "number")}
+        ${row("shipment.places", "Мест", r.shipment.places, "number")}
+        ${row("shipment.weight_gross", "Вес брутто, кг", r.shipment.weight_gross, "number")}
+        ${row("shipment.driver", "Водитель", r.shipment.driver)}
+        ${row("shipment.vehicle_plate", "Госномер", r.shipment.vehicle_plate)}
+        ${calc("shipment_sum", "Сумма отгрузки")}
+      </table>
     </div>
 
     <div class="card">
-      <h2 style="margin-top:0">Отправка</h2>
-      <div class="grid c3">
-        ${field("shipment.date", "Дата", r.shipment.date, "date")}
-        ${field("shipment.qty", "Кол-во, шт", r.shipment.qty, "number")}
-        ${field("shipment.places", "Мест", r.shipment.places, "number")}
-      </div>
-      <div class="grid c3" style="margin-top:12px">
-        ${field("shipment.weight_gross", "Вес брутто, кг", r.shipment.weight_gross, "number")}
-        ${field("shipment.driver", "Водитель", r.shipment.driver)}
-        ${field("shipment.vehicle_plate", "Госномер", r.shipment.vehicle_plate)}
-      </div>
+      <h2 style="margin-top:0">Оплаты и подтверждения</h2>
+      <table class="sheet-rows" id="pays"></table>
+      <button id="add-pay" style="margin-top:10px">+ Строка оплаты</button>
+      <table class="sheet" style="margin-top:14px">
+        ${calc("paid", "Оплачено")}
+        ${calc("transfers", "Подтверждённые переносы")}
+      </table>
     </div>
 
     <div class="card">
-      <h2 style="margin-top:0">Платежи</h2>
-      <div class="rows" id="pays"></div>
-      <button id="add-pay" style="margin-top:10px">+ Платёж</button>
+      <h2 style="margin-top:0">Расчётный остаток</h2>
+      <table class="sheet">
+        ${calc("remainder", "Остаток")}
+        ${calc("remainder_units", "Предположительно не принято / не оплачено, шт")}
+      </table>
+      <div id="flags"></div>
     </div>
 
     <div class="card">
-      <h2 style="margin-top:0">Ссылки на документы</h2>
-      <div class="rows" id="links"></div>
-      <button id="add-link" style="margin-top:10px">+ Ссылка</button>
+      <h2 style="margin-top:0">Учёт: файлы по ссылке</h2>
+      <p class="src" style="margin:-6px 0 10px">
+        Как в таблице: название в одной ячейке, адрес в другой — в карточке
+        заказа это станет ссылкой. Папку заказа на Google Drive тоже стоит
+        прикрепить сюда.
+      </p>
+      <table class="sheet-rows" id="links"></table>
+      <button id="add-link" style="margin-top:10px">+ Строка ссылки</button>
     </div>
 
     <div class="card">
       <h2 style="margin-top:0">Условия</h2>
-      <div class="grid c4">
-        ${field("terms.prepay_percent", "Предоплата, %", r.terms.prepay_percent, "number")}
-        ${field("terms.lead_time_days", "Срок, дней", r.terms.lead_time_days, "number")}
-        ${field("terms.penalty_percent_per_day", "Неустойка, %/день", r.terms.penalty_percent_per_day, "number")}
-        ${field("terms.postpay_days", "Постоплата, дней", r.terms.postpay_days, "number")}
-      </div>
+      <table class="sheet">
+        ${row("terms.prepay_percent", "Предоплата, %", r.terms.prepay_percent, "number")}
+        ${row("terms.lead_time_days", "Срок отгрузки, дней от предоплаты", r.terms.lead_time_days, "number")}
+        ${row("terms.penalty_percent_per_day", "Неустойка, %/день", r.terms.penalty_percent_per_day, "number")}
+        ${row("terms.postpay_days", "Постоплата, дней", r.terms.postpay_days, "number")}
+      </table>
       <div style="margin-top:12px">
         <label for="f-note">Заметка</label>
         <textarea id="f-note" rows="2">${escapeHtml(r.note)}</textarea>
       </div>
     </div>
 
-    <div class="card" id="preview"></div>
-
     <div class="row-line">
-      <button id="do-save" class="primary" ${canEdit() ? "" : "disabled"}>Сохранить в репозиторий</button>
-      ${record.id ? '<button id="do-delete" class="danger">Удалить заказ</button>' : ""}
-      <span class="src" id="save-state">${canEdit() ? "" : "нужен токен"}</span>
-    </div>`;
+      <button id="do-save" class="primary" ${canEdit() ? "" : "disabled"}>
+        ${fresh ? "Создать заказ" : "Сохранить в репозиторий"}</button>
+      ${fresh ? "" : '<button id="do-delete" class="danger">Удалить заказ</button>'}
+      <a class="btn" href="./order.html?id=${encodeURIComponent(r.id || "")}" ${fresh ? 'style="display:none"' : ""}>Открыть карточку</a>
+      <span class="src" id="save-state">${canEdit() ? "" : "нужен токен — сохранять некуда"}</span>
+    </div></div>`;
 
   drawRows(r);
-  editor.addEventListener("input", () => { collect(r); preview(r); });
+  recalc(r);
+
+  const editor = document.querySelector("#sheet");
+  editor.addEventListener("input", () => { collect(r); recalc(r); });
+  // Enter как в таблице: шаг к следующей ячейке, а не отправка формы.
+  editor.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || e.target.tagName === "TEXTAREA") return;
+    e.preventDefault();
+    const cells = [...editor.querySelectorAll("input, select")];
+    cells[cells.indexOf(e.target) + 1]?.focus();
+  });
+
   document.querySelector("#add-pay").onclick = () => {
-    r.payments.push({ kind: "предоплата", date: "", amount: null, doc_number: "", purpose: "" });
+    r.payments.push({ kind: nextKind(r), date: "", amount: null, doc_number: "", purpose: "" });
     drawRows(r);
+    document.querySelector("#pays tr:last-child input")?.focus();
   };
   document.querySelector("#add-link").onclick = () => {
     r.links.push({ title: "", url: "" });
     drawRows(r);
+    document.querySelector("#links tr:last-child input")?.focus();
   };
   document.querySelector("#do-save").onclick = () => persist(r);
-  const del = document.querySelector("#do-delete");
-  if (del) del.onclick = () => remove(r);
-  preview(r);
+  document.querySelector("#do-delete")?.addEventListener("click", () => remove(r));
 
   function drawRows(rec) {
-    document.querySelector("#pays").innerHTML = rec.payments.map((p, i) => `
-      <div class="line">
-        <div><label>Вид</label><select data-pay="${i}" data-k="kind">
-          ${["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"].map((k) =>
-            `<option${k === p.kind ? " selected" : ""}>${k}</option>`).join("")}
-        </select></div>
-        <div><label>Дата</label><input type="date" data-pay="${i}" data-k="date" value="${escapeHtml(p.date)}"></div>
-        <div><label>Сумма, ₽</label><input type="number" step="0.01" data-pay="${i}" data-k="amount" value="${p.amount ?? ""}"></div>
-        <div><label>Документ</label><input data-pay="${i}" data-k="doc_number" value="${escapeHtml(p.doc_number)}"></div>
-        <button data-drop-pay="${i}">✕</button>
-      </div>`).join("") || '<span class="src">Платежей нет.</span>';
+    document.querySelector("#pays").innerHTML =
+      `<tr><th>Вид операции</th><th>Дата</th><th class="num">Сумма, ₽</th><th>Документ</th><th></th></tr>` +
+      (rec.payments.map((p, i) => `<tr>
+        <td><select data-pay="${i}" data-k="kind">${KINDS.map((k) =>
+          `<option${k === p.kind ? " selected" : ""}>${k}</option>`).join("")}</select></td>
+        <td><input type="date" data-pay="${i}" data-k="date" value="${escapeHtml(p.date)}"></td>
+        <td><input type="number" step="0.01" class="num" data-pay="${i}" data-k="amount" value="${p.amount ?? ""}"></td>
+        <td><input data-pay="${i}" data-k="doc_number" value="${escapeHtml(p.doc_number)}" placeholder="№ п/п"></td>
+        <td class="drop"><button data-drop-pay="${i}" title="Убрать строку">✕</button></td>
+      </tr>`).join("") || '<tr><td colspan="5" class="src">Оплат пока нет.</td></tr>');
 
-    document.querySelector("#links").innerHTML = rec.links.map((l, i) => `
-      <div class="line link">
-        <div><label>Название</label><input data-link="${i}" data-k="title" value="${escapeHtml(l.title)}"></div>
-        <div><label>Адрес</label><input data-link="${i}" data-k="url" value="${escapeHtml(l.url)}" placeholder="https://drive.google.com/…"></div>
-        <button data-drop-link="${i}">✕</button>
-      </div>`).join("") || '<span class="src">Ссылок нет.</span>';
+    document.querySelector("#links").innerHTML =
+      `<tr><th>Название</th><th>Адрес файла или папки</th><th></th></tr>` +
+      (rec.links.map((l, i) => `<tr>
+        <td><input data-link="${i}" data-k="title" value="${escapeHtml(l.title)}" placeholder="например, Отправка 666.pdf"></td>
+        <td><input data-link="${i}" data-k="url" value="${escapeHtml(l.url)}" placeholder="https://drive.google.com/…"></td>
+        <td class="drop"><button data-drop-link="${i}" title="Убрать строку">✕</button></td>
+      </tr>`).join("") || '<tr><td colspan="3" class="src">Ссылок пока нет.</td></tr>');
 
     for (const b of document.querySelectorAll("[data-drop-pay]")) {
-      b.onclick = () => { rec.payments.splice(+b.dataset.dropPay, 1); drawRows(rec); preview(rec); };
+      b.onclick = () => { rec.payments.splice(+b.dataset.dropPay, 1); drawRows(rec); recalc(rec); };
     }
     for (const b of document.querySelectorAll("[data-drop-link]")) {
-      b.onclick = () => { rec.links.splice(+b.dataset.dropLink, 1); drawRows(rec); preview(rec); };
+      b.onclick = () => { rec.links.splice(+b.dataset.dropLink, 1); drawRows(rec); recalc(rec); };
     }
   }
 }
 
-/** Собрать запись из полей формы. */
+/** Следующая оплата обычно постоплата: предоплата бывает одна. */
+function nextKind(r) {
+  return r.payments.some((p) => p.kind === "предоплата") ? "постоплата" : "предоплата";
+}
+
+// ── считаемые строки ───────────────────────────────────────────────────
+
+/** Значение и то, из чего оно получилось: формула в ячейке была не видна. */
+function recalc(r) {
+  const o = orderFromRecord(r);
+  const c = o.computed;
+  const st = stage(stageOf(o));
+  const price = r.unit_price;
+
+  show("order_sum", money(c.order_sum), c.order_sum === null
+    ? "нужны «Заказано» и «Цена пошива»"
+    : `= ${qty(r.ordered_qty)} шт × ${money(price)}`);
+  show("shipment_sum", money(c.shipment_sum), c.shipment_sum === null
+    ? "нужны «Отправлено» и «Цена пошива»"
+    : `= ${qty(r.shipment.qty)} шт × ${money(price)}`);
+  show("paid", money(c.paid), "= сумма оплат, кроме переносов");
+  show("transfers", money(c.transfers), "= сумма строк с видом «перенос»");
+  show("remainder", money(c.remainder), c.remainder === null
+    ? "считается от суммы отгрузки"
+    : `= ${money(c.shipment_sum)} − ${money(c.paid)} − ${money(c.transfers)}`);
+  show("remainder_units", c.remainder_units == null ? "—" : qty(c.remainder_units),
+    c.remainder_units == null ? "нужна цена пошива" : `= остаток ÷ ${money(price)}`);
+
+  // На совсем пустой карточке замечания говорят лишь о том, что она пустая, —
+  // это видно и так, а красная полоса на первом же шаге только мешает.
+  const untouched = !r.order_no && !r.contract_no && r.ordered_qty === null &&
+    r.unit_price === null && !r.payments.some((p) => p.amount !== null);
+
+  document.querySelector("#flags").innerHTML = untouched
+    ? '<p class="src" style="margin:10px 0 0">Заполните строки — расчёт, стадия и проверки появятся сами.</p>'
+    : `<div class="row-line" style="margin:10px 0 0"><span class="pill ${st.cls}">${st.name}</span>
+        <span class="src">${escapeHtml(st.hint)}</span></div>` +
+      o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("");
+}
+
+function show(key, value, formula) {
+  const node = document.querySelector(`#c-${key}`);
+  if (node) {
+    node.innerHTML = `<span class="value">${escapeHtml(value)}</span>
+      <span class="formula">${escapeHtml(formula)}</span>`;
+  }
+}
+
+// ── сбор и запись ──────────────────────────────────────────────────────
+
 function collect(r) {
   for (const input of document.querySelectorAll("#editor [id^='f-']")) {
     const path = input.id.slice(2).replace(/-/g, ".");
@@ -256,39 +353,43 @@ function collect(r) {
   return r;
 }
 
-function preview(r) {
-  const o = orderFromRecord(r);
-  const c = o.computed;
-  const st = status(o);
-  document.querySelector("#preview").innerHTML = `
-    <h2 style="margin-top:0">Как это посчитается <span class="pill ${st.cls}">${st.name}</span></h2>
-    <table>
-      <tr><th>Сумма заказа</th><td class="num">${money(c.order_sum)}</td>
-          <th>Сумма отгрузки</th><td class="num">${money(c.shipment_sum)}</td></tr>
-      <tr><th>Оплачено</th><td class="num">${money(c.paid)}</td>
-          <th>Остаток</th><td class="num"><b>${money(c.remainder)}</b> ${
-            c.remainder_units != null ? `<span class="src">≈ ${qty(c.remainder_units)} шт</span>` : ""}</td></tr>
-    </table>
-    ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}`;
-}
-
 async function persist(r) {
   collect(r);
   const state = document.querySelector("#save-state");
-  if (!r.id.trim()) { state.textContent = "нужен ключ заказа"; return; }
+
+  // Ключ — то, по чему карточка находится потом. Проще подставить его из
+  // договора, чем объяснять, зачем он нужен.
+  if (!String(r.id || "").trim()) {
+    r.id = normalizeContract(r.contract_no) || r.contract_no || r.order_no;
+    const field = document.querySelector("#f-id");
+    if (field) field.value = r.id ?? "";
+  }
+  if (!String(r.id || "").trim()) {
+    state.textContent = "заполните «Договор» или «Заказ №» — из них берётся ключ карточки";
+    return;
+  }
+  if (current === null && data.orders.some((o) => o.id === r.id)) {
+    state.textContent = `заказ с ключом ${r.id} уже есть — поменяйте ключ или откройте его в списке`;
+    return;
+  }
+  // Пустые строки, добавленные «на всякий случай», в данные не попадают.
+  r.payments = r.payments.filter((p) => p.amount !== null || p.date);
+  r.links = r.links.filter((l) => String(l.url || "").trim());
 
   const i = data.orders.findIndex((o) => o.id === (current ?? r.id));
   if (i >= 0) data.orders[i] = r; else data.orders.push(r);
+  const created = current === null;
   current = r.id;
 
   state.textContent = "сохраняю…";
   state.className = "src";
   try {
-    const result = await save(data, `Заказ ${r.order_no || r.id}: правка через дашборд`);
-    state.innerHTML = `сохранено${result.commit
+    const result = await save(data, `Заказ ${r.order_no || r.id}: ${created ? "новая карточка" : "правка"}`);
+    state.innerHTML = `${created ? "создано" : "сохранено"}${result.commit
       ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}
       · на сайте появится через пару минут`;
     state.className = "src saved";
+    drawEditor(r);
     drawList();
   } catch (err) {
     state.textContent = err.message;
@@ -304,16 +405,32 @@ async function remove(r) {
     await save(data, `Удалить заказ ${r.order_no || r.id}`);
     current = data.orders[0]?.id ?? null;
     drawList();
-    if (current) drawEditor(data.orders[0]); else document.querySelector("#editor").innerHTML = "";
+    if (current) drawEditor(data.orders[0]); else startNew();
   } catch (err) {
     fatal(`Удалить не удалось: ${err.message}`);
   }
 }
 
-function field(path, label, value, type = "text") {
+// ── разметка строк ─────────────────────────────────────────────────────
+
+// Объявлениями функций, а не стрелочными константами: drawEditor вызывается
+// выше по файлу и до этих строк ещё не дошёл бы.
+function block(name) {
+  return `<tr class="block"><th colspan="2">${escapeHtml(name)}</th></tr>`;
+}
+
+function row(path, label, value, type = "text", placeholder = "") {
   const id = `f-${path.replace(/\./g, "-")}`;
-  return `<div><label for="${id}">${escapeHtml(label)}</label>
-    <input id="${id}" type="${type}" value="${value === null || value === undefined ? "" : escapeHtml(value)}"></div>`;
+  return `<tr>
+    <th class="key"><label for="${id}" style="margin:0">${escapeHtml(label)}</label></th>
+    <td class="val"><input id="${id}" type="${type}" placeholder="${escapeHtml(placeholder)}"
+      value="${value === null || value === undefined ? "" : escapeHtml(value)}"></td>
+  </tr>`;
+}
+
+function calc(key, label) {
+  return `<tr class="calc">
+    <th class="key">${escapeHtml(label)}</th><td class="val" id="c-${key}"></td></tr>`;
 }
 
 function setPath(target, path, value) {
