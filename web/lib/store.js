@@ -118,20 +118,32 @@ function normalize(data) {
     version: data?.version ?? 1,
     updated: data?.updated ?? null,
     contractor: data?.contractor ?? "",
+    workshops: normalizeWorkshops(data?.workshops),
     orders: orders.map((o, i) => ({
       id: String(o.id ?? o.contract_no ?? i + 1),
       order_no: o.order_no ?? "",
       contract_no: o.contract_no ?? "",
+      order_date: o.order_date ?? "",
       item: o.item ?? "",
-      item_color: o.item_color ?? "",
       item_article: o.item_article ?? "",
+      tnved: o.tnved ?? "",
       ordered_qty: o.ordered_qty ?? null,
       unit_price: o.unit_price ?? null,
-      workshop: o.workshop ?? "",
+      // Цехов у заказа бывает несколько: раньше это было одно текстовое поле.
+      workshops: toList(o.workshops ?? o.workshop),
+      photo: o.photo ?? "",
       shipment: {
         date: o.shipment?.date ?? "", qty: o.shipment?.qty ?? null,
         places: o.shipment?.places ?? null, weight_gross: o.shipment?.weight_gross ?? null,
-        driver: o.shipment?.driver ?? "", vehicle_plate: o.shipment?.vehicle_plate ?? "",
+        driver: o.shipment?.driver ?? "", driver_phone: o.shipment?.driver_phone ?? "",
+      },
+      // Приёмка: сколько заказчик принял, сколько завернул и почему. От неё
+      // зависит, можно ли считать сделку закрытой при ненулевом остатке.
+      acceptance: {
+        accepted_qty: o.acceptance?.accepted_qty ?? null,
+        rejected_qty: o.acceptance?.rejected_qty ?? null,
+        date: o.acceptance?.date ?? "",
+        reason: o.acceptance?.reason ?? "",
       },
       payments: (o.payments || []).map((p) => ({
         kind: p.kind ?? "неизвестно", date: p.date ?? "", amount: p.amount ?? null,
@@ -139,8 +151,9 @@ function normalize(data) {
       })),
       terms: {
         prepay_percent: o.terms?.prepay_percent ?? 50,
-        lead_time_days: o.terms?.lead_time_days ?? 7,
-        penalty_percent_per_day: o.terms?.penalty_percent_per_day ?? null,
+        // Срок не подставляется: без него просрочка просто не считается, а
+        // подставленный «обычный» срок означал бы выдуманную претензию.
+        lead_time_days: o.terms?.lead_time_days ?? null,
         postpay_days: o.terms?.postpay_days ?? null,
       },
       links: (o.links || []).filter((l) => l?.url).map((l) => ({
@@ -150,6 +163,24 @@ function normalize(data) {
     })),
   };
 }
+
+/** Справочник цехов: список правится в админке, цвет — у каждого свой. */
+function normalizeWorkshops(raw) {
+  const list = Array.isArray(raw) ? raw : [];
+  return list
+    .map((w) => (typeof w === "string" ? { name: w, color: "" } : w))
+    .filter((w) => w?.name)
+    .map((w) => ({ name: String(w.name).trim(), color: w.color || WORKSHOP_COLORS[0] }));
+}
+
+/** Палитра справочника: проверенные цвета, различимые и в тёмной теме. */
+export const WORKSHOP_COLORS = [
+  "#2a78d6", "#eb6834", "#0ca30c", "#8b5cf6", "#b35c00", "#0f9b9b", "#d03b3b", "#6b7280",
+];
+
+const toList = (value) =>
+  (Array.isArray(value) ? value : String(value || "").split(","))
+    .map((v) => String(v).trim()).filter(Boolean);
 
 export function blankOrder() {
   return normalize({ orders: [{ id: "", terms: {} }] }).orders[0];

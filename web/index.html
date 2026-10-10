@@ -5,24 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дашборд заказов</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <div class="wrap">
-  <h1>Где сейчас деньги</h1>
-  <p class="sub" id="updated">Загружаю…</p>
+  <div class="page-head">
+    <div class="grow">
+      <h1>Где сейчас деньги</h1>
+      <p class="sub" id="updated">Загружаю…</p>
+    </div>
+    <a class="btn" href="./orders.html">Все заказы →</a>
+  </div>
 
-  <h2 style="margin-top:0">Процесс</h2>
-  <p class="src" style="margin:-8px 0 12px">
-    Предоплата → пошив → отгрузка → постоплата → сверка. Нажмите ступень,
+  <h2>Процесс</h2>
+  <p class="section-note">
+    Предоплата → пошив → отгрузка → приёмка → постоплата → сверка. Нажмите ступень,
     чтобы увидеть её заказы.
   </p>
   <div class="flow" id="flow"></div>
 
-  <div class="tiles" id="tiles" style="margin-top:12px"></div>
+  <div class="tiles" id="tiles"></div>
 
-  <h2>Что делать <span class="src" id="todo-count"></span></h2>
-  <div class="todo" id="todo"></div>
+  <h2>Что делать</h2>
+  <details class="shutter" id="todo-box">
+    <summary><b>Список дел</b> <span class="src" id="todo-count"></span></summary>
+    <div class="todo" id="todo"></div>
+  </details>
 
   <h2>По месяцам</h2>
   <div class="charts">
@@ -33,17 +44,21 @@
   <h2>Самые крупные долги</h2>
   <div class="card"><table class="wide" id="top"></table></div>
 
-  <h2>Замечания по документам</h2>
-  <div id="attention"></div>
+  <details class="shutter" id="attention">
+    <summary><b>Замечания по документам</b> <span class="src" id="attention-count"></span></summary>
+    <div id="attention-body"></div>
+  </details>
 </div>
 
 <script type="module">
-import { byMonth, groupedBars, lineChart } from "./lib/charts.js";
+import { byMonth, groupedBars, lineChart, shortMoney } from "./lib/charts.js";
 import { money } from "./lib/ledger.js";
 import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
-import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
+import { balanceScale, ring, sparkline } from "./lib/ui.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
 
-mountHeader("index.html");
+mountShell("index.html");
+
 
 try {
   const { data, orders } = await loadOrders();
@@ -67,8 +82,11 @@ function render(orders) {
 
 /** Ступени процесса: счёт заказов и деньги, которые на ступени стоят. */
 function drawFlow(orders) {
-  document.querySelector("#flow").innerHTML = funnel(orders).map((s, i) =>
-    `<a class="step ${s.count ? s.cls : "empty"}" href="./orders.html?stage=${s.key}">
+  const rows = funnel(orders);
+  const peak = Math.max(...rows.map((r) => (r.key === "closed" ? 0 : r.count)));
+  document.querySelector("#flow").innerHTML = rows.map((s, i) =>
+    `<a class="step ${s.count ? s.cls : "empty"}${s.count && s.count === peak ? " hot" : ""}"
+        style="--tone: var(--${s.cls || "accent"})" href="./orders.html?stage=${s.key}">
        <span class="n">${i + 1}</span>
        <span class="name">${escapeHtml(s.name)}</span>
        <b>${s.count}</b>
@@ -80,47 +98,83 @@ function drawTiles(orders) {
   const open = orders.filter((o) => stageOf(o) !== "closed");
   const debt = orders.reduce((s, o) => s + (o.computed.remainder || 0), 0);
   const units = orders.reduce((s, o) => s + (o.computed.remainder_units || 0), 0);
-  const late = orders.filter((o) => (o.computed.overdue_days || 0) > 0);
-  const penalty = late.reduce((s, o) => s + (o.computed.penalty || 0), 0);
   const shipped = orders.reduce((s, o) => s + (o.computed.shipment_sum || 0), 0);
   const paid = orders.reduce((s, o) => s + (o.computed.paid || 0), 0);
+  // Приёмка: сколько недоплаты уже объяснено непринятым товаром.
+  const checked = orders.filter((o) => o.computed.rejected_qty !== null);
+  const rejected = checked.reduce((s, o) => s + (o.computed.rejected_sum || 0), 0);
+  const waiting = orders.filter((o) => stageOf(o) === "acceptance");
+
+  // Долг по месяцам — для спарклайна: цифра говорит «сколько», линия рядом —
+  // «куда идёт», и это разные вопросы.
+  const trail = byMonth(orders).map((m) => m.debt);
 
   tiles([
-    ["Остаток к перечислению", money(debt), `${qty(Math.round(units))} шт по текущим ценам`,
-      debt > 0.5 ? "bad" : ""],
-    ["Отгружено всего", money(shipped), `оплачено ${money(paid)}`, ""],
-    ["Заказов открыто", qty(open.length), `закрыто ${orders.length - open.length} из ${orders.length}`, ""],
-    ["Просрочено отгрузок", qty(late.length),
-      penalty ? `неустойка по условиям ${money(penalty)}` : "в срок", late.length ? "warn" : ""],
+    { name: "Остаток к перечислению", value: `${shortMoney(debt)} ₽`,
+      hint: `${money(debt)} · ${qty(Math.round(units))} шт по текущим ценам`,
+      cls: "hero", wide: true,
+      art: sparkline(trail, { tone: "#d2ff4f", width: 210, height: 40 }) },
+    // В узких плитках знак рубля не ставим: он единственный толкает цифру
+    // на кольцо, а валюта и так названа в подписи.
+    { name: "Отгружено за всё время", value: shortMoney(shipped),
+      hint: `пришло ${money(paid)}`,
+      art: ring({ value: shipped ? paid / shipped : 0, size: 46, stroke: 6,
+                  tone: "var(--ok)", tone2: "var(--lime-deep)",
+                  title: "доля оплаченного от отгруженного" }) },
+    { name: "Заказов в работе", value: qty(open.length),
+      hint: `закрыто ${orders.length - open.length} из ${orders.length}`,
+      art: ring({ value: orders.length ? (orders.length - open.length) / orders.length : 0,
+                  size: 46, stroke: 6, tone: "var(--accent)", tone2: "#7cc0ff",
+                  title: "доля закрытых заказов" }) },
+    { name: "Приёмка отмечена", value: `${checked.length} из ${orders.length}`,
+      hint: checked.length ? `непринятого на ${money(rejected)}` : `${waiting.length} заказов ждут отметки`,
+      cls: waiting.length ? "warn" : "",
+      art: ring({ value: orders.length ? checked.length / orders.length : 0,
+                  size: 46, stroke: 6, tone: "var(--warn)", tone2: "#ffd089",
+                  title: "доля заказов с отмеченной приёмкой" }) },
   ]);
 }
 
 function tiles(items) {
-  document.querySelector("#tiles").innerHTML = items.map(([name, value, hint, cls]) =>
-    `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
-     <div class="hint">${escapeHtml(hint)}</div></div>`).join("");
+  document.querySelector("#tiles").innerHTML = items.map(({ name, value, hint, cls, art, wide }) =>
+    `<div class="tile ${cls || ""}${wide ? " wide" : ""}">
+       <div class="t-text"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
+         <div class="hint">${escapeHtml(hint)}</div></div>
+       <div class="t-art">${art || ""}</div>
+     </div>`).join("");
 }
 
 /** Список дел: по одной строке на незакрытый заказ, самое срочное сверху. */
 function drawTodo(orders) {
   const rows = tasks(orders);
-  document.querySelector("#todo-count").textContent =
-    rows.length ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` : "";
+  const urgent = rows.filter((r) => r.level === "error");
+  const sum = rows.reduce((s, r) => s + Math.max(0, r.amount || 0), 0);
+
+  // Список за шторкой: заголовок говорит, сколько там и на сколько, а
+  // разворачивается он, когда до дел дошли руки.
+  document.querySelector("#todo-count").textContent = rows.length
+    ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` +
+      (urgent.length ? `, срочных ${urgent.length}` : "") + ` · ${money(sum)}`
+    : "· всё закрыто";
 
   document.querySelector("#todo").innerHTML = rows.length
-    ? rows.map(({ order, level, title, detail, amount, stage: key }) => `
-      <div class="item ${level}">
-        <div class="what">${escapeHtml(title)}</div>
-        <div class="sum">${amount ? money(amount) : ""}
-          <div class="src">${escapeHtml(stage(key).name)}</div></div>
-        <div class="who">
-          <a href="./order.html?id=${encodeURIComponent(order.key)}">${
-            escapeHtml(order.get("order_no") || order.key)}</a>
-          · ${escapeHtml(order.get("item") || "изделие не указано")}
-          · ${escapeHtml(detail)}
-        </div>
-      </div>`).join("")
-    : '<div class="card src">Всё закрыто — ни одного заказа в работе.</div>';
+    ? rows.map(item).join("")
+    : '<div class="src" style="padding:10px 0">Ни одного заказа в работе.</div>';
+}
+
+
+function item({ order, level, title, detail, amount, stage: key }) {
+  return `<div class="item ${level}">
+    <div class="what">${escapeHtml(title)}</div>
+    <div class="sum">${amount ? money(amount) : ""}
+      <div class="src">${escapeHtml(stage(key).name)}</div></div>
+    <div class="who">
+      <a href="./order.html?id=${encodeURIComponent(order.key)}">${
+        escapeHtml(order.contract_no || order.key)}</a>
+      · ${escapeHtml(order.get("item") || "изделие не указано")}
+      · ${escapeHtml(detail)}
+    </div>
+  </div>`;
 }
 
 function plural(n, one, few, many) {
@@ -158,11 +212,11 @@ function drawTop(orders) {
     .slice(0, 10);
 
   document.querySelector("#top").innerHTML = rows.length
-    ? `<tr><th>Заказ</th><th>Изделие</th><th>Отгрузка</th><th>Стадия</th>
+    ? `<tr><th>Договор</th><th>Изделие</th><th>Отгрузка</th><th>Стадия</th>
          <th class="num">Остаток</th><th class="num">В штуках</th></tr>` +
       rows.map((o) => `<tr class="row">
-        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.get("order_no") || o.key)}</a>
-            <div class="src">${escapeHtml(o.contract_no || "")}</div></td>
+        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.contract_no || o.key)}</a>
+            <div class="src">${escapeHtml(o.get("order_no") || "")}</div></td>
         <td>${escapeHtml(o.get("item") || "—")}</td>
         <td>${dateRu(o.get("shipment_date"))}</td>
         <td><span class="pill ${stage(stageOf(o)).cls}">${stage(stageOf(o)).name}</span></td>
@@ -171,17 +225,30 @@ function drawTop(orders) {
     : '<tr><td class="src">Долгов нет.</td></tr>';
 }
 
+/**
+ * Замечания живут за шторкой: их много, они по документам, а не по деньгам,
+ * и первым экраном должно быть не это. Счёт в заголовке показывает, сколько
+ * их там, — закрытая шторка не должна скрывать сам факт.
+ */
 function drawAttention(orders) {
   const rows = orders
     .map((o) => ({ order: o, flags: o.flags.filter((f) => f.level !== "info") }))
     .filter((r) => r.flags.length)
     .sort((a, b) => b.flags.length - a.flags.length);
 
-  document.querySelector("#attention").innerHTML = rows.length
+  const count = rows.reduce((s, r) => s + r.flags.length, 0);
+  const errors = rows.reduce((s, r) => s + r.flags.filter((f) => f.level === "error").length, 0);
+  document.querySelector("#attention-count").textContent = count
+    ? `· ${count} ${plural(count, "замечание", "замечания", "замечаний")} ` +
+      `по ${rows.length} ${plural(rows.length, "заказу", "заказам", "заказам")}` +
+      (errors ? `, из них ${errors} ${plural(errors, "важное", "важных", "важных")}` : "")
+    : "· их нет";
+
+  document.querySelector("#attention-body").innerHTML = rows.length
     ? rows.map(({ order, flags }) => `<div class="card">
         <div class="row-line">
-          <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.get("order_no") || order.key)}</b></a>
-          <span class="pill">договор ${escapeHtml(order.contract_no || "—")}</span>
+          <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.contract_no || order.key)}</b></a>
+          <span class="pill">заказ ${escapeHtml(order.get("order_no") || "—")}</span>
           <span class="src">${escapeHtml(order.get("item") || "")}</span>
         </div>
         ${flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}

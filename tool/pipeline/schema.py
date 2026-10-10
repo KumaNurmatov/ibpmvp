@@ -120,10 +120,9 @@ EXTRACTION_SCHEMA = {
             "properties": {
                 "prepay_percent": _NUM,
                 "lead_time_days": _NUM,
-                "penalty_percent_per_day": _NUM,
                 "postpay_days": _NUM,
             },
-            "required": ["prepay_percent", "lead_time_days", "penalty_percent_per_day", "postpay_days"],
+            "required": ["prepay_percent", "lead_time_days", "postpay_days"],
             "additionalProperties": False,
             "description": "условия из договора или спецификации",
         },

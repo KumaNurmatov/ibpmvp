@@ -68,7 +68,7 @@ export const EXTRACTION_SCHEMA = obj({
   },
   terms: obj({
     prepay_percent: NUM, lead_time_days: NUM,
-    penalty_percent_per_day: NUM, postpay_days: NUM,
+    postpay_days: NUM,
   }, "условия из договора или спецификации"),
   unreadable: { type: "boolean", description: "документ нечитаем или это не деловой документ" },
   notes: { ...STR, description: "что показалось странным: правки от руки, незаполненные графы" },

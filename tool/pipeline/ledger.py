@@ -439,20 +439,23 @@ def _check_deadline(order: Order, c: dict, prepay: Payment | None) -> None:
     ship_date = _date(order.get("shipment_date"))
     if prepay is None or not prepay.date or not ship_date:
         return
-    lead = int(order.terms.get("lead_time_days") or 7)
+    # Срок исполнения берётся только из условий заказа: просрочка — это
+    # претензия и неустойка, и заявлять её по умолчанию, не видя договора,
+    # значит выдумывать.
+    if order.terms.get("lead_time_days") is None:
+        return
+    lead = int(order.terms["lead_time_days"])
     due = prepay.date + timedelta(days=lead)
     overdue = (ship_date - due).days
     c["due_date"] = due.isoformat()
     c["overdue_days"] = overdue
     if overdue <= 0:
         return
-    rate = order.terms.get("penalty_percent_per_day")
-    penalty = _round(c["order_sum"] * rate / 100 * overdue) if rate and c["order_sum"] else None
-    c["penalty"] = penalty
-    tail = f" Неустойка по условиям {rate:g}%/день: {_m(penalty)}." if penalty else ""
+    # Про неустойку здесь ни слова: в договорах её нет, и считать её «по
+    # обычной» ставке значило бы придумывать заказчику долг.
     order.flags.append(Flag(
         "warn", "late_shipment",
-        f"Отгрузка {ship_date.isoformat()} при сроке до {due.isoformat()} — просрочка {overdue} дн.{tail}"))
+        f"Отгрузка {ship_date.isoformat()} при сроке до {due.isoformat()} — просрочка {overdue} дн."))
 
 
 def _check_completeness(order: Order) -> None:

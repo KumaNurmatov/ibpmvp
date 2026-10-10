@@ -70,7 +70,6 @@ describe("проверки", () => {
     const c = build666().computed;
     assert.equal(c.due_date, "2026-04-23");   // 16.04 + 7 дней
     assert.equal(c.overdue_days, 43);
-    assert.equal(c.penalty, 129000.0);        // 1% × 300 000 × 43
   });
 
   it("аванс ровно 50 процентов замечаний не даёт", () => {

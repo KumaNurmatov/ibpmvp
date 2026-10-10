@@ -183,7 +183,7 @@ def _empty(doc: docs.SourceDoc, note: str) -> dict:
                                        "route_from", "route_to")},
         "payments": [], "orders": [],
         "terms": {"prepay_percent": None, "lead_time_days": None,
-                  "penalty_percent_per_day": None, "postpay_days": None},
+                  "postpay_days": None},
         "unreadable": True, "notes": note,
         "_source_file": doc.filename, "_source_kind": doc.kind, "_cached": False,
     }

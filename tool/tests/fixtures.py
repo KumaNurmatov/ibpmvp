@@ -21,7 +21,7 @@ def _blank(**over):
                                        "route_from", "route_to")},
         "payments": [], "orders": [],
         "terms": {"prepay_percent": None, "lead_time_days": None,
-                  "penalty_percent_per_day": None, "postpay_days": None},
+                  "postpay_days": None},
         "unreadable": False, "notes": None,
         "_source_file": "?", "_source_kind": "pdf_text",
     }
@@ -51,7 +51,7 @@ SPECIFICATION = _blank(
           "composition": "хлопок 80%, вискоза 15%, эластан 5%", "size_range": "38-40…54-56"},
     ordered={"qty": 750, "unit_price": 400.0, "stated_total": 300000.0},
     terms={"prepay_percent": 50, "lead_time_days": 7,
-           "penalty_percent_per_day": 1.0, "postpay_days": 20},
+           "postpay_days": 20},
     _source_file="спец дог 666 подписанная айзада.pdf",
 )
 
@@ -59,7 +59,7 @@ CONTRACT = _blank(
     doc_type="contract", contract_no="666/1-1", doc_date="2026-04-13",
     parties={"supplier": 'ОсОО "Мокси Кло"', "buyer": 'ООО «Айлукхоум»'},
     terms={"prepay_percent": 50, "lead_time_days": 7,
-           "penalty_percent_per_day": 0.01, "postpay_days": 20},
+           "postpay_days": 20},
     _source_file="договор 666 подписанный айзада.pdf",
     notes="п.7.1 говорит 0,01% в день, спецификация — 1% в день",
 )

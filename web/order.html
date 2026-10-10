@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Карточка заказа</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🧾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 <style>
   /* Расчёт показываем с формулой: видно, откуда взялась цифра, как в таблице. */
@@ -12,6 +15,10 @@
   .calc .formula { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
   .calc tr.total td { border-top: 2px solid var(--axis); font-size: 16px; }
   .links a { display: inline-block; margin: 0 10px 8px 0; }
+  .acc { display: grid; gap: 16px; margin-bottom: 14px; }
+  .acc-rings { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .acc-rings .src { margin-right: 18px; line-height: 1.3; }
+  .hero { width: 54px; height: 40px; border-radius: 9px; object-fit: contain; background: var(--shot); padding: 2px; }
 </style>
 </head>
 <body>
@@ -22,10 +29,12 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { photoFor } from "./lib/photo.js";
 import { tasks } from "./lib/stages.js";
-import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, status } from "./lib/shell.js";
+import { balanceScale, ring } from "./lib/ui.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, status, workshopChips } from "./lib/shell.js";
 
-mountHeader("orders.html");
+mountShell("orders.html");
 
 const id = new URLSearchParams(location.search).get("id");
 
@@ -50,14 +59,17 @@ function render(o) {
 
   document.querySelector("#body").innerHTML = `
     <div class="row-line" style="margin-bottom:6px">
-      <h1 style="margin:0">${escapeHtml(o.get("order_no") || o.key)}</h1>
-      <span class="pill">договор ${escapeHtml(o.contract_no || "—")}</span>
+      <img class="hero" src="${photoFor(o).url}" alt="">
+      <h1 style="margin:0">${escapeHtml(o.contract_no || o.key)}</h1>
+      <span class="pill">заказ ${escapeHtml(o.get("order_no") || "—")}</span>
       <span class="pill ${st.cls}">${st.name}</span>
       <span style="margin-left:auto">${edit}</span>
     </div>
     <p class="sub">${escapeHtml(o.get("item") || "изделие не указано")}${
-      o.get("item_color") ? ` · ${escapeHtml(o.get("item_color"))}` : ""}${
-      o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}</p>
+      o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}${
+      o.get("tnved") ? ` · ТН ВЭД ${escapeHtml(o.get("tnved"))}` : ""}${
+      o.get("order_date") ? ` · заказ от ${dateRu(o.get("order_date"))}` : ""}</p>
+    ${o.workshops.length ? `<div class="chips" style="margin:-10px 0 18px">${workshopChips(o)}</div>` : ""}
 
     ${todo(o)}
 
@@ -79,9 +91,17 @@ function render(o) {
       ${calcRow("Остаток", c.remainder,
                 `${money(c.shipment_sum)} − ${money(c.paid)}`, true)}
       ${c.remainder_units != null
-        ? calcRow("Предположительно не принято", c.remainder_units,
+        ? calcRow("В штуках по цене пошива", c.remainder_units,
                   `${money(c.remainder)} ÷ ${money(price)}`, false, "шт") : ""}
+      ${c.rejected_sum !== null ? calcRow("Непринятое по приёмке", c.rejected_sum,
+          `${qty(c.rejected_qty)} шт × ${money(price)}`) : ""}
+      ${c.unexplained !== null ? calcRow(
+          c.settled ? "Сверх непринятого — ничего" : "Сверх непринятого", c.unexplained,
+          `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
     </table></div>
+
+    <h2>Приёмка</h2>
+    <div class="card">${acceptance(o)}</div>
 
     <h2>Отправка</h2>
     <div class="card"><table>
@@ -89,9 +109,10 @@ function render(o) {
           <th>Мест</th><td>${qty(o.get("places"))}</td></tr>
       <tr><th>Количество</th><td>${qty(o.get("shipped_qty"))} шт</td>
           <th>Вес брутто</th><td>${qty(o.get("weight_gross"))} кг</td></tr>
-      <tr><th>Водитель</th><td colspan="3">${escapeHtml(o.get("driver") || "—")}${
-        o.get("vehicle_plate") ? ` · ${escapeHtml(o.get("vehicle_plate"))}` : ""}</td></tr>
-      ${o.get("workshop") ? `<tr><th>Цех</th><td colspan="3">${escapeHtml(o.get("workshop"))}</td></tr>` : ""}
+      <tr><th>Водитель</th><td>${escapeHtml(o.get("driver") || "—")}</td>
+          <th>Телефон</th><td>${o.get("driver_phone")
+            ? `<a href="tel:${escapeHtml(String(o.get("driver_phone")).replace(/[^+\d]/g, ""))}">${
+                escapeHtml(o.get("driver_phone"))}</a>` : "—"}</td></tr>
     </table></div>
 
     <h2>Платежи</h2>
@@ -116,9 +137,10 @@ function render(o) {
 
     ${o.note ? `<h2>Заметка</h2><div class="card">${escapeHtml(o.note)}</div>` : ""}
 
-    <p class="src" style="margin-top:20px">Сроки по условиям: предоплата ${
-      o.terms.prepay_percent ?? 50}%, исполнение ${o.terms.lead_time_days ?? 7} дн.${
-      o.terms.penalty_percent_per_day ? `, неустойка ${o.terms.penalty_percent_per_day}%/день` : ""}.${
+    <p class="src" style="margin-top:20px">Условия: предоплата ${
+      o.terms.prepay_percent ?? 50}%, ${o.terms.lead_time_days
+        ? `срок исполнения ${o.terms.lead_time_days} дн.`
+        : "срок исполнения не задан"}.${
       c.due_date ? ` Срок сдачи ${dateRu(c.due_date)}.` : ""}</p>
   `;
 }
@@ -134,6 +156,56 @@ function todo(o) {
     <div class="sum">${task.amount ? money(task.amount) : ""}</div>
     <div class="who">${escapeHtml(task.detail)}</div>
   </div></div>`;
+}
+
+/**
+ * Приёмка: от неё зависит, спор перед нами или нет. Пока не отмечена —
+ * так и сказано, без домыслов.
+ */
+function acceptance(o) {
+  const c = o.computed;
+  if (c.accepted_qty === null && c.rejected_qty === null) {
+    return `<div class="src">Приёмка не отмечена. Пока неизвестно, сколько заказчик принял,
+      недоплату не с чем сравнить — отметьте её в карточке.</div>`;
+  }
+  const price = o.get("unit_price");
+  const shipped = o.get("shipped_qty");
+  // Кольца и шкала отвечают на разные вопросы: кольца — сколько приняли и
+  // сколько заплатили, шкала — в какую сторону и насколько разошлось.
+  return `<div class="acc">
+    <div class="acc-rings">
+      ${ring({ value: shipped ? (c.accepted_qty ?? 0) / shipped : 0, size: 76, stroke: 8,
+               tone: "var(--ok)", tone2: "var(--lime-deep)", title: "доля принятого от отгруженного" })}
+      <span class="src">принято<br>от отгрузки</span>
+      ${ring({ value: c.shipment_sum ? c.paid / c.shipment_sum : 0, size: 76, stroke: 8,
+               tone: "var(--accent)", tone2: "#7cc0ff", title: "доля оплаченного от отгруженного" })}
+      <span class="src">оплачено<br>от отгрузки</span>
+    </div>
+    ${balanceScale({
+      value: c.unexplained ?? 0,
+      span: Math.max(Math.abs(c.unexplained ?? 0), c.rejected_sum ?? 0, 1),
+      left: "переплата ",
+      right: "недоплата ",
+      zero: c.settled ? "сходится в ноль — сделка закрыта" : "ноль",
+      format: (v) => money(v),
+    })}
+  </div>
+  <table>
+    <tr><th>Принято</th><td>${qty(c.accepted_qty)} шт${c.accepted_sum !== null
+          ? ` <span class="src">на ${money(c.accepted_sum)}</span>` : ""}</td>
+        <th>Дата приёмки</th><td>${dateRu(o.get("acceptance_date"))}</td></tr>
+    <tr><th>Не принято</th><td>${qty(c.rejected_qty)} шт${c.rejected_sum !== null
+          ? ` <span class="src">на ${money(c.rejected_sum)} (${qty(c.rejected_qty)} × ${money(price)})</span>` : ""}</td>
+        <th>Причина</th><td>${escapeHtml(o.get("reject_reason") || "не указана")}</td></tr>
+    <tr><th>Вывод</th><td colspan="3">${c.settled
+      ? `<b style="color:var(--ok)">Сделка закрыта.</b> Недоплата ${money(c.remainder)} это ровно
+         непринятое — за всё принятое заплачено.`
+      : c.unexplained > 0
+        ? `<b style="color:var(--bad)">Недоплачено сверх непринятого ${money(c.unexplained)}.</b>
+           Непринятое объясняет только ${money(c.rejected_sum)} из ${money(c.remainder)}.`
+        : `<b style="color:var(--warn)">Заплачено на ${money(-c.unexplained)} больше, чем за принятое.</b>
+           Либо приёмка отмечена неверно, либо часть непринятого всё-таки оплатили.`}</td></tr>
+  </table>`;
 }
 
 function tile(name, value, hint, cls = "") {
