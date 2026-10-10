@@ -137,25 +137,29 @@ function absorb(order, ex, onlyContract) {
   put(order, "item_article", item.article, src, docType);
   put(order, "item_composition", item.composition, src, docType);
 
+  // Числовые поля приводим к числам прямо здесь. Модель отдаёт их строками
+  // («324 800,00 ₽»), и если оставить как есть, строка доедет до money() и до
+  // ячейки Excel, где превратится в текст или в NaN.
   const ordered = ex.ordered || {};
-  put(order, "ordered_qty", ordered.qty, src, docType);
-  put(order, "unit_price", ordered.unit_price, src, docType);
-  put(order, "stated_order_sum", ordered.stated_total, src, docType);
+  put(order, "ordered_qty", num(ordered.qty), src, docType);
+  put(order, "unit_price", num(ordered.unit_price), src, docType);
+  put(order, "stated_order_sum", num(ordered.stated_total), src, docType);
 
   const sh = ex.shipment || {};
   put(order, "shipment_date", sh.date, src, docType);
-  put(order, "shipped_qty", sh.qty, src, docType);
-  put(order, "places", sh.places, src, docType);
-  put(order, "weight_gross", sh.weight_gross, src, docType);
-  put(order, "weight_net", sh.weight_net, src, docType);
-  put(order, "stated_shipment_sum", sh.stated_amount, src, docType);
+  put(order, "shipped_qty", num(sh.qty), src, docType);
+  put(order, "places", num(sh.places), src, docType);
+  put(order, "weight_gross", num(sh.weight_gross), src, docType);
+  put(order, "weight_net", num(sh.weight_net), src, docType);
+  put(order, "stated_shipment_sum", num(sh.stated_amount), src, docType);
   put(order, "driver", sh.driver, src, docType);
   put(order, "vehicle_plate", sh.vehicle_plate, src, docType);
   put(order, "route_from", sh.route_from, src, docType);
   put(order, "route_to", sh.route_to, src, docType);
 
   for (const [name, val] of Object.entries(ex.terms || {})) {
-    if (val !== null && val !== undefined && !(name in order.terms)) order.terms[name] = val;
+    const parsed = num(val);
+    if (parsed !== null && !(name in order.terms)) order.terms[name] = parsed;
   }
 
   for (const pay of ex.payments || []) {

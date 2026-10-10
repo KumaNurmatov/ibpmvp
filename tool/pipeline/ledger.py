@@ -223,26 +223,30 @@ def _absorb(order: Order, ex: dict, only_contract: str | None) -> None:
     _put(order, "item_article", item.get("article"), src, doc_type)
     _put(order, "item_composition", item.get("composition"), src, doc_type)
 
+    # Числовые поля приводим к числам прямо здесь. Модель отдаёт их строками
+    # («324 800,00 ₽»), и если оставить как есть, строка доедет до форматирования
+    # денег и до ячейки Excel, где станет текстом вместо числа.
     ordered = ex.get("ordered") or {}
-    _put(order, "ordered_qty", ordered.get("qty"), src, doc_type)
-    _put(order, "unit_price", ordered.get("unit_price"), src, doc_type)
-    _put(order, "stated_order_sum", ordered.get("stated_total"), src, doc_type)
+    _put(order, "ordered_qty", _num(ordered.get("qty")), src, doc_type)
+    _put(order, "unit_price", _num(ordered.get("unit_price")), src, doc_type)
+    _put(order, "stated_order_sum", _num(ordered.get("stated_total")), src, doc_type)
 
     sh = ex.get("shipment") or {}
     _put(order, "shipment_date", sh.get("date"), src, doc_type)
-    _put(order, "shipped_qty", sh.get("qty"), src, doc_type)
-    _put(order, "places", sh.get("places"), src, doc_type)
-    _put(order, "weight_gross", sh.get("weight_gross"), src, doc_type)
-    _put(order, "weight_net", sh.get("weight_net"), src, doc_type)
-    _put(order, "stated_shipment_sum", sh.get("stated_amount"), src, doc_type)
+    _put(order, "shipped_qty", _num(sh.get("qty")), src, doc_type)
+    _put(order, "places", _num(sh.get("places")), src, doc_type)
+    _put(order, "weight_gross", _num(sh.get("weight_gross")), src, doc_type)
+    _put(order, "weight_net", _num(sh.get("weight_net")), src, doc_type)
+    _put(order, "stated_shipment_sum", _num(sh.get("stated_amount")), src, doc_type)
     _put(order, "driver", sh.get("driver"), src, doc_type)
     _put(order, "vehicle_plate", sh.get("vehicle_plate"), src, doc_type)
     _put(order, "route_from", sh.get("route_from"), src, doc_type)
     _put(order, "route_to", sh.get("route_to"), src, doc_type)
 
     for name, val in (ex.get("terms") or {}).items():
-        if val is not None and name not in order.terms:
-            order.terms[name] = val
+        parsed = _num(val)
+        if parsed is not None and name not in order.terms:
+            order.terms[name] = parsed
 
     for pay in ex.get("payments") or []:
         if only_contract and pay.get("contract_no"):
