@@ -150,11 +150,19 @@ h2 { font-size: 17px; margin: 28px 0 12px; letter-spacing: -0.01em; font-weight:
 h2:first-child { margin-top: 0; }
 .card {
   background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow);
+  border-radius: var(--r-lg); padding: 18px 20px; box-shadow: var(--shadow);
 }
-/* Пять долей: плитка-герой занимает две, остальные по одной — ряд остаётся
-   одной строкой, а главная цифра получает вдвое больше места. */
-.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+/* Один отступ на все блоки раздела: карточки, плитки, воронка, список дел,
+   графики, пилюли. Пока он жил инлайном в разметке, блоки то слипались, то
+   расходились по-разному. */
+.card, .tiles, .flow, .cards, .charts, .todo, .pills, details.shutter,
+.page-head + .seg { margin-bottom: 12px; }
+details.shutter { margin-top: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+/* Пять долей — только на дашборде: плитка-герой занимает две, остальные по
+   одной. На карточке заказа плиток четыре, и пятая доля оставляла бы пустое
+   место справа. */
+.tiles.kpi { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .tile {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 15px 16px; box-shadow: var(--shadow); position: relative; overflow: hidden;
@@ -166,8 +174,10 @@ h2:first-child { margin-top: 0; }
 .tile:nth-child(2)::before { background: var(--tint-2); }
 .tile:nth-child(3)::before { background: var(--tint-3); }
 .tile:nth-child(4)::before { background: var(--tint-4); }
-/* Плитка: слева цифра, справа её же форма — кольцо или линия хода. */
-.tile { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+/* Плитка с иллюстрацией: слева цифра, справа её же форма — кольцо или линия
+   хода. Обычная плитка (карточка заказа) остаётся простой: подпись, цифра,
+   пояснение — иначе цифра встаёт рядом с подписью и не влезает. */
+.tile.split { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
 .tile .t-text { min-width: 0; overflow: hidden; }
 .tile .t-art { flex: none; display: flex; align-items: center; }
 .tile span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 2px; }
@@ -178,7 +188,7 @@ h2:first-child { margin-top: 0; }
 .tile .hint { overflow: hidden; text-overflow: ellipsis; }
 /* Плитка-герой шире и выкладывается столбиком: линия хода идёт во всю ширину,
    а не жмётся сбоку от цифры. */
-.tile.wide { grid-column: span 2; flex-direction: column; align-items: stretch; gap: 6px; }
+.tile.split.wide { grid-column: span 2; flex-direction: column; align-items: stretch; gap: 6px; }
 .tile.wide .t-art { justify-content: stretch; }
 .tile.wide b { font-size: 27px; }
 .tile.wide .spark { width: 100%; }
@@ -305,9 +315,12 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
 .ocard {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
-  padding: 14px 16px 16px; display: grid; gap: 10px; text-decoration: none; color: inherit;
-  box-shadow: var(--shadow);
+  padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+  text-decoration: none; color: inherit; box-shadow: var(--shadow);
 }
+/* Нижний блок прижат к низу: названия изделий разной длины, и без этого
+   полосы оплаты в соседних карточках стояли на разной высоте. */
+.ocard .meta { margin-top: auto; }
 .ocard:hover { border-color: var(--axis); box-shadow: 0 2px 4px rgba(16,18,20,.05), 0 10px 28px rgba(16,18,20,.07); }
 .ocard .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .ocard .top .pill::before {
@@ -475,7 +488,7 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
 .tooltip .r span { color: var(--muted); }
 
 @media (max-width: 1180px) {
-  .tiles { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .tiles.kpi { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
   .tile.wide { grid-column: 1 / -1; }
 }
 @media (max-width: 1000px) {

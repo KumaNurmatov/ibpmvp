@@ -21,6 +21,7 @@
   .list button.pick[aria-current="true"] { background: var(--drop); color: var(--accent); }
   .list .src { display: block; }
   .saved { color: var(--ok); }
+  .wide-btn { width: 100%; margin-bottom: 10px; }
   @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
 </style>
 </head>
@@ -55,7 +56,7 @@
 
   <div class="pane" id="pane">
     <div class="card list">
-      <button id="new" class="primary" style="color:#fff;text-align:center;margin-bottom:8px">+ Новый заказ</button>
+      <button id="new" class="primary wide-btn">+ Новый заказ</button>
       <div id="list"></div>
     </div>
     <div id="editor"></div>

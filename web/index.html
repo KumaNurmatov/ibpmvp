@@ -27,7 +27,7 @@
   </p>
   <div class="flow" id="flow"></div>
 
-  <div class="tiles" id="tiles"></div>
+  <div class="tiles kpi" id="tiles"></div>
 
   <h2>Что делать</h2>
   <details class="shutter" id="todo-box">
@@ -137,7 +137,7 @@ function drawTiles(orders) {
 
 function tiles(items) {
   document.querySelector("#tiles").innerHTML = items.map(({ name, value, hint, cls, art, wide }) =>
-    `<div class="tile ${cls || ""}${wide ? " wide" : ""}">
+    `<div class="tile split ${cls || ""}${wide ? " wide" : ""}">
        <div class="t-text"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
          <div class="hint">${escapeHtml(hint)}</div></div>
        <div class="t-art">${art || ""}</div>
