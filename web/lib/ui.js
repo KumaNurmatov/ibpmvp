@@ -18,7 +18,7 @@ let gradientSeq = 0;
  * быстрее цифры и не занимает строку.
  */
 export function ring({ value = 0, size = 62, stroke = 7, tone = "var(--ok)", tone2 = "",
-                       track = "var(--drop)", label = "", title = "" } = {}) {
+                       track = "var(--ring-track)", label = "", title = "" } = {}) {
   const share = clamp(Number(value) || 0, 0, 1);
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -37,8 +37,9 @@ export function ring({ value = 0, size = 62, stroke = 7, tone = "var(--ok)", ton
     <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${paint}" stroke-width="${stroke}"
       stroke-linecap="round" stroke-dasharray="${round(c * share)} ${round(c)}"
       transform="rotate(-90 ${size / 2} ${size / 2})"/>
-    ${text ? `<text class="ring-label" x="50%" y="50%" text-anchor="middle"
-        dominant-baseline="central">${escapeHtml(text)}</text>` : ""}
+    ${text ? `<text class="ring-label" x="${size / 2}" y="${size / 2}" text-anchor="middle"
+        dominant-baseline="central" font-size="${labelSize(size, stroke, text)}"
+        >${escapeHtml(text)}</text>` : ""}
   </svg>`;
 }
 
@@ -107,6 +108,17 @@ export function pills(items, { current = "", attr = "data-pill" } = {}) {
       aria-pressed="${it.key === current}">
       ${escapeHtml(it.name)}${it.count === undefined ? "" : `<i>${it.count}</i>`}
     </button>`).join("")}</div>`;
+}
+
+/**
+ * Размер подписи считается от самого кольца, а не берётся постоянным: в
+ * маленьком кольце «91%» фиксированным кеглем упиралось в дугу и выглядело
+ * сдвинутым, хотя стояло по центру.
+ */
+function labelSize(size, stroke, text) {
+  const inner = size - stroke * 2 - 6;          // свободный круг внутри дуги
+  const perChar = inner / Math.max(3, text.length) * 1.4;
+  return round(Math.min(size * 0.27, perChar), 2);
 }
 
 function round(v, digits = 1) {

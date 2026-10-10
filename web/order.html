@@ -137,9 +137,10 @@ function render(o) {
 
     ${o.note ? `<h2>Заметка</h2><div class="card">${escapeHtml(o.note)}</div>` : ""}
 
-    <p class="src" style="margin-top:20px">Сроки по условиям: предоплата ${
-      o.terms.prepay_percent ?? 50}%, исполнение ${
-      o.terms.lead_time_days ?? "не задано"} дн.${
+    <p class="src" style="margin-top:20px">Условия: предоплата ${
+      o.terms.prepay_percent ?? 50}%, ${o.terms.lead_time_days
+        ? `срок исполнения ${o.terms.lead_time_days} дн.`
+        : "срок исполнения не задан"}.${
       c.due_date ? ` Срок сдачи ${dateRu(c.due_date)}.` : ""}</p>
   `;
 }

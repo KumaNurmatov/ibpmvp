@@ -44,6 +44,7 @@
   --r-md: 12px;
   --r-sm: 10px;
   --shot: #f2f3f1;
+  --ring-track: #e7eae5;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -74,10 +75,14 @@
     --axis: #434849;
     --shadow: 0 1px 2px rgba(0, 0, 0, .5);
     --shot: #e8eae6;
+    --ring-track: #2c3133;
   }
 }
 
 * { box-sizing: border-box; }
+/* Элемент сетки по умолчанию не сжимается ниже своего содержимого, и один
+   длинный номер заказа растягивает всю колонку за край экрана. */
+.grid > *, .tiles > *, .cards > *, .flow > *, .app > *, .pane > * { min-width: 0; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -139,6 +144,10 @@ a { color: var(--accent); }
 h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.02em; font-weight: 600; }
 h2 { font-size: 17px; margin: 28px 0 12px; letter-spacing: -0.01em; font-weight: 600; }
 .sub { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+/* Пояснение под заголовком раздела: прижато к нему, а не висит само по себе.
+   Имя своё: .lede занят подписью внутри графика. */
+.section-note { color: var(--faint); font-size: 12px; margin: -6px 0 12px; }
+h2:first-child { margin-top: 0; }
 .card {
   background: var(--card); border: 1px solid var(--line);
   border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow);
@@ -189,9 +198,13 @@ h2 { font-size: 17px; margin: 28px 0 12px; letter-spacing: -0.01em; font-weight:
 
 /* ── таблицы ───────────────────────────────────────────────────────── */
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 10px 6px 0; }
-td { padding: 9px 10px 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
-.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Линейка между строками идёт по всей строке, а не только под значениями:
+   раньше ячейки-подписи её не рисовали, и сверху торчали обрубки. */
+th { text-align: left; color: var(--muted); font-weight: 500; padding: 9px 10px 9px 0; vertical-align: top; }
+td { padding: 9px 10px 9px 0; vertical-align: top; }
+.card table th, .card table td { border-top: 1px solid var(--line); }
+.card table tr:first-child > * { border-top: 0; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 16px; }
 tr.row:hover td { background: var(--bg); }
 th.sortable { cursor: pointer; user-select: none; }
 th.sortable:hover { color: var(--ink); }
@@ -247,7 +260,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .grid.c4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 
 /* ── воронка процесса ──────────────────────────────────────────────── */
-.flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+.flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .step {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 14px 16px; text-decoration: none; color: inherit; display: block;
@@ -344,8 +357,10 @@ button.chip.edit { color: var(--muted); border-color: var(--line); background: v
 
 /* ── кольца, спарклайны, шкала, пилюли ─────────────────────────────── */
 .ring { display: block; }
+/* Кегль подписи приходит атрибутом из ui.js — он считается от размера
+   кольца, поэтому в CSS его задавать нельзя: стиль перебил бы расчёт. */
 .ring-label {
-  fill: var(--ink); font-size: 15px; font-weight: 600;
+  fill: var(--ink); font-weight: 600;
   font-variant-numeric: tabular-nums; font-family: inherit;
 }
 .spark { display: block; }
@@ -435,7 +450,11 @@ table.sheet tr.calc .formula { color: var(--faint); font-size: 12px; margin-left
 .sheet-rows button { padding: 8px 11px; }
 
 /* ── графики ───────────────────────────────────────────────────────── */
+/* Две карточки графиков в ряду — одной высоты: разная длина подписи не
+   должна делать из них ступеньку. */
 .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; }
+.charts > div { display: flex; }
+.charts figure.chart { flex: 1; margin: 0; }
 figure.chart { margin: 0; }
 figure.chart figcaption { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
 figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
@@ -472,6 +491,10 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
   .side nav a { padding: 10px; }
   .side-foot { margin: 0 0 0 auto; display: flex; align-items: center; gap: 8px; }
   .side-foot .mark { display: none; }
+  /* В полосе всё в одну строку: подпись бренда и перенос в метке роли
+     ломали её высоту. */
+  .brand .src { display: none; }
+  .role { white-space: nowrap; }
 }
 @media (max-width: 640px) {
   .wrap { padding: 18px 16px 56px; }
@@ -484,4 +507,8 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
   table.sheet td.val { padding-bottom: 10px; }
   .ocard .face { grid-template-columns: minmax(0, 1fr) 96px; }
   .ocard .shot { width: 96px; height: 66px; }
+  .card table { table-layout: fixed; }
+  .card td, .card th { overflow-wrap: anywhere; }
+  /* На телефоне в полосе остаётся главное: разделы и кнопка нового заказа. */
+  .side-foot .role { display: none; }
 }
