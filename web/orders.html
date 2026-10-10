@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Заказы</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📋</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -160,7 +163,12 @@ function draw() {
   if (view === "cards") drawCards(rows); else drawTable(rows);
 }
 
-/** Карточка заказа: силуэт изделия, стадия, оплата полосой, цифры по делу. */
+/**
+ * Карточка заказа. Сверху стадия, под ней номер договора и отгрузка в
+ * деньгах, справа силуэт изделия, внизу — чем закончилась оплата: полоса и
+ * доля. Порядок такой же, как смотрят глазами: что за заказ → на сколько →
+ * сколько пришло.
+ */
 function drawCards(rows) {
   document.querySelector("#cards").innerHTML = rows.length
     ? rows.map((o) => {
@@ -170,25 +178,28 @@ function drawCards(rows) {
         const done = c.shipment_sum ? Math.min(1, Math.max(0, c.paid / c.shipment_sum)) : 0;
         const bar = done >= 0.999 ? "" : done > 0 ? "part" : "none";
         return `<a class="ocard" href="./order.html?id=${encodeURIComponent(o.key)}">
-          <div class="shot">
-            <img src="${url}" alt="" loading="lazy">
+          <div class="top">
             <span class="pill ${st.cls}">${st.name}</span>
+            ${o.workshops.length ? `<span class="chips">${workshopChips(o)}</span>` : ""}
           </div>
-          <div class="body">
-            <div class="no">${escapeHtml(o.contract_no || o.key)}
-              <span>${escapeHtml(o.get("order_no") || "")}</span></div>
-            <div class="what">${escapeHtml(o.get("item") || "изделие не указано")}</div>
-            <div class="bar ${bar}"><i style="width:${(done * 100).toFixed(1)}%"></i></div>
-            <div class="rows"><span class="src">Оплачено ${(done * 100).toFixed(0)}%</span>
-              <b>${money(c.paid)} из ${money(c.shipment_sum)}</b></div>
-            <div class="rows"><span class="src">Остаток</span>
-              <b${(c.remainder || 0) > 0.5 ? ' style="color:var(--bad)"' : ""}>${money(c.remainder)}</b></div>
-            <div class="meta">
-              <span>${qty(o.get("shipped_qty"))} шт · отправка ${dateRu(o.get("shipment_date"))}</span>
-              <span>${acceptedShort(o)}</span>
+          <div class="face">
+            <div>
+              <div class="no">${escapeHtml(o.contract_no || o.key)}</div>
+              <div class="sub2">${money(c.shipment_sum)} · ${qty(o.get("shipped_qty"))} шт</div>
+              <div class="what">${escapeHtml(o.get("order_no") || "")} ·
+                ${escapeHtml(o.get("item") || "изделие не указано")}</div>
             </div>
-            ${o.workshops.length ? `<div class="chips">${workshopChips(o)}</div>` : ""}
-          </div></a>`;
+            <img class="shot" src="${url}" alt="" loading="lazy">
+          </div>
+          <div class="meta">
+            <span>отправка ${dateRu(o.get("shipment_date"))}</span>
+            <span>${acceptedShort(o)}</span>
+            <span${(c.remainder || 0) > 0.5 ? ' style="color:var(--bad)"' : ""}>остаток ${money(c.remainder)}</span>
+          </div>
+          <div class="prog"><span>Оплачено</span>
+            <b>${money(c.paid)} · ${(done * 100).toFixed(0)}%</b></div>
+          <div class="bar ${bar}"><i style="width:${(done * 100).toFixed(1)}%"></i></div>
+        </a>`;
       }).join("")
     : '<div class="card src">Ничего не нашлось.</div>';
 }

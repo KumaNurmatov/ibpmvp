@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дашборд заказов</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -26,8 +29,11 @@
 
   <div class="tiles" id="tiles" style="margin-top:12px"></div>
 
-  <h2>Что делать <span class="src" id="todo-count"></span></h2>
-  <div class="todo" id="todo"></div>
+  <h2>Что делать</h2>
+  <details class="shutter" id="todo-box">
+    <summary><b>Список дел</b> <span class="src" id="todo-count"></span></summary>
+    <div class="todo" id="todo"></div>
+  </details>
 
   <h2>По месяцам</h2>
   <div class="charts">
@@ -52,8 +58,6 @@ import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } f
 
 mountShell("index.html");
 
-// Сколько дел показать сразу; остальные уезжают за шторку.
-const TODO_HEAD = 8;
 
 try {
   const { data, orders } = await loadOrders();
@@ -117,24 +121,19 @@ function tiles(items) {
 /** Список дел: по одной строке на незакрытый заказ, самое срочное сверху. */
 function drawTodo(orders) {
   const rows = tasks(orders);
-  document.querySelector("#todo-count").textContent =
-    rows.length ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` : "";
+  const urgent = rows.filter((r) => r.level === "error");
+  const sum = rows.reduce((s, r) => s + Math.max(0, r.amount || 0), 0);
 
-  if (!rows.length) {
-    document.querySelector("#todo").innerHTML =
-      '<div class="card src">Всё закрыто — ни одного заказа в работе.</div>';
-    return;
-  }
+  // Список за шторкой: заголовок говорит, сколько там и на сколько, а
+  // разворачивается он, когда до дел дошли руки.
+  document.querySelector("#todo-count").textContent = rows.length
+    ? `· ${rows.length} ${plural(rows.length, "заказ ждёт", "заказа ждут", "заказов ждут")} действия` +
+      (urgent.length ? `, срочных ${urgent.length}` : "") + ` · ${money(sum)}`
+    : "· всё закрыто";
 
-  // Срочное — на экран, хвост — за шторку: со всеми заказами список занимает
-  // несколько экранов, и важное в нём теряется.
-  const head = rows.slice(0, TODO_HEAD).map(item).join("");
-  const tail = rows.slice(TODO_HEAD);
-  document.querySelector("#todo").innerHTML = head + (tail.length
-    ? `<details class="shutter"><summary><b>Остальные ${tail.length}</b>
-         <span class="src">· ${plural(tail.length, "заказ ждёт", "заказа ждут", "заказов ждут")} своей очереди</span></summary>
-       <div class="todo">${tail.map(item).join("")}</div></details>`
-    : "");
+  document.querySelector("#todo").innerHTML = rows.length
+    ? rows.map(item).join("")
+    : '<div class="src" style="padding:10px 0">Ни одного заказа в работе.</div>';
 }
 
 
