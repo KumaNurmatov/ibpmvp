@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Разбор документов по заказам</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📄</text></svg>">
+<style>
+  :root {
+    --bg: #fbfbfa; --card: #fff; --ink: #1a1a18; --muted: #6b6b66;
+    --line: #e4e4e0; --accent: #2b5fd9; --ok: #1e7b34; --warn: #b35c00; --bad: #b00020;
+    --drop: #f0f4fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17171a; --card: #1f1f23; --ink: #ededea; --muted: #9b9b95;
+      --line: #32323a; --accent: #7fa0f0; --ok: #5fcb7f; --warn: #e5a155; --bad: #f08a9b;
+      --drop: #212736;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 12px; }
+  #drop { border: 2px dashed var(--line); border-radius: 14px; background: var(--card);
+    padding: 40px 20px; text-align: center; cursor: pointer; transition: .15s; }
+  #drop.over { border-color: var(--accent); background: var(--drop); }
+  #drop b { font-size: 17px; }
+  #drop p { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    padding: 9px 16px; border-radius: 9px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  input[type=password], input[type=text] { font: inherit; padding: 9px 12px; border-radius: 9px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+  label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+  .bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 14px; }
+  .bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .tile span { display: block; color: var(--muted); font-size: 13px; }
+  .tile b { font-size: 21px; font-variant-numeric: tabular-nums; }
+  h3 { margin: 0; font-size: 16px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .pill { font-size: 12px; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+  .pill.ok { color: var(--ok); border-color: var(--ok); }
+  .pill.warn { color: var(--warn); border-color: var(--warn); }
+  .pill.bad { color: var(--bad); border-color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+  td, th { text-align: left; padding: 5px 10px 5px 0; vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .src { color: var(--muted); font-size: 12px; }
+  .flag { margin-top: 8px; padding-left: 12px; border-left: 3px solid var(--line); font-size: 14px; }
+  .flag.error { border-color: var(--bad); }
+  .flag.warn { border-color: var(--warn); }
+  .flag.info { border-color: var(--line); color: var(--muted); }
+  .hide { display: none; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
+  @media (max-width: 600px) { .wrap { padding: 20px 16px 60px; } h1 { font-size: 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Разбор документов по заказам</h1>
+  <p class="sub">Киньте всё разом — договоры, спецификации, накладные, платёжки, выписку, фото.
+     Страница сама определит, что есть что, разнесёт по заказам и посчитает остатки.</p>
+
+  <div class="card" id="key-card">
+    <label for="key">Ключ к API Anthropic</label>
+    <input id="key" type="password" placeholder="sk-ant-…" autocomplete="off">
+    <div class="row">
+      <button id="save-key">Запомнить в этом браузере</button>
+      <span class="src" id="key-state"></span>
+    </div>
+    <p class="src" style="margin:12px 0 0">
+      Ключ хранится только в этом браузере и уходит только на api.anthropic.com.
+      Документы никуда не загружаются: разбор идёт у вас на устройстве.
+    </p>
+  </div>
+
+  <div id="drop">
+    <b>Перетащите файлы сюда</b>
+    <p>или нажмите, чтобы выбрать · PDF, сканы, фото, XLSX</p>
+    <input id="file" type="file" multiple class="hide"
+           accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.tif,.tiff,.xlsx,.csv,.txt">
+  </div>
+
+  <div class="row">
+    <button id="go" class="primary" disabled>Разобрать</button>
+    <span id="picked" class="src"></span>
+  </div>
+
+  <div id="progress" class="hide">
+    <div class="bar"><i></i></div>
+    <p class="src" id="progress-text"></p>
+  </div>
+
+  <div id="result" class="hide">
+    <div class="tiles" id="tiles"></div>
+    <div class="row">
+      <button id="export" class="primary">Скачать книгу Excel</button>
+      <button id="again">Загрузить ещё</button>
+    </div>
+    <div id="orders"></div>
+    <div id="problems"></div>
+  </div>
+
+  <footer>Расчёты выполняет страница, модель только читает документы.
+    Каждое число в книге несёт примечание с именем файла, из которого взято.</footer>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
