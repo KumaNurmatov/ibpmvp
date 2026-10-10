@@ -51,9 +51,10 @@
 </div>
 
 <script type="module">
-import { byMonth, groupedBars, lineChart } from "./lib/charts.js";
+import { byMonth, groupedBars, lineChart, shortMoney } from "./lib/charts.js";
 import { money } from "./lib/ledger.js";
 import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
+import { balanceScale, ring, sparkline } from "./lib/ui.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
 
 mountShell("index.html");
@@ -81,8 +82,11 @@ function render(orders) {
 
 /** Ступени процесса: счёт заказов и деньги, которые на ступени стоят. */
 function drawFlow(orders) {
-  document.querySelector("#flow").innerHTML = funnel(orders).map((s, i) =>
-    `<a class="step ${s.count ? s.cls : "empty"}" href="./orders.html?stage=${s.key}">
+  const rows = funnel(orders);
+  const peak = Math.max(...rows.map((r) => (r.key === "closed" ? 0 : r.count)));
+  document.querySelector("#flow").innerHTML = rows.map((s, i) =>
+    `<a class="step ${s.count ? s.cls : "empty"}${s.count && s.count === peak ? " hot" : ""}"
+        style="--tone: var(--${s.cls || "accent"})" href="./orders.html?stage=${s.key}">
        <span class="n">${i + 1}</span>
        <span class="name">${escapeHtml(s.name)}</span>
        <b>${s.count}</b>
@@ -101,21 +105,43 @@ function drawTiles(orders) {
   const rejected = checked.reduce((s, o) => s + (o.computed.rejected_sum || 0), 0);
   const waiting = orders.filter((o) => stageOf(o) === "acceptance");
 
+  // Долг по месяцам — для спарклайна: цифра говорит «сколько», линия рядом —
+  // «куда идёт», и это разные вопросы.
+  const trail = byMonth(orders).map((m) => m.debt);
+
   tiles([
-    ["Остаток к перечислению", money(debt), `${qty(Math.round(units))} шт по текущим ценам`,
-      debt > 0.5 ? "bad" : ""],
-    ["Отгружено всего", money(shipped), `оплачено ${money(paid)}`, ""],
-    ["Заказов открыто", qty(open.length), `закрыто ${orders.length - open.length} из ${orders.length}`, ""],
-    ["Приёмка отмечена", `${checked.length} из ${orders.length}`,
-      checked.length ? `непринятого на ${money(rejected)}` : `${waiting.length} заказов ждут отметки`,
-      waiting.length ? "warn" : ""],
+    { name: "Остаток к перечислению", value: `${shortMoney(debt)} ₽`,
+      hint: `${money(debt)} · ${qty(Math.round(units))} шт по текущим ценам`,
+      cls: "hero", wide: true,
+      art: sparkline(trail, { tone: "#d2ff4f", width: 210, height: 40 }) },
+    // В узких плитках знак рубля не ставим: он единственный толкает цифру
+    // на кольцо, а валюта и так названа в подписи.
+    { name: "Отгружено за всё время", value: shortMoney(shipped),
+      hint: `пришло ${money(paid)}`,
+      art: ring({ value: shipped ? paid / shipped : 0, size: 46, stroke: 6,
+                  tone: "var(--ok)", tone2: "var(--lime-deep)",
+                  title: "доля оплаченного от отгруженного" }) },
+    { name: "Заказов в работе", value: qty(open.length),
+      hint: `закрыто ${orders.length - open.length} из ${orders.length}`,
+      art: ring({ value: orders.length ? (orders.length - open.length) / orders.length : 0,
+                  size: 46, stroke: 6, tone: "var(--accent)", tone2: "#7cc0ff",
+                  title: "доля закрытых заказов" }) },
+    { name: "Приёмка отмечена", value: `${checked.length} из ${orders.length}`,
+      hint: checked.length ? `непринятого на ${money(rejected)}` : `${waiting.length} заказов ждут отметки`,
+      cls: waiting.length ? "warn" : "",
+      art: ring({ value: orders.length ? checked.length / orders.length : 0,
+                  size: 46, stroke: 6, tone: "var(--warn)", tone2: "#ffd089",
+                  title: "доля заказов с отмеченной приёмкой" }) },
   ]);
 }
 
 function tiles(items) {
-  document.querySelector("#tiles").innerHTML = items.map(([name, value, hint, cls]) =>
-    `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
-     <div class="hint">${escapeHtml(hint)}</div></div>`).join("");
+  document.querySelector("#tiles").innerHTML = items.map(({ name, value, hint, cls, art, wide }) =>
+    `<div class="tile ${cls || ""}${wide ? " wide" : ""}">
+       <div class="t-text"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
+         <div class="hint">${escapeHtml(hint)}</div></div>
+       <div class="t-art">${art || ""}</div>
+     </div>`).join("");
 }
 
 /** Список дел: по одной строке на незакрытый заказ, самое срочное сверху. */

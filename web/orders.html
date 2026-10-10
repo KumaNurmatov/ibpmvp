@@ -24,10 +24,11 @@
     <button id="csv">Выгрузить CSV</button>
   </div>
 
+  <div id="stages"></div>
+
   <div class="card">
-    <div class="grid c4">
+    <div class="grid c3">
       <div><label for="q">Поиск</label><input id="q" placeholder="договор, заказ, изделие, водитель"></div>
-      <div><label for="st">Стадия</label><select id="st"><option value="">все</option></select></div>
       <div><label for="ws">Цех</label><select id="ws"><option value="">все</option></select></div>
       <div><label for="mo">Месяц отгрузки</label><select id="mo"><option value="">все</option></select></div>
     </div>
@@ -44,7 +45,8 @@
 <script type="module">
 import { money } from "./lib/ledger.js";
 import { photoFor } from "./lib/photo.js";
-import { stage } from "./lib/stages.js";
+import { STAGES, stage, stageOf } from "./lib/stages.js";
+import { pills } from "./lib/ui.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, severity, showUpdated,
          status, workshopChips } from "./lib/shell.js";
 
@@ -86,14 +88,15 @@ const VALUE = {
 let all = [];
 let sort = { key: "date", dir: -1 };
 let view = readView();
+let stageKey = new URLSearchParams(location.search).get("stage") || "";
 
 try {
   const { data, orders } = await loadOrders();
   all = orders;
   showUpdated(document.querySelector("#updated"), data?.updated);
   fillFilters(orders);
-  preselectStage();
-  for (const id of ["q", "st", "ws", "mo", "only"]) {
+  drawStages(orders);
+  for (const id of ["q", "ws", "mo", "only"]) {
     document.querySelector(`#${id}`).addEventListener("input", draw);
   }
   document.querySelector("#csv").addEventListener("click", exportCsv);
@@ -111,30 +114,42 @@ function fillFilters(orders) {
       node.append(new Option(v, v));
     }
   };
-  add("#st", orders.map((o) => status(o).name));
   add("#ws", orders.flatMap((o) => o.workshops));
   add("#mo", orders.map((o) => (o.get("shipment_date") || "").slice(0, 7)));
 }
 
-/** Со ступени воронки на дашборде приходят с ?stage=…: открываем уже отобранным. */
-function preselectStage() {
-  const key = new URLSearchParams(location.search).get("stage");
-  if (!key) return;
-  const name = stage(key).name;
-  const select = document.querySelector("#st");
-  if (![...select.options].some((o) => o.value === name)) select.append(new Option(name, name));
-  select.value = name;
+/**
+ * Стадии — ряд пилюль со счётчиками. В выпадающем списке не было видно ни
+ * самих стадий, ни того, сколько в какой; со ступени воронки на дашборде
+ * приходят с ?stage=… и сразу попадают на нужную пилюлю.
+ */
+function drawStages(orders) {
+  const counts = new Map(STAGES.map((s) => [s.key, 0]));
+  for (const o of orders) counts.set(stageOf(o), (counts.get(stageOf(o)) || 0) + 1);
+
+  const items = [{ key: "", name: "Все", count: orders.length },
+                 ...STAGES.map((s) => ({ key: s.key, name: s.name, count: counts.get(s.key), cls: s.cls }))];
+  document.querySelector("#stages").innerHTML = pills(items, { current: stageKey });
+
+  for (const button of document.querySelectorAll("[data-pill]")) {
+    button.onclick = () => {
+      stageKey = button.dataset.pill;
+      for (const b of document.querySelectorAll("[data-pill]")) {
+        b.setAttribute("aria-pressed", String(b.dataset.pill === stageKey));
+      }
+      draw();
+    };
+  }
 }
 
 function filtered() {
   const q = document.querySelector("#q").value.trim().toLowerCase();
-  const st = document.querySelector("#st").value;
   const ws = document.querySelector("#ws").value;
   const mo = document.querySelector("#mo").value;
   const only = document.querySelector("#only").checked;
 
   return all.filter((o) => {
-    if (st && status(o).name !== st) return false;
+    if (stageKey && stageOf(o) !== stageKey) return false;
     if (ws && !o.workshops.includes(ws)) return false;
     if (mo && !(o.get("shipment_date") || "").startsWith(mo)) return false;
     if (only && !severity(o)) return false;
