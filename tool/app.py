@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import shutil
+import tempfile
 import threading
 import uuid
 from datetime import datetime, timezone
@@ -26,7 +27,31 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("ibp")
 
 ROOT = Path(__file__).parent
-DATA = Path(os.environ.get("IBP_DATA") or ROOT / "data")
+
+
+def _writable_data_dir() -> Path:
+    """Куда складывать пакеты и кэш.
+
+    На бесплатных хостингах каталог из IBP_DATA может оказаться недоступен на
+    запись — Spaces запускают контейнер не от root. Падать из-за этого нельзя:
+    лучше работать из временной папки и сказать об этом в логе.
+    """
+    preferred = Path(os.environ.get("IBP_DATA") or ROOT / "data")
+    try:
+        preferred.mkdir(parents=True, exist_ok=True)
+        probe = preferred / ".probe"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+        return preferred
+    except OSError as exc:
+        fallback = Path(tempfile.gettempdir()) / "ibp-data"
+        fallback.mkdir(parents=True, exist_ok=True)
+        log.warning("%s недоступен на запись (%s) — работаю из %s; "
+                    "пакеты и кэш не переживут перезапуск", preferred, exc, fallback)
+        return fallback
+
+
+DATA = _writable_data_dir()
 CACHE = DATA / "_cache"
 MAX_FILE_BYTES = 64 * 1024 * 1024
 MAX_FILES = 200

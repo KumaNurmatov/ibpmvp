@@ -56,22 +56,22 @@
 `https://<логин>-ibp.hf.space`, TLS и менеджер секретов
 ([Spaces overview](https://huggingface.co/docs/hub/en/spaces-overview)).
 
-1. huggingface.co → New Space → SDK **Docker**, Blank, видимость Private.
-2. В корень Space положите файл `README.md`:
+1. huggingface.co → New Space → SDK **Docker**, шаблон Blank, видимость
+   Private. Имя, например, `ibp`.
+2. Выложить код одной командой:
 
-   ```yaml
-   ---
-   title: Разбор документов по заказам
-   sdk: docker
-   app_port: 7860
-   ---
+   ```bash
+   tool/deploy/space/push.sh <ваш-логин> ibp
    ```
 
-3. Залейте туда же `Dockerfile` и папку `tool/` из этого репозитория
-   (проще всего `git remote add space https://huggingface.co/spaces/<логин>/ibp`
-   и `git push space`).
-4. Settings → Variables and secrets → **Secrets**:
-   `ANTHROPIC_API_KEY` и `IBP_ACCESS_TOKEN` (пароль на вход).
+   Скрипт собирает во временной папке ровно то, что нужно образу (README с
+   frontmatter, Dockerfile, `tool/` без тестов и данных) и пушит в Space.
+   При запросе пароля вводите **access token** с правом write со страницы
+   huggingface.co/settings/tokens, а не пароль от аккаунта.
+3. Settings → Variables and secrets → **Secrets**: `ANTHROPIC_API_KEY` и
+   `IBP_ACCESS_TOKEN` (пароль на вход). После сохранения Space пересоберётся.
+4. Адрес появится вида `https://<логин>-ibp.hf.space`. Проверить, что живо:
+   `curl https://<логин>-ibp.hf.space/healthz` → `{"ok":true,"auth":true}`.
 
 Важно про диск: на бесплатном тарифе `/data` **не переживает перезапуск**.
 Пакеты и кэш распознавания исчезнут, когда Space заснёт. Для разбора это
@@ -103,3 +103,17 @@ DNS: одна запись `A` с именем `zakazy` на IP сервера. 
 - **Ключ только в секретах хостинга**, не в коде и не в репозитории.
 - Проверить, что живо: `GET /healthz` отвечает `{"ok": true, "auth": true}`.
   `auth: false` означает, что пароль не задан.
+
+---
+
+## Что проверено, а что нет
+
+Проверено здесь: приложение поднимается и отдаёт страницу (`uvicorn`,
+`/healthz` → `{"ok":true,"auth":false}` без пароля и `true` с ним), сборка
+выкладки для Space даёт 160 КБ правильных файлов, при недоступном `IBP_DATA`
+приложение не падает, а уходит во временную папку с предупреждением в логе.
+
+Не проверено: **сборка образа Docker** — в среде, где писался код, не было
+запущенного демона. Если `docker build` споткнётся, почти наверняка дело в
+имени пакета poppler или в версии базового образа; ошибка будет видна сразу
+на первом шаге сборки.
