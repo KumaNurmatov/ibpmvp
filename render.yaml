@@ -1,0 +1,26 @@
+# Выкладка на Render одним файлом: Dashboard → New → Blueprint → этот репозиторий.
+# Render прочитает render.yaml и создаст сервис сам.
+#
+# Файл лежит в корне, потому что Blueprint ищется только там.
+services:
+  - type: web
+    name: ibp-zakazy
+    runtime: docker
+    plan: free
+    dockerfilePath: ./tool/Dockerfile
+    # Контекст — корень репозитория: Dockerfile копирует tool/ целиком.
+    dockerContext: .
+    # Пока сервис спит, Render будит его этой ручкой; она же показывает,
+    # включена ли защита паролем.
+    healthCheckPath: /healthz
+    envVars:
+      # sync: false — Render спросит значение при создании и не положит его
+      # в репозиторий. Оба обязательны.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: IBP_ACCESS_TOKEN
+        sync: false
+      # На бесплатном плане постоянного диска нет: пишем во временную папку,
+      # приложение это переживает и предупреждает в логе.
+      - key: IBP_DATA
+        value: /tmp/ibp-data
