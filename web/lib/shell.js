@@ -20,6 +20,14 @@ export function mountHeader(current) {
       `<a href="./${href}"${href === current ? ' aria-current="page"' : ""}>${name}</a>`).join("")}</nav>
   </div>`;
   document.body.prepend(header);
+
+  // Отметку версии подставляет выкладка. Нужна, чтобы отличить свежую
+  // страницу от той, что браузер взял из кэша: на вид они неразличимы.
+  const mark = document.createElement("p");
+  mark.className = "src";
+  mark.style.cssText = "max-width:1180px;margin:0 auto;padding:0 16px 24px";
+  mark.textContent = "версия: из исходников";
+  document.body.append(mark);
 }
 
 /** Данные + посчитанные заказы. Одна точка входа для всех страниц. */
