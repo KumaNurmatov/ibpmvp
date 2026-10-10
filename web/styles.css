@@ -13,61 +13,67 @@
 
 :root {
   color-scheme: light;
-  --bg: #f4f5f3;
+  --bg: #f2f4f1;
   --card: #fff;
-  --ink: #15171a;
-  --muted: #5a6066;
-  --faint: #8d9298;
-  --line: #e6e8e5;
-  --accent: #2a78d6;
-  --lime: #cdfd50;
-  --lime-deep: #b5e52f;
-  --ok: #17a34a;
-  --warn: #b35c00;
-  --bad: #d93a3a;
+  --ink: #0f1113;
+  --muted: #4c5257;
+  --faint: #7b8187;
+  --line: #e3e6e2;
+  --accent: #1f6fd0;
+  --lime: #d2ff4f;
+  --lime-deep: #b9e92d;
+  --ok: #0a9d4a;
+  --warn: #c2680a;
+  --bad: #dc2626;
   --drop: #eef1ec;
-  --ink-side: #16181a;        /* меню тёмное в обеих темах */
-  --side-text: #d8dcd4;
-  --side-muted: #8e948c;
-  --tint-1: #eaf5ec;
-  --tint-2: #f3f8da;
-  --tint-3: #eeecfa;
-  --tint-4: #fdeee6;
+  --ink-side: #14171a;        /* меню тёмное в обеих темах */
+  --side-text: #e7eae3;
+  --side-muted: #959b92;
+  /* Подложки плиток: чистые светлые оттенки одного тона, без примеси серого —
+     именно смесь с серым и давала «грязь» в парах цветов. */
+  --tint-1: #e4f6ea;
+  --tint-2: #f1fbd3;
+  --tint-3: #ebe9fe;
+  --tint-4: #ffeadf;
   --series-1: #2a78d6;
   --series-2: #eb6834;
-  --grid: #e6e8e5;
-  --axis: #c6c9c3;
-  --shadow: 0 1px 2px rgba(16, 18, 20, .04), 0 8px 24px rgba(16, 18, 20, .04);
+  --grid: #e3e6e2;
+  --axis: #c3c7c2;
+  --shadow: 0 1px 2px rgba(16, 18, 20, .04), 0 8px 24px rgba(16, 18, 20, .05);
   --r-lg: 16px;
   --r-md: 12px;
   --r-sm: 10px;
+  --shot: #f2f3f1;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0e0f10;
-    --card: #17191b;
-    --ink: #eef0ec;
-    --muted: #b3b8b2;
-    --faint: #878c86;
-    --line: #262a2c;
-    --accent: #5aa0f0;
-    --ok: #35c46a;
-    --warn: #e5a155;
-    --bad: #e86b6b;
-    --drop: #1f2326;
-    --ink-side: #121314;
-    --side-text: #d8dcd4;
-    --side-muted: #83887f;
-    --tint-1: #1b2a20;
-    --tint-2: #262c17;
-    --tint-3: #221f2e;
-    --tint-4: #2c201a;
+    --bg: #0b0c0d;
+    --card: #16191b;
+    --ink: #f3f5f1;
+    --muted: #c3c8c2;
+    --faint: #8f958e;
+    --line: #2a2f31;
+    --accent: #6fb2ff;
+    /* Статусы в тёмной теме берутся яркими и чистыми: приглушённые уходили
+       в коричневый, стоило их положить на тёмную подложку. */
+    --ok: #3ddc84;
+    --warn: #ffb340;
+    --bad: #ff6b6b;
+    --drop: #1e2325;
+    --ink-side: #101213;
+    --side-text: #e7eae3;
+    --side-muted: #8b918a;
+    --tint-1: #162a1f;
+    --tint-2: #222c13;
+    --tint-3: #1e1c2e;
+    --tint-4: #2a1d16;
     --series-1: #3987e5;
     --series-2: #d95926;
-    --grid: #262a2c;
-    --axis: #3a3f41;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    --grid: #2a2f31;
+    --axis: #434849;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .5);
+    --shot: #e8eae6;
   }
 }
 
@@ -165,9 +171,15 @@ th.sortable:hover { color: var(--ink); }
   font-size: 12px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line);
   color: var(--muted); white-space: nowrap; background: var(--card);
 }
-.pill.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); background: var(--tint-1); }
-.pill.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); background: var(--tint-4); }
-.pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); background: var(--tint-4); }
+/* Подложка статуса замешивается с цветом самой карточки, а не берётся общей
+   плашкой: иначе красный чип на коричневатой подложке читался как грязь. */
+.pill.ok, .pill.warn, .pill.bad {
+  color: var(--tone); border-color: color-mix(in srgb, var(--tone) 38%, var(--card));
+  background: color-mix(in srgb, var(--tone) 13%, var(--card));
+}
+.pill.ok { --tone: var(--ok); }
+.pill.warn { --tone: var(--warn); }
+.pill.bad { --tone: var(--bad); }
 .src { color: var(--faint); font-size: 12px; }
 .flag {
   margin-top: 8px; padding: 8px 12px; font-size: 14px; border-radius: var(--r-sm);
@@ -259,7 +271,12 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .ocard .no { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
 .ocard .sub2 { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .ocard .what { font-size: 13px; color: var(--faint); margin-top: 2px; }
-.ocard .shot { width: 124px; height: 78px; border-radius: var(--r-md); object-fit: cover; display: block; }
+.ocard .shot {
+  width: 124px; height: 82px; border-radius: var(--r-md); object-fit: contain; display: block;
+  /* Фон плитки совпадает с фоном самой иконки — шва не видно, и в тёмной
+     теме это читается как миниатюра товара, а не как дыра в карточке. */
+  background: var(--shot); padding: 2px;
+}
 .ocard .meta {
   display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--muted);
   border-top: 1px solid var(--line); padding-top: 10px;
@@ -376,5 +393,5 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
   table.sheet th.key { padding-bottom: 2px; }
   table.sheet td.val { padding-bottom: 10px; }
   .ocard .face { grid-template-columns: minmax(0, 1fr) 96px; }
-  .ocard .shot { width: 96px; height: 64px; }
+  .ocard .shot { width: 96px; height: 66px; }
 }
