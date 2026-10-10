@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Разбор документов по заказам</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --card: #fff; --ink: #1a1a18; --muted: #6b6b66;
+    --line: #e4e4e0; --accent: #2b5fd9; --ok: #1e7b34; --warn: #b35c00; --bad: #b00020;
+    --drop: #f0f4fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17171a; --card: #1f1f23; --ink: #ededea; --muted: #9b9b95;
+      --line: #32323a; --accent: #7fa0f0; --ok: #5fcb7f; --warn: #e5a155; --bad: #f08a9b;
+      --drop: #212736;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  #drop { border: 2px dashed var(--line); border-radius: 14px; background: var(--card);
+    padding: 40px 20px; text-align: center; cursor: pointer; transition: .15s; }
+  #drop.over { border-color: var(--accent); background: var(--drop); }
+  #drop b { font-size: 17px; }
+  #drop p { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    padding: 9px 16px; border-radius: 9px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+  .bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 14px; }
+  .bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .tile span { display: block; color: var(--muted); font-size: 13px; }
+  .tile b { font-size: 21px; font-variant-numeric: tabular-nums; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 12px; }
+  .card h3 { margin: 0; font-size: 16px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .pill { font-size: 12px; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+  .pill.ok { color: var(--ok); border-color: var(--ok); }
+  .pill.warn { color: var(--warn); border-color: var(--warn); }
+  .pill.bad { color: var(--bad); border-color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+  td, th { text-align: left; padding: 5px 10px 5px 0; vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .src { color: var(--muted); font-size: 12px; }
+  .flag { margin-top: 8px; padding-left: 12px; border-left: 3px solid var(--line); font-size: 14px; }
+  .flag.error { border-color: var(--bad); }
+  .flag.warn { border-color: var(--warn); }
+  .flag.info { border-color: var(--line); color: var(--muted); }
+  .hide { display: none; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
+  @media (max-width: 600px) { .wrap { padding: 20px 16px 60px; } h1 { font-size: 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Разбор документов по заказам</h1>
+  <p class="sub">Киньте всё разом — договоры, спецификации, накладные, платёжки, выписку, фото.
+     Инструмент сам определит, что есть что, разнесёт по заказам и посчитает остатки.</p>
+
+  <div id="drop">
+    <b>Перетащите файлы сюда</b>
+    <p>или нажмите, чтобы выбрать · PDF, сканы, фото, DOCX, XLSX</p>
+    <input id="file" type="file" multiple class="hide"
+           accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.tif,.tiff,.docx,.xlsx,.xlsm,.csv,.txt">
+  </div>
+
+  <div class="row">
+    <button id="go" class="primary" disabled>Разобрать</button>
+    <span id="picked" class="src"></span>
+  </div>
+
+  <div id="progress" class="hide">
+    <div class="bar"><i></i></div>
+    <p class="src" id="progress-text"></p>
+  </div>
+
+  <div id="result" class="hide">
+    <div class="tiles" id="tiles"></div>
+    <div class="row">
+      <button id="export" class="primary">Скачать книгу Excel</button>
+      <button id="again">Загрузить ещё</button>
+    </div>
+    <div id="orders"></div>
+    <div id="problems"></div>
+  </div>
+
+  <footer>Расчёты выполняются программой, модель только читает документы.
+    Каждое число в книге несёт примечание с именем файла, из которого взято.</footer>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const drop = $("#drop"), input = $("#file");
+let files = [], batch = null, timer = null;
+
+drop.onclick = () => input.click();
+drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = (e) => {
+  e.preventDefault(); drop.classList.remove("over");
+  pick([...e.dataTransfer.files]);
+};
+input.onchange = () => pick([...input.files]);
+
+function pick(list) {
+  files = list;
+  $("#picked").textContent = files.length ? `выбрано файлов: ${files.length}` : "";
+  $("#go").disabled = !files.length;
+}
+
+$("#go").onclick = async () => {
+  const form = new FormData();
+  files.forEach((f) => form.append("files", f, f.name));
+  $("#go").disabled = true;
+  $("#progress").classList.remove("hide");
+  setProgress(0, files.length, "загрузка…");
+  const res = await fetch("/api/batches", { method: "POST", body: form });
+  if (!res.ok) { setProgress(0, 1, "ошибка: " + (await res.text())); return; }
+  batch = (await res.json()).batch_id;
+  timer = setInterval(poll, 1200);
+};
+
+async function poll() {
+  const state = await (await fetch(`/api/batches/${batch}`)).json();
+  if (state.status === "running") {
+    setProgress(state.done || 0, state.total || 1, state.current || "разбор…");
+    return;
+  }
+  clearInterval(timer);
+  $("#progress").classList.add("hide");
+  if (state.status === "error") { alert("Разбор упал: " + state.error); return; }
+  render(state);
+}
+
+function setProgress(done, total, text) {
+  $(".bar i").style.width = Math.round((done / Math.max(total, 1)) * 100) + "%";
+  $("#progress-text").textContent = `${text} (${done} из ${total})`;
+}
+
+const money = (v) => v == null ? "—"
+  : v.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ₽";
+const num = (v) => v == null ? "—" : v.toLocaleString("ru-RU");
+
+function render(state) {
+  $("#result").classList.remove("hide");
+  const t = state.totals;
+  $("#tiles").innerHTML = [
+    ["Заказов", t.orders], ["Остаток к перечислению", money(t.remainder)],
+    ["Ошибок", t.errors], ["Предупреждений", t.warnings],
+  ].map(([k, v]) => `<div class="tile"><span>${k}</span><b>${v}</b></div>`).join("");
+
+  $("#orders").innerHTML = state.orders.map(card).join("");
+
+  const bad = [...state.failed.map((f) => `${f.file}: ${f.error}`),
+               ...state.orphans.map((o) => `${o.file}: ${o.reason}`)];
+  $("#problems").innerHTML = bad.length
+    ? `<div class="card"><h3>Не разобрано</h3>${bad.map((b) =>
+        `<div class="flag error">${esc(b)}</div>`).join("")}</div>` : "";
+}
+
+function card(o) {
+  const f = (n) => o.fields[n]?.value ?? null;
+  const src = (n) => o.fields[n] ? `<div class="src">${esc(o.fields[n].source)}</div>` : "";
+  const cls = { "Закрыт": "ok", "К сверке": "warn", "Нет постоплаты": "bad" }[o.status] || "";
+  const c = o.computed;
+  return `<div class="card">
+    <h3>${esc(f("order_no") || o.key)}
+      <span class="pill">договор ${esc(o.contract_no || "—")}</span>
+      <span class="pill ${cls}">${esc(o.status)}</span></h3>
+    <table>
+      <tr><th>Изделие</th><td colspan="3">${esc(f("item") || "—")}</td></tr>
+      <tr><th>Заказано</th><td class="num">${num(f("ordered_qty"))} шт ${src("ordered_qty")}</td>
+          <th>Цена</th><td class="num">${money(f("unit_price"))} ${src("unit_price")}</td></tr>
+      <tr><th>Отгружено</th><td class="num">${num(f("shipped_qty"))} шт ${src("shipped_qty")}</td>
+          <th>Сумма отгрузки</th><td class="num">${money(c.shipment_sum)}</td></tr>
+      <tr><th>Оплачено</th><td class="num">${money(c.paid)}</td>
+          <th>Остаток</th><td class="num"><b>${money(c.remainder)}</b>${
+            c.remainder_units != null ? ` <span class="src">≈ ${num(c.remainder_units)} шт</span>` : ""}</td></tr>
+      ${f("driver") ? `<tr><th>Водитель</th><td colspan="3">${esc(f("driver"))}
+          ${f("vehicle_plate") ? esc(" · " + f("vehicle_plate")) : ""} ${src("driver")}</td></tr>` : ""}
+    </table>
+    ${o.payments.length ? `<table><tr><th>Платёж</th><th>Дата</th><th class="num">Сумма</th><th>Источник</th></tr>
+      ${o.payments.map((p) => `<tr><td>${esc(p.kind)}</td><td>${esc(p.date || "—")}</td>
+        <td class="num">${money(p.amount)}</td><td class="src">${esc(p.source)}</td></tr>`).join("")}</table>` : ""}
+    ${o.flags.map((fl) => `<div class="flag ${fl.level}">${esc(fl.message)}</div>`).join("")}
+    <div class="src" style="margin-top:10px">Документы: ${
+      o.documents.map((d) => esc(`${d.file} (${d.doc_type})`)).join(", ") || "—"}</div>
+  </div>`;
+}
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (ch) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+$("#export").onclick = () => { location.href = `/api/batches/${batch}/export.xlsx`; };
+$("#again").onclick = () => location.reload();
+</script>
+</body>
+</html>
