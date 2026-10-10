@@ -4,24 +4,16 @@
   "contractor": "Айзада (Az)",
   "workshops": [
     {
-      "name": "Венера",
-      "color": "#5e30eb"
+      "name": "Цех 1",
+      "color": "#2a78d6"
     },
     {
-      "name": "Майрам",
+      "name": "Цех 2",
       "color": "#eb6834"
     },
     {
-      "name": "Сулайман",
+      "name": "Надомники",
       "color": "#0ca30c"
-    },
-    {
-      "name": "Нурлан",
-      "color": "#0061ff"
-    },
-    {
-      "name": "Дача-суу",
-      "color": "#fffc41"
     }
   ],
   "orders": [
@@ -46,7 +38,7 @@
         "driver_phone": "+996 702 198 366"
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 812,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -2435,9 +2427,7 @@
       "tnved": "",
       "ordered_qty": 1080,
       "unit_price": 1171.17,
-      "workshops": [
-        "Сулайман"
-      ],
+      "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
