@@ -201,3 +201,53 @@ describe("нечитаемый платёж", () => {
     assert.equal(orders[0].payments.length, 0);
   });
 });
+
+describe("вид платежа не назван в документе", () => {
+  // Платёжное поручение по заказу 666: назначение есть, слова «предоплата» нет.
+  const unnamed = {
+    ...fx.PAYMENT,
+    payments: [{ ...fx.PAYMENT.payments[0], kind: "неизвестно" }],
+  };
+
+  it("определяется по дате, когда известна отгрузка", () => {
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, unnamed]);
+    const pay = orders[0].payments[0];
+    assert.equal(pay.kind, "предоплата");
+    assert.match(pay.inferred_from, /по дате/);
+    assert.ok(codes(orders[0]).has("kind_inferred"));
+  });
+
+  it("определяется по доле, когда отгрузки ещё нет", () => {
+    // Ровно тот случай, что вышел у пользователя: спецификация и платёжка.
+    const { orders } = build([fx.SPECIFICATION, unnamed]);
+    const pay = orders[0].payments[0];
+    assert.equal(pay.kind, "предоплата");          // 150 000 = 50% от 300 000
+    assert.match(pay.inferred_from, /по доле/);
+  });
+
+  it("после отгрузки это постоплата", () => {
+    const late = { ...unnamed, payments: [{ ...unnamed.payments[0], date: "2026-07-01", amount: 174800 }] };
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, late]);
+    assert.equal(orders[0].payments[0].kind, "постоплата");
+  });
+
+  it("непохожий платёж остаётся неизвестным, а не угадывается", () => {
+    const odd = { ...unnamed, payments: [{ ...unnamed.payments[0], date: "", amount: 7777 }] };
+    const { orders } = build([fx.SPECIFICATION, odd]);
+    assert.equal(orders[0].payments[0].kind, "неизвестно");
+    assert.ok(!codes(orders[0]).has("kind_inferred"));
+  });
+
+  it("названный вид не переписывается", () => {
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, fx.PAYMENT]);
+    assert.equal(orders[0].payments[0].kind, "предоплата");
+    assert.equal(orders[0].payments[0].inferred_from, null);
+    assert.ok(!codes(orders[0]).has("kind_inferred"));
+  });
+
+  it("определённый аванс включает проверку срока", () => {
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, unnamed]);
+    assert.equal(orders[0].computed.overdue_days, 43);
+    assert.ok(!codes(orders[0]).has("no_prepay_doc"));
+  });
+});
