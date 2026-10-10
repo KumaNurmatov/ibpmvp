@@ -163,7 +163,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": 706,
+        "accepted_qty": null,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -2623,6 +2623,41 @@
           "url": "https://drive.google.com/file/d/1hnTnxCFdib_NhFxxoSz2E_ao0mbHUty1/view?usp=drive_link"
         }
       ],
+      "note": ""
+    },
+    {
+      "id": "999",
+      "order_no": "аи9032920",
+      "contract_no": "999",
+      "order_date": "",
+      "item": "",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": null,
+      "unit_price": null,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
       "note": ""
     }
   ]
