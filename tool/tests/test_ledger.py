@@ -132,3 +132,39 @@ def test_нормализация_номера_договора():
     assert ledger.normalize_contract("дог.666/1-1 от 13.04.2026") == "666"
     assert ledger.normalize_contract("№ 942") == "942"
     assert ledger.normalize_contract(None) is None
+
+
+def test_копейки_через_дефис_как_в_платёжке():
+    # 150000-00 в платёжном поручении раньше давало None, и предоплата
+    # на 150 тысяч молча пропадала из расчёта.
+    assert ledger._num("150000-00") == 150000.0
+    assert ledger._num("1234-56") == 1234.56
+
+
+def test_числа_с_пробелами_и_валютой():
+    assert ledger._num("324 800,00 ₽") == 324800.0
+    assert ledger._num("1 234,56") == 1234.56
+    assert ledger._num("1.234,56") == 1234.56
+    assert ledger._num("1,234.56") == 1234.56
+    assert ledger._num("-137840,88") == -137840.88
+
+
+def test_не_число_остаётся_ничем():
+    for s in ("", "нет оплаты", "abc", "-", ","):
+        assert ledger._num(s) is None
+
+
+def test_нечитаемый_платёж_не_исчезает_молча():
+    broken = dict(fx.PAYMENT)
+    broken["payments"] = [{**fx.PAYMENT["payments"][0], "amount": "сто пятьдесят тысяч"}]
+    orders, _ = ledger.build([fx.SPECIFICATION, fx.SHIPMENT, broken])
+    order = orders[0]
+    assert "payment_unparsed" in codes(order)
+    assert order.computed["paid"] == 0
+    assert not order.payments
+
+
+def test_привязка_по_совпадению_переживает_пересчёт():
+    # Замечание поднимается при сборке, а compute() раньше стирал все флаги.
+    order = build_666()
+    assert "linked_by_match" in codes(order)

@@ -7,7 +7,7 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
 
-import { build, money, normalizeContract, round } from "../lib/ledger.js";
+import { build, money, normalizeContract, num, round } from "../lib/ledger.js";
 import * as fx from "./fixtures.js";
 
 function build666(extra = []) {
@@ -152,5 +152,52 @@ describe("мелочи", () => {
   it("округление не оставляет двоичного хвоста", () => {
     assert.equal(round(324800 - 150000 - 0), 174800);
     assert.equal(round(0.1 + 0.2), 0.3);
+  });
+});
+
+describe("числа из бумаги", () => {
+  it("копейки через дефис, как в платёжке", () => {
+    // 150000-00 в платёжном поручении раньше давало null, и предоплата
+    // на 150 тысяч молча пропадала из расчёта.
+    assert.equal(num("150000-00"), 150000);
+    assert.equal(num("1234-56"), 1234.56);
+  });
+
+  it("пробелы, запятые и знак валюты", () => {
+    assert.equal(num("324 800,00 ₽"), 324800);
+    assert.equal(num("1 234,56"), 1234.56);
+  });
+
+  it("оба разделителя: десятичный тот, что правее", () => {
+    assert.equal(num("1.234,56"), 1234.56);
+    assert.equal(num("1,234.56"), 1234.56);
+  });
+
+  it("минус сохраняется", () => {
+    assert.equal(num("-137840,88"), -137840.88);
+  });
+
+  it("не число остаётся ничем", () => {
+    for (const s of ["", "нет оплаты", "abc", "-", ","]) assert.equal(num(s), null);
+  });
+});
+
+describe("нечитаемый платёж", () => {
+  const broken = {
+    ...fx.PAYMENT,
+    payments: [{ ...fx.PAYMENT.payments[0], amount: "сто пятьдесят тысяч" }],
+  };
+
+  it("не исчезает молча, а поднимает ошибку", () => {
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, broken]);
+    const order = orders[0];
+    assert.ok(codes(order).has("payment_unparsed"));
+    assert.match(messageOf(order, "payment_unparsed"), /сто пятьдесят тысяч/);
+  });
+
+  it("остаток считается без него и это видно", () => {
+    const { orders } = build([fx.SPECIFICATION, fx.SHIPMENT, broken]);
+    assert.equal(orders[0].computed.paid, 0);
+    assert.equal(orders[0].payments.length, 0);
   });
 });

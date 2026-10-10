@@ -17,6 +17,13 @@ PAYMENT_SLOTS = 5
 TRANSFER_LABEL = "Перенос подтверждён"
 CLOSED_EPS = 0.5          # меньше рубля остатка — заказ считаем закрытым
 
+# Форматы пишем канонически: xlsx хранит их в американской записи, а
+# разделители подставляет Excel по локали. Русское «# ##0,00» он читает
+# буквально и группирует разряды по две цифры — 300000 превращается в
+# «3 00 000».
+MONEY_FORMAT = "#,##0.00"
+NUMBER_FORMAT = "#,##0.##"
+
 SHEETS = [
     ("недоплата", "К сверке"),
     ("нет постоплат", "Нет постоплаты"),
@@ -65,10 +72,10 @@ def _formats(wb) -> dict:
         "title": wb.add_format({"bold": True, "font_size": 12}),
         "head": wb.add_format({"bold": True, "bg_color": "#D9D9D9", "border": 1}),
         "label": wb.add_format({"bold": True}),
-        "money": wb.add_format({"num_format": "# ##0,00"}),
-        "money_bold": wb.add_format({"num_format": "# ##0,00", "bold": True}),
+        "money": wb.add_format({"num_format": MONEY_FORMAT}),
+        "money_bold": wb.add_format({"num_format": MONEY_FORMAT, "bold": True}),
         "date": wb.add_format({"num_format": "dd.mm.yyyy"}),
-        "num": wb.add_format({"num_format": "# ##0.##"}),
+        "num": wb.add_format({"num_format": NUMBER_FORMAT}),
         "hint": wb.add_format({"font_color": "#808080", "italic": True}),
         "status_ok": wb.add_format({"bold": True, "font_color": "#1E7B34"}),
         "status_warn": wb.add_format({"bold": True, "font_color": "#B35C00"}),

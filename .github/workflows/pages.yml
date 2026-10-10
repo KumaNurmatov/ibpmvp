@@ -41,6 +41,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Проставить версию на страницу
+        # Браузер держит модули в кэше, и свежая страница от старой внешне
+        # неотличима. Отметка в подвале позволяет это сразу увидеть.
+        run: |
+          set -euo pipefail
+          stamp="$(git rev-parse --short HEAD) от $(date -u +%d.%m.%Y' '%H:%M) UTC"
+          sed -i "s|версия: из исходников|версия: ${stamp}|" web/index.html
+          grep -o 'версия: [^<]*' web/index.html
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

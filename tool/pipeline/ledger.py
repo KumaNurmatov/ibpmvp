@@ -36,6 +36,7 @@ DEFAULT_TRUST = ["specification", "contract", "waybill", "invoice", "cmr", "orde
 MONEY_EPS = 0.05        # меньше копейки расхождения — округление, а не ошибка
 PREPAY_EPS = 1.0        # аванс сходится с точностью до рубля
 NON_PAYMENT_KINDS = {"перенос"}   # переносы не являются оплатой, считаются отдельно
+KEEP_ON_RECOMPUTE = {"linked_by_match", "payment_unparsed"}
 
 
 @dataclass
@@ -254,6 +255,12 @@ def _absorb(order: Order, ex: dict, only_contract: str | None) -> None:
                 continue
         amount = _num(pay.get("amount"))
         if amount is None:
+            # Нечитаемую сумму нельзя просто пропустить: остаток молча сойдётся
+            # не с тем, и никто не заметит.
+            order.flags.append(Flag(
+                "error", "payment_unparsed",
+                f"Сумма платежа не разобрана: {pay.get('amount')!r} "
+                f"({pay.get('kind') or 'вид не указан'}, {src}). Остаток посчитан без неё."))
             continue
         candidate = Payment(
             kind=(pay.get("kind") or "неизвестно").lower(),
@@ -305,7 +312,9 @@ def _duplicate(existing: list[Payment], new: Payment) -> bool:
 
 def compute(order: Order) -> Order:
     """Все производные величины и проверки. Чистая функция по отношению к входу."""
-    order.flags = []
+    # Замечания, поднятые при сборке, пересчёт не отменяет: они про сами
+    # документы, а не про арифметику.
+    order.flags = [f for f in order.flags if f.code in KEEP_ON_RECOMPUTE]
     c: dict[str, float | int | None] = {}
 
     qty = _num(order.get("ordered_qty"))
@@ -473,11 +482,38 @@ def _orphan(ex: dict, reason: str) -> dict:
 
 
 def _num(v) -> float | None:
+    """Число из того, как оно напечатано в бумаге.
+
+    Модели велено переписывать суммы дословно, поэтому сюда приходит и
+    «324 800,00 ₽», и «150000-00» — копейки через дефис, как в платёжном
+    поручении. На такой записи разбор возвращал None, и платёж молча
+    исчезал: в карточке стояло «Оплачено 0» при живой предоплате.
+    """
     if v is None or isinstance(v, bool):
         return None
     if isinstance(v, (int, float)):
         return float(v)
-    s = re.sub(r"[^\d,.\-]", "", str(v)).replace(",", ".")
+
+    s = re.sub(r"[^\d,.\-]", "", re.sub(r"[\s\u00a0]", "", str(v)))
+    if not s:
+        return None
+
+    kopecks = re.fullmatch(r"(-?\d+)-(\d{2})", s)
+    if kopecks:                                   # 150000-00
+        s = f"{kopecks.group(1)}.{kopecks.group(2)}"
+    else:
+        last_comma, last_dot = s.rfind(","), s.rfind(".")
+        if last_comma >= 0 and last_dot >= 0:
+            # Есть оба разделителя: десятичный — тот, что правее.
+            decimal, thousands = (",", ".") if last_comma > last_dot else (".", ",")
+            s = s.replace(thousands, "").replace(decimal, ".")
+        elif s.count(",") > 1:
+            s = s.replace(",", "")                # несколько запятых — разряды
+        else:
+            s = s.replace(",", ".")               # одна запятая — десятичная
+
+    if not re.fullmatch(r"-?\d+(\.\d+)?", s):
+        return None
     try:
         return float(s)
     except ValueError:
