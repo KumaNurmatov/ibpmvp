@@ -20,7 +20,7 @@ function blank(over = {}) {
     },
     payments: [], orders: [],
     terms: { prepay_percent: null, lead_time_days: null,
-             penalty_percent_per_day: null, postpay_days: null },
+             postpay_days: null },
     unreadable: false, notes: null,
     _source_file: "?", _source_kind: "pdf_text",
   };
@@ -49,14 +49,14 @@ export const SPECIFICATION = blank({
   item: { name: "Костюм летний с шортами сингапур", color: "оливковый",
           composition: "хлопок 80%, вискоза 15%, эластан 5%", size_range: "38-40…54-56" },
   ordered: { qty: 750, unit_price: 400.0, stated_total: 300000.0 },
-  terms: { prepay_percent: 50, lead_time_days: 7, penalty_percent_per_day: 1.0, postpay_days: 20 },
+  terms: { prepay_percent: 50, lead_time_days: 7, postpay_days: 20 },
   _source_file: "спец дог 666 подписанная айзада.pdf",
 });
 
 export const CONTRACT = blank({
   doc_type: "contract", contract_no: "666/1-1", doc_date: "2026-04-13",
   parties: { supplier: 'ОсОО "Мокси Кло"', buyer: "ООО «Айлукхоум»" },
-  terms: { prepay_percent: 50, lead_time_days: 7, penalty_percent_per_day: 0.01, postpay_days: 20 },
+  terms: { prepay_percent: 50, lead_time_days: 7, postpay_days: 20 },
   _source_file: "договор 666 подписанный айзада.pdf",
   notes: "п.7.1 говорит 0,01% в день, спецификация — 1% в день",
 });

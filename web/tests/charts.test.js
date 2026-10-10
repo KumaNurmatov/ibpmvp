@@ -17,7 +17,7 @@ const order = (over = {}) => orderFromRecord({
   shipment: { date: "2026-06-05", qty: 812 },
   payments: [{ kind: "предоплата", date: "2026-04-16", amount: 150000 },
              { kind: "постоплата", date: "2026-06-25", amount: 174800 }],
-  terms: { prepay_percent: 50, lead_time_days: 7, penalty_percent_per_day: 1 },
+  terms: { prepay_percent: 50, lead_time_days: 7 },
   ...over,
 });
 

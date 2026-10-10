@@ -7,19 +7,27 @@
       "id": "666",
       "order_no": "Аи 13.04.26/4",
       "contract_no": "666/1-1",
+      "order_date": "2026-04-13",
       "item": "Костюм летний с шортами сингапур",
-      "item_color": "оливковый",
-      "item_article": "КОСТЛЕТШ01сингапур/олива",
       "ordered_qty": 750,
       "unit_price": 400,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "КОСТЛЕТШ01сингапур/олива",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 812,
         "places": 8,
         "weight_gross": 282,
         "driver": "Ташыкулов Элмир Койчубаевич",
-        "vehicle_plate": "04KG227AON"
+        "driver_phone": "+996 702 198 366"
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -40,7 +48,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": 7,
-        "penalty_percent_per_day": 1,
         "postpay_days": 20
       },
       "links": [
@@ -57,25 +64,33 @@
           "url": "https://drive.google.com/file/d/1Omirnm78BmzFs9yUDFdy_N-sI2PDPJki/view"
         }
       ],
-      "note": "Графа 24 CMR (груз получен) не заполнена, акта приёмки нет."
+      "note": "Графа 24 CMR (груз получен) не заполнена, акта приёмки нет. Госномер по CMR: 04KG227AON."
     },
     {
       "id": "399",
       "order_no": "Аи 29.01.26/2",
       "contract_no": "399/1-1",
+      "order_date": "2026-01-29",
       "item": "Костюм (летний с шортами, Сингапур)",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1120.0,
       "unit_price": 373.33,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-02-27",
         "qty": 842.0,
         "places": 5.0,
         "weight_gross": 346.5,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -103,7 +118,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -118,19 +132,27 @@
       "id": "397",
       "order_no": "Аи 28.01.26",
       "contract_no": "397/1-1",
+      "order_date": "2026-01-28",
       "item": "Костюм (летний с шортами и футболкой поло)",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 620.0,
       "unit_price": 471.11,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-02-28",
         "qty": 710.0,
         "places": 6.0,
         "weight_gross": 344.88,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -158,7 +180,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -177,19 +198,27 @@
       "id": "411",
       "order_no": "Аи 30.01.26/1",
       "contract_no": "411/1-1",
+      "order_date": "2026-01-30",
       "item": "Костюм (юбка-шорты, Сингапур)",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 800.0,
       "unit_price": 473.68,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-02-28",
         "qty": 688.0,
         "places": 6.0,
         "weight_gross": 334.12,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -217,7 +246,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -232,19 +260,27 @@
       "id": "448",
       "order_no": "Аи 13.02.2026/1",
       "contract_no": "448/1-1",
+      "order_date": "2026-02-13",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 2590.0,
       "unit_price": 222.22,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-03-06",
         "qty": 2699.0,
         "places": 5.0,
         "weight_gross": 323.5,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -265,7 +301,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -280,19 +315,27 @@
       "id": "434",
       "order_no": "Аи 06.02.2026/1",
       "contract_no": "434/1-1",
+      "order_date": "2026-02-06",
       "item": "двойка с шортами",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1876.0,
       "unit_price": 318.39,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-03-09",
         "qty": 1904.0,
         "places": 8.0,
         "weight_gross": 523.5,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -313,7 +356,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -328,19 +370,27 @@
       "id": "449",
       "order_no": "Аи 13.02.2026/2",
       "contract_no": "449/1-1",
+      "order_date": "2026-02-13",
       "item": "фукра костюм",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 980.0,
       "unit_price": 844.44,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-03-12",
         "qty": 982.0,
         "places": 13.0,
         "weight_gross": 820.3,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -361,7 +411,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -376,19 +425,27 @@
       "id": "513",
       "order_no": "Аи 27.02.26/1",
       "contract_no": "513/1-1",
+      "order_date": "2026-02-27",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 4440.0,
       "unit_price": 222.22,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-03-16",
         "qty": 4602.0,
         "places": 7.0,
         "weight_gross": 565.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -409,7 +466,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -428,19 +484,27 @@
       "id": "554",
       "order_no": "Аи 13.03.26",
       "contract_no": "554/1-1",
+      "order_date": "2026-03-13",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 5650.0,
       "unit_price": 231.48,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 5812.0,
         "places": 9.0,
         "weight_gross": 774.6,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -461,7 +525,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -480,19 +543,27 @@
       "id": "558",
       "order_no": "Аи 13.03.26/1",
       "contract_no": "558/1-1",
+      "order_date": "2026-03-13",
       "item": "фукра костюм",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1640.0,
       "unit_price": 879.63,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 1191.0,
         "places": 16.0,
         "weight_gross": 1041.3,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -513,7 +584,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -532,19 +602,27 @@
       "id": "559",
       "order_no": "Аи 13.03.26/2",
       "contract_no": "559/1-1",
+      "order_date": "2026-03-13",
       "item": "футболка с шортами сингапур",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 960.0,
       "unit_price": 328.7,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 1044.0,
         "places": 2.0,
         "weight_gross": 181.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -565,7 +643,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -584,19 +661,27 @@
       "id": "602",
       "order_no": "Аи 24.03.26",
       "contract_no": "602/1-1",
+      "order_date": "2026-03-24",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 4910.0,
       "unit_price": 234.74,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-14",
         "qty": 4954.0,
         "places": 8.0,
         "weight_gross": 609.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -617,7 +702,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -636,19 +720,27 @@
       "id": "631",
       "order_no": "Аи 02.04.26/1",
       "contract_no": "631/1-1",
+      "order_date": "2026-04-02",
       "item": "брюки шоколад",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1000.0,
       "unit_price": 232.56,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-14",
         "qty": 990.0,
         "places": 5.0,
         "weight_gross": 219.6,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -669,7 +761,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -688,19 +779,27 @@
       "id": "560",
       "order_no": "Аи 13.03.26/3",
       "contract_no": "560/1-1",
+      "order_date": "2026-03-13",
       "item": "рубашка с шортами сингапур",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 3000.0,
       "unit_price": 416.67,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-22",
         "qty": 2960.0,
         "places": 15.0,
         "weight_gross": 1033.4,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -721,7 +820,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -740,19 +838,27 @@
       "id": "647",
       "order_no": "Аи 07.04.26/2",
       "contract_no": "647/1-1",
+      "order_date": "2026-04-07",
       "item": "брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 7500.0,
       "unit_price": 227.27,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-30",
         "qty": 6987.0,
         "places": 36.0,
         "weight_gross": 2200.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -787,7 +893,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -806,19 +911,27 @@
       "id": "648",
       "order_no": "Аи 07.04.26/3",
       "contract_no": "648/1-1",
+      "order_date": "2026-04-07",
       "item": "брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 8000.0,
       "unit_price": 227.27,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-06",
         "qty": 8080.0,
         "places": 45.0,
         "weight_gross": 2136.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -846,7 +959,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -865,19 +977,27 @@
       "id": "665",
       "order_no": "Аи 13.04.26/3",
       "contract_no": "665/1-1",
+      "order_date": "2026-04-13",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 7200.0,
       "unit_price": 222.22,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-06",
         "qty": 6126.0,
         "places": 12.0,
         "weight_gross": 730.4,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -898,7 +1018,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -917,19 +1036,27 @@
       "id": "624",
       "order_no": "Аи 01.04.26",
       "contract_no": "624/1-1",
+      "order_date": "2026-04-01",
       "item": "поло летний",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 2400.0,
       "unit_price": 495.33,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-07",
         "qty": 2419.0,
         "places": 35.0,
         "weight_gross": 1273.7,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -950,7 +1077,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -969,19 +1095,27 @@
       "id": "736",
       "order_no": "Аи 24.04.26/2",
       "contract_no": "736/1-1",
+      "order_date": "2026-04-24",
       "item": "рубашка в клетку",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 580.0,
       "unit_price": 440.53,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-15",
         "qty": 590.0,
         "places": 7.0,
         "weight_gross": 270.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1002,7 +1136,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1021,19 +1154,27 @@
       "id": "728",
       "order_no": "Аи 24.04.26/1",
       "contract_no": "728/1-1",
+      "order_date": "2026-04-24",
       "item": "брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 5120.0,
       "unit_price": 218.34,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-19",
         "qty": 4806.0,
         "places": 24.0,
         "weight_gross": 1360.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1061,7 +1202,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1080,19 +1220,27 @@
       "id": "712",
       "order_no": "Аи 20.04.26/2",
       "contract_no": "712/1-1",
+      "order_date": "2026-04-20",
       "item": "двойные шорты",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 3410.0,
       "unit_price": 473.68,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-22",
         "qty": 3410.0,
         "places": 34.0,
         "weight_gross": 1290.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1120,7 +1268,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1139,19 +1286,27 @@
       "id": "713",
       "order_no": "Аи 20.04.26/3",
       "contract_no": "713/1-1",
+      "order_date": "2026-04-20",
       "item": "двойные шорты",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 3520.0,
       "unit_price": 473.68,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-22",
         "qty": 3520.0,
         "places": 36.0,
         "weight_gross": 1305.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1179,7 +1334,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1198,19 +1352,27 @@
       "id": "766",
       "order_no": "Аи 04.05.26/3",
       "contract_no": "766/1-1",
+      "order_date": "2026-05-04",
       "item": "брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 8354.0,
       "unit_price": 221.24,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-28",
         "qty": 8315.0,
         "places": 63.0,
         "weight_gross": 2352.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1238,7 +1400,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1257,19 +1418,27 @@
       "id": "787",
       "order_no": "Аи 04.05.26/4",
       "contract_no": "787/1-1",
+      "order_date": "2026-05-04",
       "item": "блузка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 5098.0,
       "unit_price": 221.24,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-05-28",
         "qty": 5263.0,
         "places": 13.0,
         "weight_gross": 655.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1297,7 +1466,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1316,19 +1484,27 @@
       "id": "737",
       "order_no": "Аи 24.04.26/3",
       "contract_no": "737/1-1",
+      "order_date": "2026-04-24",
       "item": "двойные шорты",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 2200.0,
       "unit_price": 475.77,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 2327.0,
         "places": 22.0,
         "weight_gross": 800.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1349,7 +1525,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1368,19 +1543,27 @@
       "id": "764",
       "order_no": "Аи 04.05.26/1",
       "contract_no": "764/1-1",
+      "order_date": "2026-05-04",
       "item": "рубашка с шортами сингапур",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 6750.0,
       "unit_price": 398.23,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 6693.0,
         "places": 60.0,
         "weight_gross": 2311.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1408,7 +1591,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1427,19 +1609,27 @@
       "id": "809",
       "order_no": "Аи 04.05.26/1",
       "contract_no": "809/1-1",
+      "order_date": "2026-05-04",
       "item": "рубашка с шортами сингапур",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1225.0,
       "unit_price": 398.23,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 1196.0,
         "places": 10.0,
         "weight_gross": 390.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1460,7 +1650,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1479,19 +1668,27 @@
       "id": "706",
       "order_no": "Аи 21.04.26/1",
       "contract_no": "706/1-1",
+      "order_date": "2026-04-21",
       "item": "рубашка с шортами сингапур",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 4400.0,
       "unit_price": 506.55,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-02",
         "qty": 3000.0,
         "places": 31.0,
         "weight_gross": 1330.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1512,7 +1709,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1531,19 +1727,27 @@
       "id": "808",
       "order_no": "Аи 06.05.26/2",
       "contract_no": "808/1-1",
+      "order_date": "2026-05-06",
       "item": "брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 5100.0,
       "unit_price": 221.24,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-02",
         "qty": 4569.0,
         "places": 28.0,
         "weight_gross": 1250.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1564,7 +1768,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1583,19 +1786,27 @@
       "id": "662",
       "order_no": "Аи 13.04.26/2",
       "contract_no": "662/1-1",
+      "order_date": "2026-04-13",
       "item": "двойные шорты",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1000.0,
       "unit_price": 480.0,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 812.0,
         "places": 10.0,
         "weight_gross": 376.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1616,7 +1827,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1635,19 +1845,27 @@
       "id": "797",
       "order_no": "Аи 06.05.26/3",
       "contract_no": "797/1-1",
+      "order_date": "2026-05-06",
       "item": "двойка лапша",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 4720.0,
       "unit_price": 442.48,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 4771.0,
         "places": 32.0,
         "weight_gross": 2780.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1668,7 +1886,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1687,19 +1904,27 @@
       "id": "818",
       "order_no": "Аи 21.05.26/1",
       "contract_no": "818/1-1",
+      "order_date": "2026-05-21",
       "item": "блузка с высоким горлом",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1760.0,
       "unit_price": 190.08,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-06-24",
         "qty": 2255.0,
         "places": 11.0,
         "weight_gross": 287.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1720,7 +1945,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1739,19 +1963,27 @@
       "id": "827",
       "order_no": "Аи 11.06.26/1",
       "contract_no": "827/1-1",
+      "order_date": "2026-06-11",
       "item": "рубашка клетка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 785.0,
       "unit_price": 418.41,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-01",
         "qty": 693.0,
         "places": 11.0,
         "weight_gross": 295.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1772,7 +2004,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1791,19 +2022,27 @@
       "id": "832",
       "order_no": "Аи 16.06.26/1",
       "contract_no": "832/1-1",
+      "order_date": "2026-06-16",
       "item": "фукра костюм",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1120.0,
       "unit_price": 808.51,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-01",
         "qty": 1065.0,
         "places": 26.0,
         "weight_gross": 940.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1824,7 +2063,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1843,19 +2081,27 @@
       "id": "823",
       "order_no": "Аи 29.05.26/1",
       "contract_no": "823/1-1",
+      "order_date": "2026-05-29",
       "item": "брюки палаццо",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 7670.0,
       "unit_price": 232.37,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-02",
         "qty": 5594.0,
         "places": 52.0,
         "weight_gross": 2020.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1876,7 +2122,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1895,19 +2140,27 @@
       "id": "831",
       "order_no": "Аи 15.06.26/2",
       "contract_no": "831/1-1",
+      "order_date": "2026-06-15",
       "item": "костюм зип/брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1000.0,
       "unit_price": 835.44,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-13",
         "qty": 995.0,
         "places": 26.0,
         "weight_gross": 935.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1928,7 +2181,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1947,19 +2199,27 @@
       "id": "628",
       "order_no": "Аи 01.04.26/1",
       "contract_no": "628/1-1",
+      "order_date": "2026-04-01",
       "item": "рубашка в клетку",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 2000.0,
       "unit_price": 467.29,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-04-30",
         "qty": 1984.0,
         "places": 27.0,
         "weight_gross": 892.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -1973,7 +2233,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -1992,19 +2251,27 @@
       "id": "821",
       "order_no": "Аи 27.05.26/1",
       "contract_no": "821/1-1",
+      "order_date": "2026-05-27",
       "item": "рубашка клетка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1080.0,
       "unit_price": 410.04,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-13",
         "qty": 1090.0,
         "places": 9.0,
         "weight_gross": 293.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2018,7 +2285,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2037,19 +2303,27 @@
       "id": "839",
       "order_no": "Аи 17.06.26/1",
       "contract_no": "839/1-1",
+      "order_date": "2026-06-17",
       "item": "костюм зип/брюки",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 960.0,
       "unit_price": 1162.16,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-07-21",
         "qty": 1018.0,
         "places": 32.0,
         "weight_gross": 1065.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2063,7 +2337,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2082,19 +2355,27 @@
       "id": "881",
       "order_no": "Аи 03.07.26/1",
       "contract_no": "881/1-1",
+      "order_date": "2026-07-03",
       "item": "водолазка",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 420.0,
       "unit_price": 346.53,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-08-12",
         "qty": 657.0,
         "places": 4.0,
         "weight_gross": 150.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2108,7 +2389,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2127,19 +2407,27 @@
       "id": "848",
       "order_no": "Аи 18.06.26/1",
       "contract_no": "848/1-1",
+      "order_date": "2026-06-18",
       "item": "костюм джерси",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1080.0,
       "unit_price": 1171.17,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 916.0,
         "places": 25.0,
         "weight_gross": 1131.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2153,7 +2441,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2172,19 +2459,27 @@
       "id": "879",
       "order_no": "Аи 02.07.26/1",
       "contract_no": "879/1-1",
+      "order_date": "2026-07-02",
       "item": "костюм оксфорд",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 975.0,
       "unit_price": 1165.05,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 777.0,
         "places": 20.0,
         "weight_gross": 694.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2198,7 +2493,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2217,19 +2511,27 @@
       "id": "901",
       "order_no": "Аи 13.07.26/1",
       "contract_no": "901/1-1",
+      "order_date": "2026-07-13",
       "item": "блузка 1 цв",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 275.0,
       "unit_price": 223.3,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 330.0,
         "places": 2.0,
         "weight_gross": 65.9,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2243,7 +2545,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2262,19 +2563,27 @@
       "id": "912",
       "order_no": "Аи 13.07.26/3",
       "contract_no": "912/1-1",
+      "order_date": "2026-07-13",
       "item": "брюки 3 цв",
-      "item_color": "",
-      "item_article": "",
       "ordered_qty": 1830.0,
       "unit_price": 271.84,
-      "workshop": "",
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 1697.0,
         "places": 16.0,
         "weight_gross": 617.0,
         "driver": "",
-        "vehicle_plate": ""
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
       },
       "payments": [
         {
@@ -2288,7 +2597,6 @@
       "terms": {
         "prepay_percent": 50,
         "lead_time_days": null,
-        "penalty_percent_per_day": null,
         "postpay_days": null
       },
       "links": [
@@ -2302,6 +2610,20 @@
         }
       ],
       "note": ""
+    }
+  ],
+  "workshops": [
+    {
+      "name": "Цех 1",
+      "color": "#2a78d6"
+    },
+    {
+      "name": "Цех 2",
+      "color": "#eb6834"
+    },
+    {
+      "name": "Надомники",
+      "color": "#0ca30c"
     }
   ]
 }

@@ -451,13 +451,11 @@ def _check_deadline(order: Order, c: dict, prepay: Payment | None) -> None:
     c["overdue_days"] = overdue
     if overdue <= 0:
         return
-    rate = order.terms.get("penalty_percent_per_day")
-    penalty = _round(c["order_sum"] * rate / 100 * overdue) if rate and c["order_sum"] else None
-    c["penalty"] = penalty
-    tail = f" Неустойка по условиям {rate:g}%/день: {_m(penalty)}." if penalty else ""
+    # Про неустойку здесь ни слова: в договорах её нет, и считать её «по
+    # обычной» ставке значило бы придумывать заказчику долг.
     order.flags.append(Flag(
         "warn", "late_shipment",
-        f"Отгрузка {ship_date.isoformat()} при сроке до {due.isoformat()} — просрочка {overdue} дн.{tail}"))
+        f"Отгрузка {ship_date.isoformat()} при сроке до {due.isoformat()} — просрочка {overdue} дн."))
 
 
 def _check_completeness(order: Order) -> None:

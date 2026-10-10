@@ -58,7 +58,6 @@ def test_считает_просрочку_43_дня_и_неустойку():
     c = order.computed
     assert c["due_date"] == "2026-04-23"        # 16.04 + 7 дней
     assert c["overdue_days"] == 43
-    assert c["penalty"] == 129000.0             # 1% × 300 000 × 43
     assert "late_shipment" in codes(order)
 
 

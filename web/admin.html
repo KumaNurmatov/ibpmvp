@@ -57,11 +57,11 @@
 
 <script type="module">
 import { money, normalizeContract, orderFromRecord } from "./lib/ledger.js";
-import { blankOrder, canEdit, repo, save, setRepo, setToken, token } from "./lib/store.js";
+import { WORKSHOP_COLORS, blankOrder, canEdit, repo, save, setRepo, setToken, token } from "./lib/store.js";
 import { stage, stageOf } from "./lib/stages.js";
-import { escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
+import { escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated, workshops } from "./lib/shell.js";
 
-mountHeader("admin.html");
+mountShell("admin.html");
 
 const KINDS = ["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"];
 
@@ -125,7 +125,8 @@ function drawList() {
     const computed = orderFromRecord(o);
     const st = stage(stageOf(computed));
     return `<button class="pick" data-id="${escapeHtml(o.id)}" aria-current="${o.id === current}">
-      ${escapeHtml(o.order_no || o.id)}
+      ${escapeHtml(o.contract_no || o.id)}
+      <span class="src">${escapeHtml(o.order_no || "")}</span>
       <span class="src">${escapeHtml(st.name)} · ${money(computed.computed.remainder)}</span>
     </button>`;
   }).join("");
@@ -158,16 +159,20 @@ function drawEditor(record) {
     <div class="card">
       <table class="sheet">
         ${block("Заказ")}
-        ${row("order_no", "Заказ №", r.order_no, "text", "например, Аи 13.04.26/4")}
         ${row("contract_no", "Договор", r.contract_no, "text", "например, 666/1-1")}
+        ${row("order_no", "Заказ №", r.order_no, "text", "например, Аи 13.04.26/4")}
+        ${row("order_date", "Дата заказа", r.order_date, "date")}
         ${row("id", "Ключ карточки", r.id, "text", "подставится из договора")}
         ${row("item", "Изделие", r.item, "text", "например, Костюм летний с шортами")}
-        ${row("item_color", "Цвет", r.item_color)}
-        ${row("item_article", "Артикул", r.item_article)}
-        ${row("workshop", "Цех", r.workshop)}
         ${row("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
         ${row("unit_price", "Цена пошива, ₽", r.unit_price, "number")}
         ${calc("order_sum", "Сумма заказа")}
+        ${row("tnved", "ТН ВЭД", r.tnved, "text", "например, 6203 42")}
+        ${row("item_article", "Артикул", r.item_article)}
+        <tr>
+          <th class="key">Цех</th>
+          <td class="val"><div id="ws-pick"></div></td>
+        </tr>
 
         ${block("Отправка")}
         ${row("shipment.date", "Дата отправки", r.shipment.date, "date")}
@@ -175,8 +180,27 @@ function drawEditor(record) {
         ${row("shipment.places", "Мест", r.shipment.places, "number")}
         ${row("shipment.weight_gross", "Вес брутто, кг", r.shipment.weight_gross, "number")}
         ${row("shipment.driver", "Водитель", r.shipment.driver)}
-        ${row("shipment.vehicle_plate", "Госномер", r.shipment.vehicle_plate)}
+        ${row("shipment.driver_phone", "Телефон водителя", r.shipment.driver_phone, "tel", "+996 700 000 000")}
         ${calc("shipment_sum", "Сумма отгрузки")}
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Приёмка</h2>
+      <p class="src" style="margin:-6px 0 10px">
+        Сколько заказчик принял и сколько завернул. Отсюда видно, объясняет ли
+        непринятое всю недоплату: если да — перечислять больше нечего и сделка
+        закрыта, даже при ненулевом остатке.
+      </p>
+      <table class="sheet">
+        ${row("acceptance.accepted_qty", "Принято, шт", r.acceptance.accepted_qty, "number")}
+        ${row("acceptance.rejected_qty", "Не принято, шт", r.acceptance.rejected_qty, "number",
+              "можно не заполнять: посчитается из принятого")}
+        ${row("acceptance.date", "Дата приёмки", r.acceptance.date, "date")}
+        ${row("acceptance.reason", "Причина непринятия", r.acceptance.reason, "text",
+              "брак, пересорт, недовложение…")}
+        ${calc("rejected_sum", "Непринятое в деньгах")}
+        ${calc("unexplained", "Недоплата сверх непринятого")}
       </table>
     </div>
 
@@ -194,7 +218,7 @@ function drawEditor(record) {
       <h2 style="margin-top:0">Расчётный остаток</h2>
       <table class="sheet">
         ${calc("remainder", "Остаток")}
-        ${calc("remainder_units", "Предположительно не принято / не оплачено, шт")}
+        ${calc("remainder_units", "В штуках по цене пошива")}
       </table>
       <div id="flags"></div>
     </div>
@@ -215,7 +239,6 @@ function drawEditor(record) {
       <table class="sheet">
         ${row("terms.prepay_percent", "Предоплата, %", r.terms.prepay_percent, "number")}
         ${row("terms.lead_time_days", "Срок отгрузки, дней от предоплаты", r.terms.lead_time_days, "number")}
-        ${row("terms.penalty_percent_per_day", "Неустойка, %/день", r.terms.penalty_percent_per_day, "number")}
         ${row("terms.postpay_days", "Постоплата, дней", r.terms.postpay_days, "number")}
       </table>
       <div style="margin-top:12px">
@@ -245,6 +268,7 @@ function drawEditor(record) {
     cells[cells.indexOf(e.target) + 1]?.focus();
   });
 
+  drawWorkshops(r);
   document.querySelector("#add-pay").onclick = () => {
     r.payments.push({ kind: nextKind(r), date: "", amount: null, doc_number: "", purpose: "" });
     drawRows(r);
@@ -287,6 +311,109 @@ function drawEditor(record) {
   }
 }
 
+// ── цеха: выбор из справочника ─────────────────────────────────────────
+// Руками тут не пишут: иначе «Цех 1», «цех1» и «Цех №1» расходятся, и фильтр
+// перестаёт работать. Список правится отдельно, в одном месте для всех
+// заказов, и у каждого цеха свой цвет метки.
+
+/** Отметки цехов заказа: нажал — выбрал, нажал ещё раз — снял. */
+function drawWorkshops(r) {
+  const box = document.querySelector("#ws-pick");
+  if (!box) return;
+  const known = workshops();
+
+  box.innerHTML = `<div class="chips">
+      ${known.map((w) => {
+        const on = r.workshops.includes(w.name);
+        return `<button type="button" class="chip pick" data-ws="${escapeHtml(w.name)}"
+          aria-pressed="${on}" style="--chip:${escapeHtml(w.color)}">${escapeHtml(w.name)}</button>`;
+      }).join("") || '<span class="src">Справочник пуст — добавьте первый цех.</span>'}
+      <button type="button" class="chip edit" id="ws-edit">Править список</button>
+    </div>
+    <div id="ws-dict" class="hide" style="margin-top:10px"></div>`;
+
+  for (const button of box.querySelectorAll("[data-ws]")) {
+    button.onclick = () => {
+      const name = button.dataset.ws;
+      r.workshops = r.workshops.includes(name)
+        ? r.workshops.filter((w) => w !== name)
+        : [...r.workshops, name];
+      drawWorkshops(r);
+      recalc(r);
+    };
+  }
+  document.querySelector("#ws-edit").onclick = () => drawDictionary(r);
+}
+
+/** Правка самого справочника: название, цвет, удаление, добавление. */
+function drawDictionary(r) {
+  const box = document.querySelector("#ws-dict");
+  box.classList.remove("hide");
+  const list = workshops();
+
+  box.innerHTML = `<table class="sheet-rows">
+      <tr><th>Цех</th><th>Цвет</th><th></th></tr>
+      ${list.map((w, i) => `<tr>
+        <td><input data-dict="${i}" data-k="name" value="${escapeHtml(w.name)}"></td>
+        <td><input type="color" data-dict="${i}" data-k="color" value="${escapeHtml(w.color)}"
+              style="width:52px;padding:2px"></td>
+        <td class="drop"><button type="button" data-drop-ws="${i}" title="Убрать из справочника">✕</button></td>
+      </tr>`).join("") || '<tr><td colspan="3" class="src">Пока пусто.</td></tr>'}
+    </table>
+    <div class="row-line" style="margin-top:8px">
+      <button type="button" id="ws-add">+ Цех</button>
+      <span class="src">Справочник общий: правка видна во всех заказах после сохранения.</span>
+    </div>`;
+
+  for (const input of box.querySelectorAll("[data-dict]")) {
+    input.oninput = () => {
+      const w = workshops()[+input.dataset.dict];
+      const was = w.name;
+      w[input.dataset.k] = input.value;
+      // Переименование не должно отцеплять метку от заказов, где она стоит.
+      if (input.dataset.k === "name") renameWorkshop(was, input.value);
+      paintChips(r);
+    };
+  }
+  for (const button of box.querySelectorAll("[data-drop-ws]")) {
+    button.onclick = () => {
+      const [gone] = workshops().splice(+button.dataset.dropWs, 1);
+      for (const order of data.orders) {
+        order.workshops = (order.workshops || []).filter((w) => w !== gone.name);
+      }
+      r.workshops = r.workshops.filter((w) => w !== gone.name);
+      drawWorkshops(r);
+      drawDictionary(r);
+    };
+  }
+  document.querySelector("#ws-add").onclick = () => {
+    const list = workshops();
+    list.push({ name: `Цех ${list.length + 1}`, color: WORKSHOP_COLORS[list.length % WORKSHOP_COLORS.length] });
+    drawWorkshops(r);
+    drawDictionary(r);
+  };
+}
+
+function renameWorkshop(was, now) {
+  if (!was || was === now) return;
+  for (const order of data.orders) {
+    order.workshops = (order.workshops || []).map((w) => (w === was ? now : w));
+  }
+}
+
+/** Перерисовать только метки — чтобы не терять фокус в поле справочника. */
+function paintChips(r) {
+  for (const chip of document.querySelectorAll("#ws-pick [data-ws]")) {
+    const w = workshops().find((x) => x.name === chip.dataset.ws) ||
+              workshops()[[...document.querySelectorAll("#ws-pick [data-ws]")].indexOf(chip)];
+    if (!w) continue;
+    chip.textContent = w.name;
+    chip.dataset.ws = w.name;
+    chip.style.setProperty("--chip", w.color);
+    chip.setAttribute("aria-pressed", String(r.workshops.includes(w.name)));
+  }
+}
+
 /** Следующая оплата обычно постоплата: предоплата бывает одна. */
 function nextKind(r) {
   return r.payments.some((p) => p.kind === "предоплата") ? "постоплата" : "предоплата";
@@ -314,6 +441,13 @@ function recalc(r) {
     : `= ${money(c.shipment_sum)} − ${money(c.paid)} − ${money(c.transfers)}`);
   show("remainder_units", c.remainder_units == null ? "—" : qty(c.remainder_units),
     c.remainder_units == null ? "нужна цена пошива" : `= остаток ÷ ${money(price)}`);
+  show("rejected_sum", money(c.rejected_sum), c.rejected_sum === null
+    ? "нужно «Не принято» (или «Принято») и цена пошива"
+    : `= ${qty(c.rejected_qty)} шт × ${money(price)}`);
+  show("unexplained", money(c.unexplained), c.unexplained === null
+    ? "появится, когда отмечена приёмка"
+    : c.settled ? "сходится: за принятое заплачено полностью — сделка закрыта"
+    : `= ${money(c.remainder)} − ${money(c.rejected_sum)}`);
 
   // На совсем пустой карточке замечания говорят лишь о том, что она пустая, —
   // это видно и так, а красная полоса на первом же шаге только мешает.

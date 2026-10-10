@@ -71,7 +71,7 @@ describe("расчёты принимают строки, как их тепер
       route_from: "", route_to: "",
     },
     payments: [], orders: [],
-    terms: { prepay_percent: "", lead_time_days: "", penalty_percent_per_day: "", postpay_days: "" },
+    terms: { prepay_percent: "", lead_time_days: "", postpay_days: "" },
     unreadable: false, notes: "", _source_file: "?",
     ...over,
   });
@@ -80,7 +80,7 @@ describe("расчёты принимают строки, как их тепер
     doc_type: "specification", contract_no: "666/1-1", doc_date: "2026-04-13",
     item: { name: "Костюм летний с шортами сингапур", color: "", composition: "", article: "", size_range: "" },
     ordered: { qty: "750", unit_price: "400.00", stated_total: "300 000,00" },
-    terms: { prepay_percent: "50", lead_time_days: "7", penalty_percent_per_day: "1", postpay_days: "20" },
+    terms: { prepay_percent: "50", lead_time_days: "7", postpay_days: "20" },
     payments: [{ kind: "предоплата", date: "2026-04-16", amount: "150 000,00 ₽",
                  currency: "RUB", contract_no: "666/1-1", purpose: "", doc_number: "291" }],
     _source_file: "спец.pdf",
@@ -117,7 +117,6 @@ describe("расчёты принимают строки, как их тепер
     const { orders } = build([spec, ship]);
     const c = orders[0].computed;
     assert.equal(c.overdue_days, 43);
-    assert.equal(c.penalty, 129000);
   });
 
   it("документ, где всё пусто, уходит в неприкаянные", () => {

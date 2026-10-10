@@ -20,7 +20,7 @@ const order = (over = {}) => orderFromRecord({
   item: "Костюм", ordered_qty: 750, unit_price: 400,
   shipment: { date: "2026-06-05", qty: 812 },
   payments: [PREPAY, POSTPAY],
-  terms: { prepay_percent: 50, lead_time_days: 7, penalty_percent_per_day: 1 },
+  terms: { prepay_percent: 50, lead_time_days: 7 },
   ...over,
 });
 
@@ -37,9 +37,26 @@ describe("стадия заказа", () => {
     assert.equal(stageOf(order({ payments: [PREPAY] })), "shipped");
   });
 
-  it("постоплата прошла, но остаток остался — к сверке", () => {
+  it("постоплата прошла, остаток остался, приёмки нет — на приёмку", () => {
     const partial = { ...POSTPAY, amount: 100000 };
-    assert.equal(stageOf(order({ payments: [PREPAY, partial] })), "reconcile");
+    assert.equal(stageOf(order({ payments: [PREPAY, partial] })), "acceptance");
+  });
+
+  it("приёмка отмечена, недоплата больше непринятого — к сверке", () => {
+    const partial = { ...POSTPAY, amount: 100000 };
+    const o = order({ payments: [PREPAY, partial], acceptance: { rejected_qty: 10 } });
+    assert.equal(stageOf(o), "reconcile");
+    assert.equal(o.computed.rejected_sum, 4000);      // 10 × 400
+    assert.equal(o.computed.unexplained, 70800);      // 74 800 − 4 000
+  });
+
+  it("недоплата ровно за непринятое — сделка закрыта", () => {
+    // 812 отгружено, 625 принято; 187 × 400 = 74 800 — ровно недоплата
+    const partial = { ...POSTPAY, amount: 100000 };
+    const o = order({ payments: [PREPAY, partial], acceptance: { accepted_qty: 625 } });
+    assert.equal(o.computed.rejected_qty, 187);
+    assert.equal(o.computed.unexplained, 0);
+    assert.equal(stageOf(o), "closed");
   });
 
   it("остаток сошёлся — закрыт", () => {
@@ -48,21 +65,21 @@ describe("стадия заказа", () => {
   });
 
   it("переплата закрытым заказом не считается", () => {
-    assert.equal(stageOf(order({ payments: [PREPAY, { ...POSTPAY, amount: 200000 }] })), "reconcile");
+    assert.equal(stageOf(order({ payments: [PREPAY, { ...POSTPAY, amount: 200000 }] })), "acceptance");
   });
 
-  it("отгрузка есть, а посчитать нечем — к сверке, не «закрыт»", () => {
+  it("отгрузка есть, а посчитать нечем — не «закрыт»", () => {
     const blind = order({ unit_price: null, payments: [PREPAY] });
     assert.equal(blind.computed.remainder, null);
-    assert.equal(stageOf(blind), "reconcile");
+    assert.equal(stageOf(blind), "acceptance");
   });
 });
 
 describe("воронка", () => {
-  it("держит все пять ступеней, даже пустые", () => {
+  it("держит все ступени, даже пустые", () => {
     const rows = funnel([order()]);
     assert.deepEqual(rows.map((r) => r.key),
-      ["prepay", "production", "shipped", "reconcile", "closed"]);
+      ["prepay", "production", "shipped", "acceptance", "reconcile", "closed"]);
     assert.equal(rows.find((r) => r.key === "closed").count, 1);
     assert.equal(rows.find((r) => r.key === "prepay").count, 0);
   });
@@ -76,6 +93,46 @@ describe("воронка", () => {
   it("на ступени «нет постоплаты» стоит непришедший остаток", () => {
     const rows = funnel([order({ payments: [PREPAY] })]);
     assert.equal(rows.find((r) => r.key === "shipped").sum, 174800);
+  });
+});
+
+describe("приёмка", () => {
+  const partial = { ...POSTPAY, amount: 100000 };
+  const codes = (o) => new Set(o.flags.map((f) => f.code));
+
+  it("считает непринятое из принятого, когда завернутое не отмечено", () => {
+    const o = order({ acceptance: { accepted_qty: 800 } });
+    assert.equal(o.computed.rejected_qty, 12);        // 812 − 800
+    assert.equal(o.computed.accepted_sum, 320000);
+    assert.equal(o.computed.rejected_sum, 4800);
+  });
+
+  it("недоплата ровно за непринятое — замечание о закрытии", () => {
+    const o = order({ payments: [PREPAY, partial], acceptance: { rejected_qty: 187 } });
+    assert.ok(codes(o).has("acceptance_settled"));
+    assert.equal(o.computed.settled, true);
+  });
+
+  it("недоплата сверх непринятого — ошибка с разницей", () => {
+    const o = order({ payments: [PREPAY, partial], acceptance: { rejected_qty: 10 } });
+    assert.ok(codes(o).has("underpaid_beyond_rejected"));
+    assert.equal(o.computed.unexplained, 70800);      // 74 800 − 4 000
+    const text = o.flags.find((f) => f.code === "underpaid_beyond_rejected").message;
+    // Пробел в суммах неразрывный, поэтому сверяем по цифрам, а не по строке.
+    assert.ok(/70.800,00/.test(text), text);
+  });
+
+  it("заплатили больше, чем за принятое — предупреждение", () => {
+    const o = order({ payments: [PREPAY, partial], acceptance: { rejected_qty: 400 } });
+    assert.ok(codes(o).has("overpaid_rejected"));
+    assert.equal(o.computed.unexplained, -85200);     // 74 800 − 160 000
+  });
+
+  it("без приёмки ничего не выдумывается", () => {
+    const o = order({ payments: [PREPAY, partial] });
+    assert.equal(o.computed.rejected_qty, null);
+    assert.equal(o.computed.unexplained, null);
+    assert.equal(o.computed.settled, false);
   });
 });
 
@@ -97,7 +154,6 @@ describe("список дел", () => {
     const [task] = tasks([waiting], new Date("2026-05-03T00:00:00Z"));
     assert.equal(task.level, "error");
     assert.equal(task.title, "Отгрузка просрочена на 10 дн.");
-    assert.equal(task.amount, 30000);   // 300 000 × 1% × 10
   });
 
   it("без срока в условиях просрочки не бывает", () => {

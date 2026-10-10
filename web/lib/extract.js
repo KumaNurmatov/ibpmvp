@@ -145,7 +145,7 @@ function empty(doc, note) {
       route_from: null, route_to: null,
     },
     payments: [], orders: [],
-    terms: { prepay_percent: null, lead_time_days: null, penalty_percent_per_day: null, postpay_days: null },
+    terms: { prepay_percent: null, lead_time_days: null, postpay_days: null },
     unreadable: true, notes: note,
     _source_file: doc.filename, _source_kind: doc.kind,
   };

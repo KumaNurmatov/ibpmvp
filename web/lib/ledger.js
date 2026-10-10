@@ -54,6 +54,10 @@ export class Order {
     this.flags = [];
     this.computed = {};
     this.raw = [];
+    this.links = [];
+    this.workshops = [];
+    this.photo = "";
+    this.note = "";
   }
 
   get(name) {
@@ -313,6 +317,8 @@ export function compute(order) {
     c.remainder_units = null;
   }
 
+  acceptance(order, c, price, shipped);
+
   const prepay = order.payments.find((p) => p.kind === "предоплата") || null;
   c.prepay = prepay ? prepay.amount : null;
   c.prepay_date = prepay && prepay.date ? iso(prepay.date) : null;
@@ -322,9 +328,64 @@ export function compute(order) {
   checkPrepay(order, c, prepay);
   checkQuantities(order, qty, shipped);
   checkDeadline(order, c, prepay);
+  checkAcceptance(order, c);
   checkCompleteness(order);
   checkConflicts(order);
   return order;
+}
+
+/**
+ * Приёмка: сколько заказчик принял, сколько завернул, на какую сумму.
+ *
+ * Без неё остаток — просто «недоплата», и непонятно, спор это или норма.
+ * С ней видно главное: заказчик недоплатил ровно за непринятое — или ещё
+ * сверх того. Если ровно, перечислять больше нечего и сделка закрыта,
+ * хотя расчётный остаток и не ноль.
+ */
+function acceptance(order, c, price, shipped) {
+  const accepted = num(order.get("accepted_qty"));
+  const rejected = num(order.get("rejected_qty"));
+
+  c.accepted_qty = accepted;
+  // Если отмечено только принятое, непринятое — это остальная отгрузка.
+  c.rejected_qty = rejected !== null ? rejected
+    : (accepted !== null && shipped !== null ? round(shipped - accepted, 2) : null);
+  c.accepted_sum = accepted !== null && price !== null ? round(accepted * price) : null;
+  c.rejected_sum = c.rejected_qty !== null && price !== null ? round(c.rejected_qty * price) : null;
+
+  // Сколько ещё должны сверх непринятого: ноль — значит заплачено за всё,
+  // что приняли, и сделка закрыта.
+  c.unexplained = c.remainder !== null && c.rejected_sum !== null
+    ? round(c.remainder - c.rejected_sum) : null;
+  c.settled = c.unexplained !== null && Math.abs(c.unexplained) <= MONEY_EPS;
+}
+
+function checkAcceptance(order, c) {
+  if (c.rejected_qty === null || c.unexplained === null) return;
+  if (c.settled) {
+    order.flags.push({
+      level: "info", code: "acceptance_settled",
+      message: `Недоплата ${money(c.remainder)} это ровно непринятое: ` +
+        `${fmt(c.rejected_qty)} шт × ${money(order.get("unit_price"))}. ` +
+        `За принятое заплачено полностью — сделка закрыта.`,
+    });
+    return;
+  }
+  if (c.unexplained > 0) {
+    order.flags.push({
+      level: "error", code: "underpaid_beyond_rejected",
+      message: `Непринятое — ${money(c.rejected_sum)}, а не хватает ${money(c.remainder)}. ` +
+        `Сверх непринятого недоплачено ${money(c.unexplained)}` +
+        (order.get("unit_price") ? ` (≈ ${fmt(round(c.unexplained / order.get("unit_price"), 1))} шт)` : "") + ".",
+    });
+    return;
+  }
+  order.flags.push({
+    level: "warn", code: "overpaid_rejected",
+    message: `Заплачено на ${money(-c.unexplained)} больше, чем за принятое: ` +
+      `непринятое ${money(c.rejected_sum)} при недоплате ${money(c.remainder)}. ` +
+      `Либо приёмка отмечена неверно, либо часть брака всё-таки оплатили.`,
+  });
 }
 
 const countsAsPaid = (p) => !NON_PAYMENT_KINDS.has(p.kind);
@@ -434,13 +495,11 @@ function checkDeadline(order, c, prepay) {
   c.due_date = iso(due);
   c.overdue_days = overdue;
   if (overdue <= 0) return;
-  const rate = order.terms.penalty_percent_per_day;
-  const penalty = rate && c.order_sum ? round(c.order_sum * rate / 100 * overdue) : null;
-  c.penalty = penalty;
-  const tail = penalty ? ` Неустойка по условиям ${fmt(rate)}%/день: ${money(penalty)}.` : "";
+  // Про неустойку здесь ни слова: в договорах её нет, и считать её «по
+  // обычной» ставке значило бы придумывать заказчику долг.
   order.flags.push({
     level: "warn", code: "late_shipment",
-    message: `Отгрузка ${iso(shipDate)} при сроке до ${iso(due)} — просрочка ${overdue} дн.${tail}`,
+    message: `Отгрузка ${iso(shipDate)} при сроке до ${iso(due)} — просрочка ${overdue} дн.`,
   });
 }
 
@@ -497,12 +556,12 @@ export function orderFromRecord(record) {
     order.fields.set(name, new Value(value, src, "manual"));
   };
   set("order_no", record.order_no);
+  set("order_date", record.order_date);
   set("item", record.item);
-  set("item_color", record.item_color);
+  set("tnved", record.tnved);
   set("item_article", record.item_article);
   set("ordered_qty", num(record.ordered_qty));
   set("unit_price", num(record.unit_price));
-  set("workshop", record.workshop);
 
   const sh = record.shipment || {};
   set("shipment_date", sh.date);
@@ -510,7 +569,13 @@ export function orderFromRecord(record) {
   set("places", num(sh.places));
   set("weight_gross", num(sh.weight_gross));
   set("driver", sh.driver);
-  set("vehicle_plate", sh.vehicle_plate);
+  set("driver_phone", sh.driver_phone);
+
+  const ac = record.acceptance || {};
+  set("accepted_qty", num(ac.accepted_qty));
+  set("rejected_qty", num(ac.rejected_qty));
+  set("acceptance_date", ac.date);
+  set("reject_reason", ac.reason);
 
   for (const [name, value] of Object.entries(record.terms || {})) {
     const parsed = num(value);
@@ -530,6 +595,11 @@ export function orderFromRecord(record) {
   order.payments.sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
 
   order.links = (record.links || []).filter((l) => l && l.url);
+  // Цехов бывает несколько, и это не поле документа, а метка справочника:
+  // держим их рядом с заказом, а не в общей таблице полей.
+  order.workshops = Array.isArray(record.workshops) ? record.workshops
+    : String(record.workshop || "").split(",").map((w) => w.trim()).filter(Boolean);
+  order.photo = record.photo || "";
   order.note = record.note || "";
   order.record = record;
   return compute(order);

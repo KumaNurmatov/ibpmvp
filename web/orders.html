@@ -9,53 +9,70 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Заказы</h1>
-  <p class="sub" id="updated"></p>
+  <div class="page-head">
+    <div class="grow">
+      <h1>Заказы</h1>
+      <p class="sub" id="updated"></p>
+    </div>
+    <div class="seg" role="group" aria-label="Вид списка">
+      <button id="view-cards" aria-pressed="true">Карточки</button>
+      <button id="view-table" aria-pressed="false">Таблица</button>
+    </div>
+    <button id="csv">Выгрузить CSV</button>
+  </div>
 
   <div class="card">
     <div class="grid c4">
-      <div><label for="q">Поиск</label><input id="q" placeholder="номер, договор, изделие, водитель"></div>
-      <div><label for="st">Статус</label><select id="st"><option value="">все</option></select></div>
+      <div><label for="q">Поиск</label><input id="q" placeholder="договор, заказ, изделие, водитель"></div>
+      <div><label for="st">Стадия</label><select id="st"><option value="">все</option></select></div>
       <div><label for="ws">Цех</label><select id="ws"><option value="">все</option></select></div>
       <div><label for="mo">Месяц отгрузки</label><select id="mo"><option value="">все</option></select></div>
     </div>
     <div class="row-line" style="margin-top:12px">
       <label style="margin:0"><input type="checkbox" id="only" style="width:auto"> только с замечаниями</label>
       <span class="src" id="count"></span>
-      <button id="csv" style="margin-left:auto">Выгрузить CSV</button>
     </div>
   </div>
 
-  <div class="card"><table class="wide" id="tbl"></table></div>
+  <div class="cards" id="cards"></div>
+  <div class="card hide" id="table-box"><table class="wide" id="tbl"></table></div>
 </div>
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { photoFor } from "./lib/photo.js";
 import { stage } from "./lib/stages.js";
-import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, severity, showUpdated, status } from "./lib/shell.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, severity, showUpdated,
+         status, workshopChips } from "./lib/shell.js";
 
-mountHeader("orders.html");
+mountShell("orders.html");
 
+const VIEW_KEY = "ibp.ordersView";
+
+// Заголовок строки и карточки — номер договора: заказы ищут по нему, в
+// платёжках и CMR стоит он же. Номер заказа идёт подписью.
 const COLUMNS = [
-  ["order_no", "Заказ", (o) => `<a href="./order.html?id=${encodeURIComponent(o.key)}">${
-      escapeHtml(o.get("order_no") || o.key)}</a><div class="src">${escapeHtml(o.contract_no || "")}</div>`],
+  ["contract", "Договор", (o) => `<a href="./order.html?id=${encodeURIComponent(o.key)}">${
+      escapeHtml(o.contract_no || o.key)}</a><div class="src">${escapeHtml(o.get("order_no") || "")}</div>`],
   ["item", "Изделие", (o) => escapeHtml(o.get("item") || "—")],
   ["ordered", "Заказано", (o) => qty(o.get("ordered_qty")), "num"],
   ["price", "Цена", (o) => money(o.get("unit_price")), "num"],
   ["shipped", "Отгружено", (o) => qty(o.get("shipped_qty")), "num"],
+  ["accepted", "Принято", (o) => accepted(o), "num"],
   ["date", "Отправка", (o) => dateRu(o.get("shipment_date"))],
   ["ship_sum", "Сумма отгрузки", (o) => money(o.computed.shipment_sum), "num"],
   ["paid", "Оплачено", (o) => money(o.computed.paid), "num"],
   ["remainder", "Остаток", (o) => `<b>${money(o.computed.remainder)}</b>`, "num"],
-  ["status", "Статус", (o) => `<span class="pill ${status(o).cls}">${status(o).name}</span>`],
+  ["status", "Стадия", (o) => `<span class="pill ${status(o).cls}">${status(o).name}</span>`],
 ];
 
 const VALUE = {
-  order_no: (o) => o.get("order_no") || o.key,
+  contract: (o) => o.contract_no || o.key,
   item: (o) => o.get("item") || "",
   ordered: (o) => o.get("ordered_qty") ?? -1,
   price: (o) => o.get("unit_price") ?? -1,
   shipped: (o) => o.get("shipped_qty") ?? -1,
+  accepted: (o) => o.computed.accepted_qty ?? -1,
   date: (o) => o.get("shipment_date") || "",
   ship_sum: (o) => o.computed.shipment_sum ?? -1,
   paid: (o) => o.computed.paid ?? -1,
@@ -65,6 +82,7 @@ const VALUE = {
 
 let all = [];
 let sort = { key: "date", dir: -1 };
+let view = readView();
 
 try {
   const { data, orders } = await loadOrders();
@@ -76,6 +94,8 @@ try {
     document.querySelector(`#${id}`).addEventListener("input", draw);
   }
   document.querySelector("#csv").addEventListener("click", exportCsv);
+  document.querySelector("#view-cards").onclick = () => setView("cards");
+  document.querySelector("#view-table").onclick = () => setView("table");
   draw();
 } catch (err) {
   fatal(`Не удалось загрузить данные: ${err.message}`);
@@ -89,7 +109,7 @@ function fillFilters(orders) {
     }
   };
   add("#st", orders.map((o) => status(o).name));
-  add("#ws", orders.map((o) => o.get("workshop")));
+  add("#ws", orders.flatMap((o) => o.workshops));
   add("#mo", orders.map((o) => (o.get("shipment_date") || "").slice(0, 7)));
 }
 
@@ -112,12 +132,12 @@ function filtered() {
 
   return all.filter((o) => {
     if (st && status(o).name !== st) return false;
-    if (ws && (o.get("workshop") || "") !== ws) return false;
+    if (ws && !o.workshops.includes(ws)) return false;
     if (mo && !(o.get("shipment_date") || "").startsWith(mo)) return false;
     if (only && !severity(o)) return false;
     if (!q) return true;
-    const hay = [o.get("order_no"), o.contract_no, o.get("item"), o.get("driver"),
-                 o.get("workshop"), o.get("item_article")].join(" ").toLowerCase();
+    const hay = [o.contract_no, o.get("order_no"), o.get("item"), o.get("driver"),
+                 o.workshops.join(" "), o.get("item_article"), o.get("tnved")].join(" ").toLowerCase();
     return hay.includes(q);
   }).sort((a, b) => {
     const x = VALUE[sort.key](a), y = VALUE[sort.key](b);
@@ -132,6 +152,48 @@ function draw() {
   document.querySelector("#count").textContent =
     `${rows.length} из ${all.length} · остаток ${money(debt)}`;
 
+  document.querySelector("#cards").classList.toggle("hide", view !== "cards");
+  document.querySelector("#table-box").classList.toggle("hide", view !== "table");
+  document.querySelector("#view-cards").setAttribute("aria-pressed", String(view === "cards"));
+  document.querySelector("#view-table").setAttribute("aria-pressed", String(view === "table"));
+
+  if (view === "cards") drawCards(rows); else drawTable(rows);
+}
+
+/** Карточка заказа: силуэт изделия, стадия, оплата полосой, цифры по делу. */
+function drawCards(rows) {
+  document.querySelector("#cards").innerHTML = rows.length
+    ? rows.map((o) => {
+        const c = o.computed;
+        const st = status(o);
+        const { url } = photoFor(o);
+        const done = c.shipment_sum ? Math.min(1, Math.max(0, c.paid / c.shipment_sum)) : 0;
+        const bar = done >= 0.999 ? "" : done > 0 ? "part" : "none";
+        return `<a class="ocard" href="./order.html?id=${encodeURIComponent(o.key)}">
+          <div class="shot">
+            <img src="${url}" alt="" loading="lazy">
+            <span class="pill ${st.cls}">${st.name}</span>
+          </div>
+          <div class="body">
+            <div class="no">${escapeHtml(o.contract_no || o.key)}
+              <span>${escapeHtml(o.get("order_no") || "")}</span></div>
+            <div class="what">${escapeHtml(o.get("item") || "изделие не указано")}</div>
+            <div class="bar ${bar}"><i style="width:${(done * 100).toFixed(1)}%"></i></div>
+            <div class="rows"><span class="src">Оплачено ${(done * 100).toFixed(0)}%</span>
+              <b>${money(c.paid)} из ${money(c.shipment_sum)}</b></div>
+            <div class="rows"><span class="src">Остаток</span>
+              <b${(c.remainder || 0) > 0.5 ? ' style="color:var(--bad)"' : ""}>${money(c.remainder)}</b></div>
+            <div class="meta">
+              <span>${qty(o.get("shipped_qty"))} шт · отправка ${dateRu(o.get("shipment_date"))}</span>
+              <span>${acceptedShort(o)}</span>
+            </div>
+            ${o.workshops.length ? `<div class="chips">${workshopChips(o)}</div>` : ""}
+          </div></a>`;
+      }).join("")
+    : '<div class="card src">Ничего не нашлось.</div>';
+}
+
+function drawTable(rows) {
   const head = COLUMNS.map(([key, name, , cls]) =>
     `<th class="sortable ${cls || ""}" data-key="${key}">${name}${
       sort.key === key ? (sort.dir > 0 ? " ↑" : " ↓") : ""}</th>`).join("");
@@ -152,14 +214,41 @@ function draw() {
   }
 }
 
+function accepted(o) {
+  const c = o.computed;
+  if (c.accepted_qty === null && c.rejected_qty === null) return '<span class="src">не отмечено</span>';
+  return `${qty(c.accepted_qty)}${c.rejected_qty ? `<div class="src">не принято ${qty(c.rejected_qty)}</div>` : ""}`;
+}
+
+function acceptedShort(o) {
+  const c = o.computed;
+  if (c.rejected_qty === null) return "приёмка не отмечена";
+  if (!c.rejected_qty) return "принято полностью";
+  return `не принято ${qty(c.rejected_qty)} шт`;
+}
+
+function setView(next) {
+  view = next;
+  try { localStorage.setItem(VIEW_KEY, next); } catch { /* приватное окно */ }
+  draw();
+}
+
+function readView() {
+  try { return localStorage.getItem(VIEW_KEY) === "table" ? "table" : "cards"; } catch { return "cards"; }
+}
+
 function exportCsv() {
   const rows = filtered();
-  const header = COLUMNS.map(([, name]) => name);
+  const header = ["Договор", "Заказ", "Дата заказа", "Изделие", "ТН ВЭД", "Заказано", "Цена",
+                  "Отгружено", "Принято", "Не принято", "Причина", "Отправка",
+                  "Сумма отгрузки", "Оплачено", "Остаток", "Стадия", "Цеха"];
   const lines = [header, ...rows.map((o) => [
-    o.get("order_no") || o.key, o.get("item") || "", o.get("ordered_qty") ?? "",
-    o.get("unit_price") ?? "", o.get("shipped_qty") ?? "", o.get("shipment_date") || "",
-    o.computed.shipment_sum ?? "", o.computed.paid ?? "", o.computed.remainder ?? "",
-    status(o).name,
+    o.contract_no || o.key, o.get("order_no") || "", o.get("order_date") || "",
+    o.get("item") || "", o.get("tnved") || "",
+    o.get("ordered_qty") ?? "", o.get("unit_price") ?? "", o.get("shipped_qty") ?? "",
+    o.computed.accepted_qty ?? "", o.computed.rejected_qty ?? "", o.get("reject_reason") || "",
+    o.get("shipment_date") || "", o.computed.shipment_sum ?? "", o.computed.paid ?? "",
+    o.computed.remainder ?? "", status(o).name, o.workshops.join(", "),
   ])];
   // Точка с запятой и BOM: иначе Excel в русской локали сложит всё в один столбец.
   const csv = "﻿" + lines.map((r) => r.map(cell).join(";")).join("\r\n");

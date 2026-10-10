@@ -18,8 +18,9 @@ export const STAGES = [
   { key: "prepay", name: "Ждёт предоплаты", cls: "warn", hint: "заказ оформлен, денег не было" },
   { key: "production", name: "В пошиве", cls: "", hint: "предоплата внесена, отгрузки ещё нет" },
   { key: "shipped", name: "Нет постоплаты", cls: "bad", hint: "отгружено, постоплата не приходила" },
-  { key: "reconcile", name: "К сверке", cls: "warn", hint: "постоплата прошла, остаток не нулевой" },
-  { key: "closed", name: "Закрыт", cls: "ok", hint: "остаток сошёлся" },
+  { key: "acceptance", name: "Приёмка", cls: "warn", hint: "постоплата прошла, приёмка не отмечена" },
+  { key: "reconcile", name: "К сверке", cls: "bad", hint: "недоплата больше, чем непринятое" },
+  { key: "closed", name: "Закрыт", cls: "ok", hint: "за принятое заплачено полностью" },
 ];
 
 const BY_KEY = new Map(STAGES.map((s) => [s.key, s]));
@@ -28,16 +29,25 @@ export const stage = (key) => BY_KEY.get(key) || STAGES[0];
 const isPrepay = (p) => p.kind === "предоплата";
 const isPostpay = (p) => p.kind.startsWith("постоплата") || p.kind.startsWith("доп");
 
-/** Ключ стадии. Одно правило на дашборд, таблицу и карточку. */
+/**
+ * Ключ стадии. Одно правило на дашборд, таблицу и карточку.
+ *
+ * Сделка закрыта не тогда, когда остаток ноль, а когда заплачено за всё
+ * принятое: если заказчик завернул 120 штук и ровно на них недоплатил,
+ * перечислять больше нечего — остаток ненулевой, а спора нет.
+ */
 export function stageOf(order) {
   const c = order.computed;
   const shipped = Boolean(order.get("shipment_date")) || order.get("shipped_qty") !== null;
 
   if (!shipped) return order.payments.some(isPrepay) ? "production" : "prepay";
   // Отгрузка есть, но посчитать нечем — цены или количества не хватает.
-  if (c.remainder === null || c.remainder === undefined) return "reconcile";
-  if (Math.abs(c.remainder) <= EPS) return "closed";
-  return order.payments.some(isPostpay) ? "reconcile" : "shipped";
+  if (c.remainder === null || c.remainder === undefined) return "acceptance";
+  if (Math.abs(c.remainder) <= EPS || c.settled) return "closed";
+  if (!order.payments.some(isPostpay)) return "shipped";
+  // Постоплата прошла, но остаток остался: без приёмки непонятно, спор это
+  // или просто непринятый товар.
+  return c.rejected_qty === null ? "acceptance" : "reconcile";
 }
 
 /**
@@ -115,14 +125,11 @@ function taskFor(order, key, today) {
   if (key === "production") {
     const late = lateness(order, today);
     if (late > 0) {
-      const penalty = penaltyFor(order, late);
       return {
         ...base,
         level: "error",
-        amount: penalty ?? 0,
         title: `Отгрузка просрочена на ${late} дн.`,
-        detail: `Срок по условиям — до ${ru(c.due_date)}.` +
-          (penalty ? ` Неустойка на сегодня: ${money(penalty)}.` : ""),
+        detail: `Срок по условиям — до ${ru(c.due_date)}. Предоплата уже у цеха.`,
       };
     }
     return {
@@ -143,7 +150,6 @@ function taskFor(order, key, today) {
     };
   }
 
-  // reconcile
   if (c.remainder === null || c.remainder === undefined) {
     return {
       ...base,
@@ -152,15 +158,38 @@ function taskFor(order, key, today) {
       detail: errors.length ? errors[0].message : "Не хватает цены или количества отгрузки.",
     };
   }
-  const over = c.remainder < 0;
+
+  if (c.remainder < 0) {
+    return {
+      ...base,
+      level: errors.length ? "error" : "warn",
+      amount: c.remainder,
+      title: "Переплата",
+      detail: `Пришло на ${money(-c.remainder)} больше отгруженного — проверьте, за какой заказ.`,
+    };
+  }
+
+  // Приёмка не отмечена: пока неизвестно, сколько приняли, недоплату не с чем
+  // сравнивать — это первый шаг, а не «сверка вообще».
+  if (key === "acceptance") {
+    return {
+      ...base,
+      level: "warn",
+      amount: c.remainder,
+      title: "Отметить приёмку",
+      detail: `Недоплата ${money(c.remainder)} (≈ ${c.remainder_units ?? "—"} шт). ` +
+        "Сколько заказчик принял и сколько завернул — тогда будет видно, спор это или нет.",
+    };
+  }
+
+  // reconcile: приёмка отмечена, и недоплата оказалась больше непринятого.
   return {
     ...base,
-    level: errors.length ? "error" : "warn",
-    amount: c.remainder,
-    title: over ? "Переплата" : "Сверить остаток",
-    detail: over
-      ? `Пришло на ${money(-c.remainder)} больше отгруженного — проверьте, за какой заказ.`
-      : `Остаток ${money(c.remainder)}${c.remainder_units != null ? ` (≈ ${c.remainder_units} шт)` : ""}.`,
+    level: "error",
+    amount: c.unexplained ?? c.remainder,
+    title: "Недоплата сверх непринятого",
+    detail: `Непринятое — ${money(c.rejected_sum)}, не хватает ${money(c.remainder)}. ` +
+      `Разница ${money(c.unexplained)} ничем не объяснена.`,
   };
 }
 
@@ -174,12 +203,6 @@ function lateness(order, today) {
   const due = new Date(prepay.date.getTime() + lead * DAY_MS);
   order.computed.due_date = due.toISOString().slice(0, 10);
   return Math.max(0, Math.round((startOfDay(today) - due) / DAY_MS));
-}
-
-function penaltyFor(order, days) {
-  const rate = order.terms.penalty_percent_per_day;
-  const sum = order.computed.order_sum;
-  return rate && sum ? round(sum * rate / 100 * days) : null;
 }
 
 /** 2026-09-09 → 09.09.2026: ISO-дата в тексте читается как машинная. */

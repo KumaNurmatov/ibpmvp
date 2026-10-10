@@ -9,12 +9,17 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Где сейчас деньги</h1>
-  <p class="sub" id="updated">Загружаю…</p>
+  <div class="page-head">
+    <div class="grow">
+      <h1>Где сейчас деньги</h1>
+      <p class="sub" id="updated">Загружаю…</p>
+    </div>
+    <a class="btn" href="./orders.html">Все заказы →</a>
+  </div>
 
   <h2 style="margin-top:0">Процесс</h2>
   <p class="src" style="margin:-8px 0 12px">
-    Предоплата → пошив → отгрузка → постоплата → сверка. Нажмите ступень,
+    Предоплата → пошив → отгрузка → приёмка → постоплата → сверка. Нажмите ступень,
     чтобы увидеть её заказы.
   </p>
   <div class="flow" id="flow"></div>
@@ -43,9 +48,9 @@
 import { byMonth, groupedBars, lineChart } from "./lib/charts.js";
 import { money } from "./lib/ledger.js";
 import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
-import { dateRu, escapeHtml, fatal, loadOrders, mountHeader, qty, showUpdated } from "./lib/shell.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
 
-mountHeader("index.html");
+mountShell("index.html");
 
 // Сколько дел показать сразу; остальные уезжают за шторку.
 const TODO_HEAD = 8;
@@ -85,18 +90,21 @@ function drawTiles(orders) {
   const open = orders.filter((o) => stageOf(o) !== "closed");
   const debt = orders.reduce((s, o) => s + (o.computed.remainder || 0), 0);
   const units = orders.reduce((s, o) => s + (o.computed.remainder_units || 0), 0);
-  const late = orders.filter((o) => (o.computed.overdue_days || 0) > 0);
-  const penalty = late.reduce((s, o) => s + (o.computed.penalty || 0), 0);
   const shipped = orders.reduce((s, o) => s + (o.computed.shipment_sum || 0), 0);
   const paid = orders.reduce((s, o) => s + (o.computed.paid || 0), 0);
+  // Приёмка: сколько недоплаты уже объяснено непринятым товаром.
+  const checked = orders.filter((o) => o.computed.rejected_qty !== null);
+  const rejected = checked.reduce((s, o) => s + (o.computed.rejected_sum || 0), 0);
+  const waiting = orders.filter((o) => stageOf(o) === "acceptance");
 
   tiles([
     ["Остаток к перечислению", money(debt), `${qty(Math.round(units))} шт по текущим ценам`,
       debt > 0.5 ? "bad" : ""],
     ["Отгружено всего", money(shipped), `оплачено ${money(paid)}`, ""],
     ["Заказов открыто", qty(open.length), `закрыто ${orders.length - open.length} из ${orders.length}`, ""],
-    ["Просрочено отгрузок", qty(late.length),
-      penalty ? `неустойка по условиям ${money(penalty)}` : "в срок", late.length ? "warn" : ""],
+    ["Приёмка отмечена", `${checked.length} из ${orders.length}`,
+      checked.length ? `непринятого на ${money(rejected)}` : `${waiting.length} заказов ждут отметки`,
+      waiting.length ? "warn" : ""],
   ]);
 }
 
@@ -137,7 +145,7 @@ function item({ order, level, title, detail, amount, stage: key }) {
       <div class="src">${escapeHtml(stage(key).name)}</div></div>
     <div class="who">
       <a href="./order.html?id=${encodeURIComponent(order.key)}">${
-        escapeHtml(order.get("order_no") || order.key)}</a>
+        escapeHtml(order.contract_no || order.key)}</a>
       · ${escapeHtml(order.get("item") || "изделие не указано")}
       · ${escapeHtml(detail)}
     </div>
@@ -179,11 +187,11 @@ function drawTop(orders) {
     .slice(0, 10);
 
   document.querySelector("#top").innerHTML = rows.length
-    ? `<tr><th>Заказ</th><th>Изделие</th><th>Отгрузка</th><th>Стадия</th>
+    ? `<tr><th>Договор</th><th>Изделие</th><th>Отгрузка</th><th>Стадия</th>
          <th class="num">Остаток</th><th class="num">В штуках</th></tr>` +
       rows.map((o) => `<tr class="row">
-        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.get("order_no") || o.key)}</a>
-            <div class="src">${escapeHtml(o.contract_no || "")}</div></td>
+        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.contract_no || o.key)}</a>
+            <div class="src">${escapeHtml(o.get("order_no") || "")}</div></td>
         <td>${escapeHtml(o.get("item") || "—")}</td>
         <td>${dateRu(o.get("shipment_date"))}</td>
         <td><span class="pill ${stage(stageOf(o)).cls}">${stage(stageOf(o)).name}</span></td>
@@ -214,8 +222,8 @@ function drawAttention(orders) {
   document.querySelector("#attention-body").innerHTML = rows.length
     ? rows.map(({ order, flags }) => `<div class="card">
         <div class="row-line">
-          <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.get("order_no") || order.key)}</b></a>
-          <span class="pill">договор ${escapeHtml(order.contract_no || "—")}</span>
+          <a href="./order.html?id=${encodeURIComponent(order.key)}"><b>${escapeHtml(order.contract_no || order.key)}</b></a>
+          <span class="pill">заказ ${escapeHtml(order.get("order_no") || "—")}</span>
           <span class="src">${escapeHtml(order.get("item") || "")}</span>
         </div>
         ${flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}

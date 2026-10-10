@@ -106,27 +106,31 @@ def read_block(sheet, top: int) -> tuple[dict | None, str | None]:
         "id": key,
         "order_no": order_no,
         "contract_no": contract,
+        # Дата заказа — та, что стоит в его же номере: «Аи 29.01.26/2».
+        "order_date": date_from_number(order_no),
         "item": text(cell(1, 1)),
-        "item_color": "",
-        "item_article": "",
         "ordered_qty": number(cell(2, 2)),
         "unit_price": price,
-        "workshop": "",
+        "tnved": "",
+        "item_article": "",
+        "workshops": [],
+        "photo": "",
         "shipment": {
             "date": date(cell(SHIP, 1)),
             "qty": number(cell(SHIP, 2)),
             "places": number(cell(SHIP, 3)),
             "weight_gross": number(cell(SHIP, 4)),
-            # Водителя и машину реестр не хранит — они только в CMR.
+            # Водителя и его телефон реестр не хранит — они только в CMR.
             "driver": "",
-            "vehicle_plate": "",
+            "driver_phone": "",
         },
+        # Приёмка в книге не велась: заполняется руками на сайте.
+        "acceptance": {"accepted_qty": None, "rejected_qty": None, "date": "", "reason": ""},
         "payments": payments(sheet, top),
         # В книге условий нет: проценты предоплаты и сроки живут в договоре.
         # Ставим то, что известно (половина вперёд), остальное — пусто, иначе
         # сайт посчитал бы просрочку и неустойку по выдуманному сроку.
-        "terms": {"prepay_percent": 50, "lead_time_days": None,
-                  "penalty_percent_per_day": None, "postpay_days": None},
+        "terms": {"prepay_percent": 50, "lead_time_days": None, "postpay_days": None},
         "links": links(sheet, top),
         "note": "",
     }
@@ -196,6 +200,18 @@ def merge(old: list[dict], new: list[dict]) -> tuple[list[dict], int, int]:
 
 
 # ── мелочи ────────────────────────────────────────────────────────────────
+def date_from_number(order_no: str) -> str:
+    """«Аи 29.01.26/2» → 2026-01-29. Год бывает и четырёхзначным."""
+    m = re.search(r"(\d{2})\.(\d{2})\.(\d{4}|\d{2})(?!\d)", order_no or "")
+    if not m:
+        return ""
+    day, month, year = (int(x) for x in m.groups())
+    try:
+        return dt.date(year if year > 100 else 2000 + year, month, day).isoformat()
+    except ValueError:
+        return ""
+
+
 def text(value) -> str:
     return "" if value is None else str(value).strip()
 
