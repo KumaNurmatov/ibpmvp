@@ -66,6 +66,8 @@ class Payment:
     source: str
     purpose: str | None = None
     doc_number: str | None = None
+    kind_stated: str = "неизвестно"
+    inferred_from: str | None = None
 
     @property
     def counts_as_paid(self) -> bool:
@@ -262,8 +264,9 @@ def _absorb(order: Order, ex: dict, only_contract: str | None) -> None:
                 f"Сумма платежа не разобрана: {pay.get('amount')!r} "
                 f"({pay.get('kind') or 'вид не указан'}, {src}). Остаток посчитан без неё."))
             continue
+        stated = (pay.get("kind") or "неизвестно").lower()
         candidate = Payment(
-            kind=(pay.get("kind") or "неизвестно").lower(),
+            kind=stated, kind_stated=stated,
             date=_date(pay.get("date")), amount=amount, source=src,
             purpose=pay.get("purpose"), doc_number=pay.get("doc_number"),
         )
@@ -324,6 +327,8 @@ def compute(order: Order) -> Order:
     c["order_sum"] = _round(qty * price) if qty is not None and price is not None else None
     c["shipment_sum"] = _round(shipped * price) if shipped is not None and price is not None else None
 
+    _infer_payment_kinds(order, c)
+
     paid = sum(p.amount for p in order.payments if p.counts_as_paid)
     transfers = sum(p.amount for p in order.payments if not p.counts_as_paid)
     c["paid"] = _round(paid)
@@ -348,6 +353,42 @@ def compute(order: Order) -> Order:
     _check_completeness(order)
     _check_conflicts(order)
     return order
+
+
+def _infer_payment_kinds(order: Order, c: dict) -> None:
+    """Определить вид платежа, если в бумаге он не назван.
+
+    Платёжное поручение не содержит слов «предоплата» или «постоплата» — там
+    только назначение вида «дог.666/1-1, за текст.изд.». Модель честно ставит
+    «неизвестно», но без вида отваливаются проверки аванса и срока поставки.
+    Решает это код, по двум признакам, и всегда говорит, на основании чего.
+    """
+    ship_date = _date(order.get("shipment_date"))
+    share = (order.terms.get("prepay_percent") or 50) / 100
+    inferred: list[str] = []
+
+    for pay in order.payments:
+        if pay.kind_stated != "неизвестно":
+            continue
+        kind = basis = None
+        if ship_date and pay.date:
+            kind = "предоплата" if pay.date <= ship_date else "постоплата"
+            where = "до" if kind == "предоплата" else "после"
+            basis = f"по дате: {pay.date.isoformat()} {where} отгрузки"
+        elif c.get("order_sum") and abs(pay.amount - c["order_sum"] * share) <= 1:
+            kind = "предоплата"
+            basis = f"по доле: {_m(pay.amount)} это {share * 100:.0f}% суммы заказа"
+
+        pay.kind = kind or "неизвестно"
+        pay.inferred_from = basis
+        if basis:
+            inferred.append(f"{_m(pay.amount)} — {kind} ({basis})")
+
+    if inferred:
+        order.flags.append(Flag(
+            "info", "kind_inferred",
+            "Вид платежа в документе не назван, определён расчётом: "
+            + "; ".join(inferred) + "."))
 
 
 def _check_sums(order: Order, c: dict) -> None:

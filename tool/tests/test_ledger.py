@@ -168,3 +168,40 @@ def test_привязка_по_совпадению_переживает_пер�
     # Замечание поднимается при сборке, а compute() раньше стирал все флаги.
     order = build_666()
     assert "linked_by_match" in codes(order)
+
+
+def _unnamed_payment():
+    """Платёжка по заказу 666: назначение есть, слова «предоплата» нет."""
+    pay = dict(fx.PAYMENT)
+    pay["payments"] = [{**fx.PAYMENT["payments"][0], "kind": "неизвестно"}]
+    return pay
+
+
+def test_вид_платежа_определяется_по_дате():
+    orders, _ = ledger.build([fx.SPECIFICATION, fx.SHIPMENT, _unnamed_payment()])
+    pay = orders[0].payments[0]
+    assert pay.kind == "предоплата"
+    assert "по дате" in pay.inferred_from
+    assert "kind_inferred" in codes(orders[0])
+
+
+def test_вид_платежа_определяется_по_доле_без_отгрузки():
+    orders, _ = ledger.build([fx.SPECIFICATION, _unnamed_payment()])
+    pay = orders[0].payments[0]
+    assert pay.kind == "предоплата"          # 150 000 = 50% от 300 000
+    assert "по доле" in pay.inferred_from
+
+
+def test_непохожий_платёж_не_угадывается():
+    odd = _unnamed_payment()
+    odd["payments"] = [{**odd["payments"][0], "date": "", "amount": 7777}]
+    orders, _ = ledger.build([fx.SPECIFICATION, odd])
+    assert orders[0].payments[0].kind == "неизвестно"
+    assert "kind_inferred" not in codes(orders[0])
+
+
+def test_названный_вид_не_переписывается():
+    order = build_666()
+    assert order.payments[0].kind == "предоплата"
+    assert order.payments[0].inferred_from is None
+    assert "kind_inferred" not in codes(order)

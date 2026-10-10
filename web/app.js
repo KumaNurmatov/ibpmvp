@@ -199,7 +199,8 @@ function card(order) {
     </table>
     ${order.payments.length ? `<table>
       <tr><th>Платёж</th><th>Дата</th><th class="num">Сумма</th><th>Источник</th></tr>
-      ${order.payments.map((p) => `<tr><td>${esc(p.kind)}</td>
+      ${order.payments.map((p) => `<tr><td>${esc(p.kind)}${
+          p.inferred_from ? `<div class="src">${esc(p.inferred_from)}</div>` : ""}</td>
         <td>${p.date ? p.date.toISOString().slice(0, 10) : "—"}</td>
         <td class="num">${money(p.amount)}</td>
         <td class="src">${esc(p.source)}</td></tr>`).join("")}</table>` : ""}

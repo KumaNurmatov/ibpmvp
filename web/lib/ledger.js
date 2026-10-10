@@ -177,10 +177,12 @@ function absorb(order, ex, onlyContract) {
       });
       continue;
     }
+    const stated = (pay.kind || "неизвестно").toLowerCase();
     const candidate = {
-      kind: (pay.kind || "неизвестно").toLowerCase(),
+      kind: stated, kind_stated: stated,
       date: parseDate(pay.date), amount, source: src,
       purpose: pay.purpose ?? null, doc_number: pay.doc_number ?? null,
+      inferred_from: null,
     };
     if (!isDuplicate(order.payments, candidate)) order.payments.push(candidate);
   }
@@ -296,6 +298,8 @@ export function compute(order) {
   c.order_sum = qty !== null && price !== null ? round(qty * price) : null;
   c.shipment_sum = shipped !== null && price !== null ? round(shipped * price) : null;
 
+  inferPaymentKinds(order, c);
+
   const paid = order.payments.filter(countsAsPaid).reduce((s, p) => s + p.amount, 0);
   const transfers = order.payments.filter((p) => !countsAsPaid(p)).reduce((s, p) => s + p.amount, 0);
   c.paid = round(paid);
@@ -324,6 +328,45 @@ export function compute(order) {
 }
 
 const countsAsPaid = (p) => !NON_PAYMENT_KINDS.has(p.kind);
+
+/**
+ * Определить вид платежа, если в бумаге он не назван.
+ *
+ * Платёжное поручение не содержит слов «предоплата» или «постоплата» — там
+ * только назначение вида «дог.666/1-1, за текст.изд.». Модель честно ставит
+ * «неизвестно», но без вида отваливаются проверки аванса и срока поставки.
+ * Решает это код, по двум признакам, и всегда говорит, на основании чего.
+ */
+function inferPaymentKinds(order, c) {
+  const shipDate = parseDate(order.get("shipment_date"));
+  const prepayShare = (order.terms.prepay_percent ?? 50) / 100;
+  const inferred = [];
+
+  for (const pay of order.payments) {
+    if ((pay.kind_stated ?? pay.kind) !== "неизвестно") continue;
+    let kind = null, basis = null;
+
+    if (shipDate && pay.date) {
+      kind = pay.date <= shipDate ? "предоплата" : "постоплата";
+      basis = `по дате: ${iso(pay.date)} ${kind === "предоплата" ? "до" : "после"} отгрузки`;
+    } else if (c.order_sum && Math.abs(pay.amount - c.order_sum * prepayShare) <= 1) {
+      kind = "предоплата";
+      basis = `по доле: ${money(pay.amount)} это ${(prepayShare * 100).toFixed(0)}% суммы заказа`;
+    }
+
+    pay.kind = kind || "неизвестно";
+    pay.inferred_from = basis;
+    if (basis) inferred.push(`${money(pay.amount)} — ${kind} (${basis})`);
+  }
+
+  if (inferred.length) {
+    order.flags.push({
+      level: "info", code: "kind_inferred",
+      message: `Вид платежа в документе не назван, определён расчётом: ${inferred.join("; ")}.`,
+    });
+  }
+}
+
 
 function checkSums(order, c) {
   const stated = num(order.get("stated_order_sum"));
