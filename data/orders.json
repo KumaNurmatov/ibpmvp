@@ -38,7 +38,7 @@
         "driver_phone": "+996 702 198 366"
       },
       "acceptance": {
-        "accepted_qty": 812,
+        "accepted_qty": null,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -163,10 +163,10 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
+        "accepted_qty": 706,
+        "rejected_qty": 4,
         "date": "",
-        "reason": ""
+        "reason": "хз"
       },
       "payments": [
         {
