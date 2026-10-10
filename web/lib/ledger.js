@@ -29,6 +29,7 @@ const DEFAULT_TRUST = ["specification", "contract", "waybill", "invoice", "cmr",
 const MONEY_EPS = 0.05;
 const PREPAY_EPS = 1.0;
 const NON_PAYMENT_KINDS = new Set(["перенос"]);
+const KEEP_ON_RECOMPUTE = new Set(["linked_by_match", "payment_unparsed"]);
 const DAY_MS = 86_400_000;
 
 /** Значение поля вместе с тем, откуда оно взято. */
@@ -166,7 +167,16 @@ function absorb(order, ex, onlyContract) {
     if (onlyContract && pay.contract_no &&
         normalizeContract(pay.contract_no) !== normalizeContract(onlyContract)) continue;
     const amount = num(pay.amount);
-    if (amount === null) continue;
+    if (amount === null) {
+      // Нечитаемую сумму нельзя просто пропустить: остаток молча сойдётся
+      // не с тем, и никто не заметит.
+      order.flags.push({
+        level: "error", code: "payment_unparsed",
+        message: `Сумма платежа не разобрана: ${JSON.stringify(pay.amount)} ` +
+                 `(${pay.kind || "вид не указан"}, ${src}). Остаток посчитан без неё.`,
+      });
+      continue;
+    }
     const candidate = {
       kind: (pay.kind || "неизвестно").toLowerCase(),
       date: parseDate(pay.date), amount, source: src,
@@ -274,7 +284,9 @@ function sameText(a, b) {
 // -------------------------------------------------------------------- расчёты
 
 export function compute(order) {
-  order.flags = order.flags.filter((f) => f.code === "linked_by_match");
+  // Замечания, поднятые при сборке, пересчёт не отменяет: они про сами
+  // документы, а не про арифметику.
+  order.flags = order.flags.filter((f) => KEEP_ON_RECOMPUTE.has(f.code));
   const c = {};
 
   const qty = num(order.get("ordered_qty"));
@@ -454,12 +466,42 @@ const orphan = (ex, reason) => ({
   reason, notes: ex.notes ?? null,
 });
 
+/**
+ * Число из того, как оно напечатано в бумаге.
+ *
+ * Модели велено переписывать суммы дословно, поэтому сюда приходит и
+ * «324 800,00 ₽», и «150000-00» — копейки через дефис, как в платёжном
+ * поручении. На такой записи разбор раньше возвращал null, и платёж молча
+ * исчезал: в карточке стояло «Оплачено 0» при живой предоплате на 150 тысяч.
+ */
 export function num(v) {
   if (v === null || v === undefined || typeof v === "boolean") return null;
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
-  const s = String(v).replace(/[^\d,.\-]/g, "").replace(",", ".");
-  if (!s || !/^-?\d+(\.\d+)?$/.test(s)) return null;
-  return parseFloat(s);
+
+  let s = String(v).replace(/[\s ]/g, "").replace(/[^\d,.\-]/g, "");
+  if (!s) return null;
+
+  // 150000-00 — рубли и копейки через дефис.
+  const kopecks = s.match(/^(-?\d+)-(\d{2})$/);
+  if (kopecks) s = `${kopecks[1]}.${kopecks[2]}`;
+  else {
+    const lastComma = s.lastIndexOf(",");
+    const lastDot = s.lastIndexOf(".");
+    if (lastComma >= 0 && lastDot >= 0) {
+      // Есть оба разделителя: десятичный — тот, что правее.
+      const decimal = lastComma > lastDot ? "," : ".";
+      const thousands = decimal === "," ? "." : ",";
+      s = s.split(thousands).join("").replace(decimal, ".");
+    } else if ((s.match(/,/g) || []).length > 1) {
+      s = s.split(",").join("");           // несколько запятых — разряды
+    } else {
+      s = s.replace(",", ".");             // одна запятая — десятичная
+    }
+  }
+
+  if (!/^-?\d+(\.\d+)?$/.test(s)) return null;
+  const parsed = parseFloat(s);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 /** Даты держим в UTC: иначе часовой пояс сдвигает срок поставки на сутки. */
