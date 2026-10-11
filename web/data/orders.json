@@ -2435,7 +2435,9 @@
       "tnved": "",
       "ordered_qty": 1080,
       "unit_price": 1171.17,
-      "workshops": [],
+      "workshops": [
+        "Сулайман"
+      ],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
