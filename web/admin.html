@@ -527,28 +527,42 @@ async function persist(r) {
   state.className = "src";
   try {
     const result = await save(data, `Заказ ${r.order_no || r.id}: ${created ? "новая карточка" : "правка"}`);
-    state.innerHTML = `${created ? "создано" : "сохранено"}${result.commit
-      ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}
-      · на сайте появится через пару минут`;
-    state.className = "src saved";
+    // Сначала перерисовка, потом подпись: перерисовка пересобирает карточку
+    // вместе со строкой состояния, и написанное до неё стиралось — со
+    // стороны это выглядело так, будто сохранение не сработало.
     drawEditor(r);
     drawList();
+    say(`${created ? "Создано" : "Сохранено"}${result.commit
+      ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}` +
+      " · на сайте появится примерно через минуту", "saved");
   } catch (err) {
-    state.textContent = err.message;
-    state.className = "src";
+    say(err.message, "");
     fatal(`Сохранить не удалось: ${err.message}`);
   }
 }
 
+/** Написать в строку состояния — в ту, что на экране сейчас. */
+function say(html, cls) {
+  const node = document.querySelector("#save-state");
+  if (!node) return;
+  node.innerHTML = html;
+  node.className = `src ${cls}`;
+}
+
 async function remove(r) {
   if (!confirm(`Удалить заказ ${r.order_no || r.id}? Он останется в истории правок репозитория.`)) return;
+  const was = data.orders;
   data.orders = data.orders.filter((o) => o.id !== r.id);
   try {
     await save(data, `Удалить заказ ${r.order_no || r.id}`);
     current = data.orders[0]?.id ?? null;
     drawList();
     if (current) drawEditor(data.orders[0]); else startNew();
+    say(`Заказ ${escapeHtml(r.order_no || r.id)} удалён · он остался в истории правок`, "saved");
   } catch (err) {
+    // Не удалось записать — значит заказ и не удалён: возвращаем список.
+    data.orders = was;
+    say(err.message, "");
     fatal(`Удалить не удалось: ${err.message}`);
   }
 }
