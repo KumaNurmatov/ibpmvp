@@ -27,9 +27,22 @@ const KINDS = [
 const FALLBACK = "fabric";
 
 export function photoFor(order) {
-  if (order.photo) return { url: order.photo, generated: false };
   const kind = kindOf(order.get("item"));
-  return { url: `./assets/items/${kind}.webp`, generated: true, kind };
+  const drawn = `./assets/items/${kind}.webp`;
+  if (order.photo) return { url: order.photo, fallback: drawn, generated: false, kind };
+  return { url: drawn, fallback: drawn, generated: true, kind };
+}
+
+/**
+ * Картинка заказа тегом. Если своё фото ещё не выложилось (сайт
+ * пересобирается с минуту) или файла не стало, подставляется рисунок —
+ * пустой рамки на месте изделия не бывает.
+ */
+export function photoImg(order, { className = "", alt = "", attrs = "" } = {}) {
+  const { url, fallback } = photoFor(order);
+  const swap = url === fallback ? "" :
+    ` onerror="this.onerror=null;this.src='${fallback}'"`;
+  return `<img class="${className}" src="${url}" alt="${alt}" loading="lazy"${swap} ${attrs}>`;
 }
 
 export function kindOf(item) {

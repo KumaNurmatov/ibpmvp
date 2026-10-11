@@ -91,8 +91,8 @@ export async function save(data, message) {
 }
 
 /** Текущая версия файла в репозитории: нужен её sha и дата последней правки. */
-async function head(auth) {
-  const response = await fetch(contentsUrl(), { headers: headers(auth) });
+async function head(auth, path = REPO_PATH) {
+  const response = await fetch(contentsUrl(path), { headers: headers(auth) });
   if (response.status === 404) return { sha: null };
   if (!response.ok) throw new Error(await describe(response));
   const json = await response.json();
@@ -113,7 +113,90 @@ export async function lastCommit() {
   };
 }
 
-const contentsUrl = () => `${API}/repos/${repo()}/contents/${REPO_PATH}`;
+const contentsUrl = (path = REPO_PATH) => `${API}/repos/${repo()}/contents/${path}`;
+
+// ── фотографии изделий ──────────────────────────────────────────────────
+// Фото не лезут в orders.json: он читается на каждой странице, и десяток
+// картинок в base64 превратил бы его в мегабайты. Поэтому каждая лежит
+// отдельным файлом рядом со страницей, а в заказе хранится путь к ней.
+
+const PHOTO_DIR = "assets/photos";
+
+export const photoSitePath = (id) => `${PHOTO_DIR}/${safeName(id)}.jpg`;
+const photoRepoPath = (id) => `web/${photoSitePath(id)}`;
+
+/**
+ * Положить фото заказа в репозиторий. Принимает файл из поля выбора,
+ * ужимает его и возвращает путь, который надо записать в заказ.
+ */
+export async function savePhoto(id, file) {
+  const auth = token();
+  if (!auth) throw new Error("нет токена — сохранять некуда");
+
+  const bytes = await shrink(file);
+  const path = photoRepoPath(id);
+  const current = await head(auth, path);
+  const response = await fetch(contentsUrl(path), {
+    method: "PUT",
+    headers: headers(auth),
+    body: JSON.stringify({
+      message: `Фото изделия: заказ ${id}`,
+      content: bytesToBase64(bytes),
+      ...(current.sha ? { sha: current.sha } : {}),
+    }),
+  });
+  if (!response.ok) throw new Error(await describe(response));
+  return photoSitePath(id);
+}
+
+/** Убрать фото из репозитория. Нет файла — считаем, что дело сделано. */
+export async function deletePhoto(id) {
+  const auth = token();
+  if (!auth) throw new Error("нет токена — удалять нечем");
+
+  const path = photoRepoPath(id);
+  const current = await head(auth, path);
+  if (!current.sha) return;
+  const response = await fetch(contentsUrl(path), {
+    method: "DELETE",
+    headers: headers(auth),
+    body: JSON.stringify({ message: `Убрать фото: заказ ${id}`, sha: current.sha }),
+  });
+  if (!response.ok) throw new Error(await describe(response));
+}
+
+/**
+ * Ужать снимок до разумного: с телефона прилетает 4–8 МБ, а в карточке он
+ * показывается размером со спичечный коробок. 1200 px по длинной стороне
+ * хватает и для карточки, и для «открыть покрупнее».
+ */
+export async function shrink(file, { side = 1200, quality = 0.82 } = {}) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, side / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((done) => canvas.toBlob(done, "image/jpeg", quality));
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+/**
+ * Имя файла — из ключа заказа: в нём бывают дробь и кириллица. Буквы любые,
+ * включая русские (\w их не считает за буквы, и ключ «Аи 13.04.26/4»
+ * превращался в огрызок), убираются только знаки, опасные для пути.
+ */
+export function safeName(id) {
+  return String(id).trim().replace(/[^\p{L}\p{N}._-]+/gu, "-").replace(/^-+|-+$/g, "") || "order";
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(binary);
+}
 
 function headers(auth) {
   const out = { accept: "application/vnd.github+json" };

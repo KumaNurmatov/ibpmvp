@@ -426,6 +426,39 @@ button.chip.edit { color: var(--muted); border-color: var(--line); background: v
 .pilltab[aria-pressed="true"].warn i,
 .pilltab[aria-pressed="true"].ok i { background: rgba(22, 24, 26, .12); color: inherit; }
 
+/* ── окно поверх страницы (предпросмотр бланка) ───────────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 60; background: rgba(12, 14, 15, .55);
+  display: grid; place-items: center; padding: 24px;
+}
+.sheet-view {
+  background: var(--card); border-radius: var(--r-lg); padding: 14px 16px 16px;
+  width: min(900px, 100%); height: min(90vh, 1000px); display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+.sheet-view iframe {
+  flex: 1; width: 100%; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff;
+}
+.btn.primary {
+  background: linear-gradient(135deg, var(--lime), var(--lime-deep));
+  border-color: var(--lime-deep); color: var(--on-accent); font-weight: 500;
+}
+
+/* ── бланк: лист на экране ─────────────────────────────────────────── */
+/* Лист рисуется в миллиметрах и целиком ужимается под ширину окна —
+   пропорции остаются печатными. */
+.bl-frame { flex: 1; overflow: auto; background: var(--bg); border-radius: var(--r-md); padding: 12px; }
+.bl-scale { transform: scale(var(--k, 1)); transform-origin: top left; }
+.bl-sheet { position: relative; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.18); }
+.bl-copy { position: absolute; border: .3mm solid #595959; color: #111; }
+.bl-row { display: flex; align-items: center; border-bottom: .3mm solid #595959; }
+.bl-row:last-child { border-bottom: 0; }
+.bl-label { font-weight: 700; border-right: .3mm solid #595959; align-self: stretch;
+  display: flex; align-items: center; }
+.bl-value { flex: 1; overflow: hidden; white-space: nowrap; }
+.bl-fold { position: absolute; left: 0; right: 0; border-top: 1px dashed #bbb; }
+.bl-fold.v { top: 0; bottom: 0; right: auto; border-top: 0; border-left: 1px dashed #bbb; }
+
 /* ── шторка ────────────────────────────────────────────────────────── */
 details.shutter { margin: 8px 0 12px; }
 details.shutter > summary {

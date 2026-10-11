@@ -16,7 +16,7 @@ import { describe, it } from "node:test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { REPO_PATH, SITE_PATH, blankOrder } from "../lib/store.js";
+import { REPO_PATH, SITE_PATH, blankOrder, photoSitePath, safeName } from "../lib/store.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -38,6 +38,22 @@ describe("путь к данным", () => {
     // Он там появлялся сам, как след той самой ошибки, и сбивал с толку.
     assert.ok(!existsSync(path.join(root, SITE_PATH)),
       `${SITE_PATH} в корне — это дубль, который сайт не читает`);
+  });
+});
+
+describe("путь к фото", () => {
+  it("имя файла собирается из ключа заказа", () => {
+    assert.equal(photoSitePath("666"), "assets/photos/666.jpg");
+    assert.equal(photoSitePath("666/1-1"), "assets/photos/666-1-1.jpg");
+  });
+
+  it("кириллица и пробелы в ключе не ломают путь", () => {
+    assert.equal(safeName("Аи 13.04.26/4"), "Аи-13.04.26-4");
+    assert.ok(!photoSitePath("а/б в").includes("/", "assets/photos/".length));
+  });
+
+  it("пустой ключ не даёт файла без имени", () => {
+    assert.equal(safeName("   "), "order");
   });
 });
 

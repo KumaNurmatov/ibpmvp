@@ -22,6 +22,8 @@
   .list .src { display: block; }
   .saved { color: var(--ok); }
   .wide-btn { width: 100%; margin-bottom: 10px; }
+  .photo-preview { width: 92px; height: 62px; object-fit: contain; background: var(--shot);
+    border-radius: var(--r-sm); padding: 2px; }
   @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
 </style>
 </head>
@@ -65,7 +67,9 @@
 
 <script type="module">
 import { money, normalizeContract, orderFromRecord } from "./lib/ledger.js";
-import { WORKSHOP_COLORS, blankOrder, canEdit, repo, save, setRepo, setToken, token } from "./lib/store.js";
+import { WORKSHOP_COLORS, blankOrder, canEdit, deletePhoto, repo, save, savePhoto,
+         setRepo, setToken, token } from "./lib/store.js";
+import { photoFor } from "./lib/photo.js";
 import { stage, stageOf } from "./lib/stages.js";
 import { escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated, workshops } from "./lib/shell.js";
 
@@ -181,6 +185,10 @@ function drawEditor(record) {
           <th class="key">Цех</th>
           <td class="val"><div id="ws-pick"></div></td>
         </tr>
+        <tr>
+          <th class="key">Фото изделия</th>
+          <td class="val"><div id="photo-pick"></div></td>
+        </tr>
 
         ${block("Отправка")}
         ${row("shipment.date", "Дата отправки", r.shipment.date, "date")}
@@ -277,6 +285,7 @@ function drawEditor(record) {
   });
 
   drawWorkshops(r);
+  drawPhoto(r);
   document.querySelector("#add-pay").onclick = () => {
     r.payments.push({ kind: nextKind(r), date: "", amount: null, doc_number: "", purpose: "" });
     drawRows(r);
@@ -316,6 +325,75 @@ function drawEditor(record) {
     for (const b of document.querySelectorAll("[data-drop-link]")) {
       b.onclick = () => { rec.links.splice(+b.dataset.dropLink, 1); drawRows(rec); recalc(rec); };
     }
+  }
+}
+
+// ── фото изделия ───────────────────────────────────────────────────────
+// Снимок лежит отдельным файлом в репозитории, в заказе хранится путь к
+// нему. Пока фото не выбрано, в карточках показывается рисованная иконка
+// по названию изделия — она же остаётся, если фото убрать.
+
+function drawPhoto(r, localUrl = "") {
+  const box = document.querySelector("#photo-pick");
+  if (!box) return;
+  // Пока выкладка не прошла, выложённого файла на сайте ещё нет — показываем
+  // то, что выбрали на этом компьютере.
+  const { url, generated } = localUrl
+    ? { url: localUrl, generated: false }
+    : photoFor(orderFromRecord(r));
+
+  box.innerHTML = `
+    <div class="row-line">
+      <img class="photo-preview" src="${escapeHtml(url)}" alt="">
+      <div class="row-line">
+        <button type="button" id="photo-add">${r.photo ? "Заменить фото" : "Добавить фото"}</button>
+        ${r.photo ? '<button type="button" id="photo-drop">Убрать</button>' : ""}
+        <input type="file" id="photo-file" accept="image/*" class="hide">
+      </div>
+      <span class="src" id="photo-state">${generated
+        ? "своего фото нет — показан рисунок по названию изделия" : ""}</span>
+    </div>`;
+
+  const file = document.querySelector("#photo-file");
+  const state = document.querySelector("#photo-state");
+  document.querySelector("#photo-add").onclick = () => file.click();
+  document.querySelector("#photo-drop")?.addEventListener("click", () => dropPhoto(r));
+
+  file.onchange = async () => {
+    const chosen = file.files?.[0];
+    if (!chosen) return;
+    if (!canEdit()) { state.textContent = "нужен токен — загружать некуда"; return; }
+    if (!String(r.id || "").trim()) {
+      state.textContent = "сначала заполните договор: по нему называется файл фото";
+      return;
+    }
+    // Показываем выбранное сразу, не дожидаясь ответа GitHub.
+    const local = URL.createObjectURL(chosen);
+    document.querySelector(".photo-preview").src = local;
+    state.textContent = "загружаю…";
+    try {
+      r.photo = await savePhoto(r.id, chosen);
+      drawPhoto(r, local);
+      say("Фото загружено — нажмите «Сохранить», чтобы оно закрепилось за заказом", "saved");
+      document.querySelector("#photo-state").textContent = "на сайте появится после сохранения";
+      recalc(r);
+    } catch (err) {
+      state.textContent = err.message;
+    }
+  };
+}
+
+async function dropPhoto(r) {
+  const state = document.querySelector("#photo-state");
+  state.textContent = "убираю…";
+  try {
+    await deletePhoto(r.id);
+    r.photo = "";
+    drawPhoto(r);
+    say("Фото убрано — нажмите «Сохранить», чтобы это закрепилось", "saved");
+    document.querySelector("#photo-state").textContent = "вернулся рисунок по названию изделия";
+  } catch (err) {
+    state.textContent = err.message;
   }
 }
 

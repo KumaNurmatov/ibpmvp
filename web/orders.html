@@ -44,7 +44,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
-import { photoFor } from "./lib/photo.js";
+import { photoImg } from "./lib/photo.js";
 import { STAGES, stage, stageOf } from "./lib/stages.js";
 import { pills } from "./lib/ui.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, severity, showUpdated,
@@ -189,7 +189,6 @@ function drawCards(rows) {
     ? rows.map((o) => {
         const c = o.computed;
         const st = status(o);
-        const { url } = photoFor(o);
         const done = c.shipment_sum ? Math.min(1, Math.max(0, c.paid / c.shipment_sum)) : 0;
         const bar = done >= 0.999 ? "" : done > 0 ? "part" : "none";
         return `<a class="ocard" href="./order.html?id=${encodeURIComponent(o.key)}">
@@ -204,7 +203,7 @@ function drawCards(rows) {
               <div class="what">${escapeHtml(o.get("order_no") || "")} ·
                 ${escapeHtml(o.get("item") || "изделие не указано")}</div>
             </div>
-            <img class="shot" src="${url}" alt="" loading="lazy">
+            ${photoImg(o, { className: "shot" })}
           </div>
           <div class="meta">
             <span>отправка ${dateRu(o.get("shipment_date"))}</span>
