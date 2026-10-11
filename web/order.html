@@ -82,6 +82,47 @@ function render(o) {
              (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
     </div>
 
+    <h2>Заказ</h2>
+    <div class="card"><table>
+      <tr><th>Заказано</th><td>${qty(o.get("ordered_qty"))} шт</td>
+          <th>Цена пошива</th><td>${money(price)}</td></tr>
+      <tr><th>ТН ВЭД</th><td>${escapeHtml(o.get("tnved") || "—")}</td>
+          <th>Артикул</th><td>${escapeHtml(o.get("item_article") || "—")}</td></tr>
+      <tr><th>Цех</th><td colspan="3">${o.workshops.length
+            ? `<span class="chips">${workshopChips(o)}</span>` : "—"}</td></tr>
+      <tr><th>Сумма заказа</th><td colspan="3"><b>${money(c.order_sum)}</b>
+          <span class="src">${qty(o.get("ordered_qty"))} шт × ${money(price)}</span></td></tr>
+    </table></div>
+
+    <h2>Отправка</h2>
+    <div class="card"><table>
+      <tr><th>Дата</th><td>${dateRu(o.get("shipment_date"))}</td>
+          <th>Мест</th><td>${qty(o.get("places"))}</td></tr>
+      <tr><th>Количество</th><td>${qty(o.get("shipped_qty"))} шт</td>
+          <th>Вес брутто</th><td>${qty(o.get("weight_gross"))} кг</td></tr>
+      <tr><th>Сумма отгрузки</th><td colspan="3"><b>${money(c.shipment_sum)}</b>
+          <span class="src">${qty(o.get("shipped_qty"))} шт × ${money(price)}</span></td></tr>
+      <tr><th>Водитель</th><td>${escapeHtml(o.get("driver") || "—")}</td>
+          <th>Телефон</th><td>${o.get("driver_phone")
+            ? `<a href="tel:${escapeHtml(String(o.get("driver_phone")).replace(/[^+\d]/g, ""))}">${
+                escapeHtml(o.get("driver_phone"))}</a>` : "—"}</td></tr>
+    </table></div>
+
+    <h2>Приёмка</h2>
+    <div class="card">${acceptance(o)}</div>
+
+    <h2>Платежи</h2>
+    <div class="card">${o.payments.length ? `<table>
+      <tr><th>Вид</th><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
+      ${o.payments.map((p) => `<tr>
+        <td>${escapeHtml(p.kind)}${p.inferred_from
+            ? `<div class="src">${escapeHtml(p.inferred_from)}</div>` : ""}</td>
+        <td>${dateRu(p.date)}</td>
+        <td class="num">${money(p.amount)}</td>
+        <td>${escapeHtml(p.doc_number || "—")}${p.purpose
+            ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
+      </table>` : '<span class="src">Платежей нет.</span>'}</div>
+
     <h2>Расчёт</h2>
     <div class="card"><table class="calc">
       ${calcRow("Сумма заказа", c.order_sum, `${qty(o.get("ordered_qty"))} шт × ${money(price)}`)}
@@ -99,33 +140,6 @@ function render(o) {
           c.settled ? "Сверх непринятого — ничего" : "Сверх непринятого", c.unexplained,
           `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
     </table></div>
-
-    <h2>Приёмка</h2>
-    <div class="card">${acceptance(o)}</div>
-
-    <h2>Отправка</h2>
-    <div class="card"><table>
-      <tr><th>Дата</th><td>${dateRu(o.get("shipment_date"))}</td>
-          <th>Мест</th><td>${qty(o.get("places"))}</td></tr>
-      <tr><th>Количество</th><td>${qty(o.get("shipped_qty"))} шт</td>
-          <th>Вес брутто</th><td>${qty(o.get("weight_gross"))} кг</td></tr>
-      <tr><th>Водитель</th><td>${escapeHtml(o.get("driver") || "—")}</td>
-          <th>Телефон</th><td>${o.get("driver_phone")
-            ? `<a href="tel:${escapeHtml(String(o.get("driver_phone")).replace(/[^+\d]/g, ""))}">${
-                escapeHtml(o.get("driver_phone"))}</a>` : "—"}</td></tr>
-    </table></div>
-
-    <h2>Платежи</h2>
-    <div class="card">${o.payments.length ? `<table>
-      <tr><th>Вид</th><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
-      ${o.payments.map((p) => `<tr>
-        <td>${escapeHtml(p.kind)}${p.inferred_from
-            ? `<div class="src">${escapeHtml(p.inferred_from)}</div>` : ""}</td>
-        <td>${dateRu(p.date)}</td>
-        <td class="num">${money(p.amount)}</td>
-        <td>${escapeHtml(p.doc_number || "—")}${p.purpose
-            ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
-      </table>` : '<span class="src">Платежей нет.</span>'}</div>
 
     ${o.links.length ? `<h2>Документы</h2><div class="card links">
       ${o.links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">

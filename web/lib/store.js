@@ -187,9 +187,21 @@ function normalize(data) {
   };
 }
 
+/**
+ * Цеха, которые есть всегда. Заводить их руками в каждой новой базе не надо;
+ * список правится в админке, и если в данных он уже есть — берётся оттуда.
+ */
+export const DEFAULT_WORKSHOPS = [
+  { name: "Венера", color: "#5e30eb" },
+  { name: "Сулайман", color: "#0ca30c" },
+  { name: "Майрам", color: "#eb6834" },
+  { name: "Нурлан", color: "#0061ff" },
+  { name: "Дача-суу", color: "#c9a800" },
+];
+
 /** Справочник цехов: список правится в админке, цвет — у каждого свой. */
 function normalizeWorkshops(raw) {
-  const list = Array.isArray(raw) ? raw : [];
+  const list = Array.isArray(raw) && raw.length ? raw : DEFAULT_WORKSHOPS;
   return list
     .map((w) => (typeof w === "string" ? { name: w, color: "" } : w))
     .filter((w) => w?.name)

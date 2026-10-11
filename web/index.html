@@ -113,7 +113,7 @@ function drawTiles(orders) {
     { name: "Остаток к перечислению", value: `${shortMoney(debt)} ₽`,
       hint: `${money(debt)} · ${qty(Math.round(units))} шт по текущим ценам`,
       cls: "hero", wide: true,
-      art: sparkline(trail, { tone: "#d2ff4f", width: 210, height: 40 }) },
+      art: sparkline(trail, { tone: "var(--ok)", width: 210, height: 40 }) },
     // В узких плитках знак рубля не ставим: он единственный толкает цифру
     // на кольцо, а валюта и так названа в подписи.
     { name: "Отгружено за всё время", value: shortMoney(shipped),
