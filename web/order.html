@@ -25,11 +25,23 @@
 <div class="wrap">
   <p class="sub"><a href="./orders.html">← ко всем заказам</a></p>
   <div id="body"></div>
+
+  <div class="overlay hide" id="blank-box">
+    <div class="sheet-view">
+      <div class="row-line">
+        <b>Бланк заказа</b>
+        <span class="src" id="blank-state"></span>
+        <a class="btn primary hide" id="blank-save" style="margin-left:auto">Скачать PDF</a>
+        <button id="blank-close">Закрыть</button>
+      </div>
+      <div class="bl-frame" id="blank-frame"><div class="bl-scale" id="blank-sheet"></div></div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { money } from "./lib/ledger.js";
-import { photoFor } from "./lib/photo.js";
+import { photoImg } from "./lib/photo.js";
 import { tasks } from "./lib/stages.js";
 import { balanceScale, ring } from "./lib/ui.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, status, workshopChips } from "./lib/shell.js";
@@ -46,6 +58,9 @@ try {
   } else {
     document.title = `${order.get("order_no") || order.key} — карточка заказа`;
     render(order);
+    document.querySelector("#blank").onclick = () => showBlank(order);
+    document.querySelector("#blank-close").onclick = () =>
+      document.querySelector("#blank-box").classList.add("hide");
   }
 } catch (err) {
   fatal(`Не удалось загрузить данные: ${err.message}`);
@@ -55,15 +70,16 @@ function render(o) {
   const c = o.computed;
   const st = status(o);
   const price = o.get("unit_price");
-  const edit = `<a class="btn" href="./admin.html?id=${encodeURIComponent(o.key)}">Править</a>`;
+  const edit = `<button id="blank">Скачать бланк</button>
+    <a class="btn" href="./admin.html?id=${encodeURIComponent(o.key)}">Править</a>`;
 
   document.querySelector("#body").innerHTML = `
     <div class="row-line" style="margin-bottom:6px">
-      <img class="hero" src="${photoFor(o).url}" alt="">
+      ${photoImg(o, { className: "hero" })}
       <h1 style="margin:0">${escapeHtml(o.contract_no || o.key)}</h1>
       <span class="pill">заказ ${escapeHtml(o.get("order_no") || "—")}</span>
       <span class="pill ${st.cls}">${st.name}</span>
-      <span style="margin-left:auto">${edit}</span>
+      <span class="row-line" style="margin-left:auto">${edit}</span>
     </div>
     <p class="sub">${escapeHtml(o.get("item") || "изделие не указано")}${
       o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}${
@@ -161,6 +177,51 @@ function render(o) {
 
 // Объявлениями функций, а не const: render() вызывается выше по файлу, и
 // стрелочные константы к тому моменту ещё не инициализированы.
+/**
+ * Бланк: четыре копии на листе. Показываем сам PDF, а не его подобие в
+ * HTML, — что на экране, то и напечатается. Шрифты и сборщик грузятся
+ * только по нажатию: это 80 КБ, которые незачем тянуть всем.
+ */
+async function showBlank(o) {
+  const box = document.querySelector("#blank-box");
+  const frame = document.querySelector("#blank-frame");
+  const save = document.querySelector("#blank-save");
+  const state = document.querySelector("#blank-state");
+
+  box.classList.remove("hide");
+  state.textContent = "Готовлю бланк…";
+  try {
+    const [{ loadFonts }, { blankHtml, blankName, blankPdf, fitPreview, PAGE }] =
+      await Promise.all([import("./lib/pdf.js"), import("./lib/blank.js")]);
+
+    const sheet = document.querySelector("#blank-sheet");
+    sheet.innerHTML = blankHtml(o);
+    fitPreview(sheet);
+    fit(frame, sheet, PAGE.width);
+    window.addEventListener("resize", () => fit(frame, sheet, PAGE.width));
+
+    const bytes = blankPdf(o, await loadFonts());
+    const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+    if (save.dataset.url) URL.revokeObjectURL(save.dataset.url);
+    save.dataset.url = url;
+    save.href = url;
+    save.download = blankName(o);
+    save.classList.remove("hide");
+    state.textContent = "Договор, номер заказа, дата и артикул проставлены во все четыре копии.";
+  } catch (err) {
+    state.textContent = `Не получилось собрать бланк: ${err.message}`;
+  }
+}
+
+/** Ужать лист под ширину окна, сохранив печатные пропорции. */
+function fit(frame, sheet, widthMm) {
+  const pxPerMm = 96 / 25.4;
+  const room = frame.clientWidth - 24;
+  const k = Math.min(1, room / (widthMm * pxPerMm));
+  sheet.style.setProperty("--k", k.toFixed(3));
+  sheet.style.height = `${297 * pxPerMm * k}px`;
+}
+
 /** Что по этому заказу делать — то же правило, что строит список на дашборде. */
 function todo(o) {
   const [task] = tasks([o]);
