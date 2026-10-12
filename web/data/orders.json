@@ -3438,7 +3438,7 @@
       "photo": "",
       "shipment": {
         "date": "2026-09-14",
-        "qty": null,
+        "qty": 890,
         "places": 34,
         "weight_gross": 906.6,
         "driver": "",
