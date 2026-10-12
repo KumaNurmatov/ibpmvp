@@ -478,8 +478,8 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
+        "accepted_qty": 4474,
+        "rejected_qty": 128,
         "date": "",
         "reason": ""
       },
@@ -504,6 +504,20 @@
           "amount": 11999.88,
           "doc_number": "579",
           "purpose": "дог.513/1-1 от 27.02.26,по спец.1 от 27.02.26,Инвойс 16/03-1 от 16.03.26,ТТН 16/03-1 от 16.03.26,за текст.изд. (Блузки)"
+        },
+        {
+          "kind": "перенос",
+          "date": "",
+          "amount": 29629.44,
+          "doc_number": "Аи13.03.26",
+          "purpose": ""
+        },
+        {
+          "kind": "перенос",
+          "date": "",
+          "amount": 15259,
+          "doc_number": "Аи13.04.26",
+          "purpose": ""
         }
       ],
       "terms": {
