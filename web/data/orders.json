@@ -2,6 +2,28 @@
   "version": 1,
   "updated": "2026-10-12",
   "contractor": "Айзада (Az)",
+  "workshops": [
+    {
+      "name": "Венера",
+      "color": "#5e30eb"
+    },
+    {
+      "name": "Сулайман",
+      "color": "#0ca30c"
+    },
+    {
+      "name": "Майрам",
+      "color": "#eb6834"
+    },
+    {
+      "name": "Нурлан",
+      "color": "#0061ff"
+    },
+    {
+      "name": "Дача-суу",
+      "color": "#c9a800"
+    }
+  ],
   "orders": [
     {
       "id": "666",
@@ -9,10 +31,10 @@
       "contract_no": "666/1-1",
       "order_date": "2026-04-13",
       "item": "Костюм летний с шортами сингапур",
+      "item_article": "КОСТЛЕТШ01сингапур/олива",
+      "tnved": "",
       "ordered_qty": 750,
       "unit_price": 400,
-      "tnved": "",
-      "item_article": "КОСТЛЕТШ01сингапур/олива",
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -64,6 +86,7 @@
           "url": "https://drive.google.com/file/d/1Omirnm78BmzFs9yUDFdy_N-sI2PDPJki/view"
         }
       ],
+      "status": "",
       "note": "Графа 24 CMR (груз получен) не заполнена, акта приёмки нет. Госномер по CMR: 04KG227AON."
     },
     {
@@ -72,16 +95,16 @@
       "contract_no": "399/1-1",
       "order_date": "2026-01-29",
       "item": "Костюм (летний с шортами, Сингапур)",
-      "ordered_qty": 1120.0,
-      "unit_price": 373.33,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1120,
+      "unit_price": 373.33,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-02-27",
-        "qty": 842.0,
-        "places": 5.0,
+        "qty": 842,
+        "places": 5,
         "weight_gross": 346.5,
         "driver": "",
         "driver_phone": ""
@@ -126,6 +149,7 @@
           "url": "https://drive.google.com/file/d/1DylhnWfv2N88ZRBvK0EbLJbtN0t9xrwe/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -134,16 +158,16 @@
       "contract_no": "397/1-1",
       "order_date": "2026-01-28",
       "item": "Костюм (летний с шортами и футболкой поло)",
-      "ordered_qty": 620.0,
-      "unit_price": 471.11,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 620,
+      "unit_price": 471.11,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-02-28",
-        "qty": 710.0,
-        "places": 6.0,
+        "qty": 710,
+        "places": 6,
         "weight_gross": 344.88,
         "driver": "",
         "driver_phone": ""
@@ -158,7 +182,7 @@
         {
           "kind": "предоплата",
           "date": "2026-02-02",
-          "amount": 141333.0,
+          "amount": 141333,
           "doc_number": "66",
           "purpose": "договор 397/1-1 от 28.01.2026, по спецификации 1 от 28.01.26, за текстильные изделия (костюм)"
         },
@@ -192,6 +216,7 @@
           "url": "https://drive.google.com/file/d/1mdkHOCpEOd1i-lILlif0fnE3dPiYpNbi/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -200,16 +225,16 @@
       "contract_no": "411/1-1",
       "order_date": "2026-01-30",
       "item": "Костюм (юбка-шорты, Сингапур)",
-      "ordered_qty": 800.0,
-      "unit_price": 473.68,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 800,
+      "unit_price": 473.68,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-02-28",
-        "qty": 688.0,
-        "places": 6.0,
+        "qty": 688,
+        "places": 6,
         "weight_gross": 334.12,
         "driver": "",
         "driver_phone": ""
@@ -254,6 +279,7 @@
           "url": "https://drive.google.com/file/d/1QPLEwlhFCRwUxIqNI8yWICWszwshn4Ac/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -262,16 +288,16 @@
       "contract_no": "448/1-1",
       "order_date": "2026-02-13",
       "item": "блузка",
-      "ordered_qty": 2590.0,
-      "unit_price": 222.22,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2590,
+      "unit_price": 222.22,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-03-06",
-        "qty": 2699.0,
-        "places": 5.0,
+        "qty": 2699,
+        "places": 5,
         "weight_gross": 323.5,
         "driver": "",
         "driver_phone": ""
@@ -316,6 +342,7 @@
           "url": "https://drive.google.com/file/d/1AC68v21O06WSoM-ZF-m0t59uNdpRedRI/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -324,16 +351,16 @@
       "contract_no": "434/1-1",
       "order_date": "2026-02-06",
       "item": "двойка с шортами",
-      "ordered_qty": 1876.0,
-      "unit_price": 318.39,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1876,
+      "unit_price": 318.39,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-03-09",
-        "qty": 1904.0,
-        "places": 8.0,
+        "qty": 1904,
+        "places": 8,
         "weight_gross": 523.5,
         "driver": "",
         "driver_phone": ""
@@ -355,7 +382,7 @@
         {
           "kind": "постоплата",
           "date": "2026-06-03",
-          "amount": 299605.0,
+          "amount": 299605,
           "doc_number": "411",
           "purpose": "дог.434/1-1 от 06.02.2026,по спец.1 от06.02.26,д.с 1 от 23.03.26,ТТН 09/03-1 от 09.03.26,за текст.изд. (костюм)"
         }
@@ -371,6 +398,7 @@
           "url": "https://drive.google.com/file/d/1pkg7vq8ptNCghK_gcM1jh4cgM6xforg_/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -379,16 +407,16 @@
       "contract_no": "449/1-1",
       "order_date": "2026-02-13",
       "item": "фукра костюм",
-      "ordered_qty": 980.0,
-      "unit_price": 844.44,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 980,
+      "unit_price": 844.44,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-03-12",
-        "qty": 982.0,
-        "places": 13.0,
+        "qty": 982,
+        "places": 13,
         "weight_gross": 820.3,
         "driver": "",
         "driver_phone": ""
@@ -426,6 +454,7 @@
           "url": "https://drive.google.com/file/d/12D6PXm3A2tiyxVBEfORpzxwVq7mONIg7/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -434,17 +463,17 @@
       "contract_no": "513/1-1",
       "order_date": "2026-02-27",
       "item": "блузка",
-      "ordered_qty": 4440.0,
-      "unit_price": 222.22,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 4440,
+      "unit_price": 222.22,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-03-16",
-        "qty": 4602.0,
-        "places": 7.0,
-        "weight_gross": 565.0,
+        "qty": 4602,
+        "places": 7,
+        "weight_gross": 565,
         "driver": "",
         "driver_phone": ""
       },
@@ -492,6 +521,7 @@
           "url": "https://drive.google.com/file/d/1Ysmkb2Op30IKkRl3HGxeOWzkDOoQkQ6p/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -500,16 +530,16 @@
       "contract_no": "554/1-1",
       "order_date": "2026-03-13",
       "item": "блузка",
-      "ordered_qty": 5650.0,
-      "unit_price": 231.48,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 5650,
+      "unit_price": 231.48,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-03",
-        "qty": 5812.0,
-        "places": 9.0,
+        "qty": 5812,
+        "places": 9,
         "weight_gross": 774.6,
         "driver": "",
         "driver_phone": ""
@@ -524,7 +554,7 @@
         {
           "kind": "предоплата",
           "date": "2026-03-18",
-          "amount": 653931.0,
+          "amount": 653931,
           "doc_number": "161",
           "purpose": "договор 554/1-1 от 13.03.2026, по спецификации 1 от 13.03.26, за текстильные изделия (блузка)"
         },
@@ -551,6 +581,7 @@
           "url": "https://drive.google.com/file/d/1bnFL_OoizdsO0aGjBeWpst7aLWn-TeIk/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -559,16 +590,16 @@
       "contract_no": "558/1-1",
       "order_date": "2026-03-13",
       "item": "фукра костюм",
-      "ordered_qty": 1640.0,
-      "unit_price": 879.63,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1640,
+      "unit_price": 879.63,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-03",
-        "qty": 1191.0,
-        "places": 16.0,
+        "qty": 1191,
+        "places": 16,
         "weight_gross": 1041.3,
         "driver": "",
         "driver_phone": ""
@@ -617,6 +648,7 @@
           "url": "https://drive.google.com/file/d/1kbHZI-jyywumr1bi3vD4hOuk6odx9dZ4/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -625,17 +657,17 @@
       "contract_no": "559/1-1",
       "order_date": "2026-03-13",
       "item": "футболка с шортами сингапур",
-      "ordered_qty": 960.0,
-      "unit_price": 328.7,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 960,
+      "unit_price": 328.7,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-03",
-        "qty": 1044.0,
-        "places": 2.0,
-        "weight_gross": 181.0,
+        "qty": 1044,
+        "places": 2,
+        "weight_gross": 181,
         "driver": "",
         "driver_phone": ""
       },
@@ -649,7 +681,7 @@
         {
           "kind": "предоплата",
           "date": "2026-03-19",
-          "amount": 157776.0,
+          "amount": 157776,
           "doc_number": "202",
           "purpose": "договор 559/1-1 от 13.03.2026, по спецификации 1 от 13.03.26, за текстильные изделия (костюм)"
         },
@@ -676,6 +708,7 @@
           "url": "https://drive.google.com/file/d/11U74UTwm5RD-YzUi6H2HjXzPTCuCRFhg/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -684,17 +717,17 @@
       "contract_no": "602/1-1",
       "order_date": "2026-03-24",
       "item": "блузка",
-      "ordered_qty": 4910.0,
-      "unit_price": 234.74,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 4910,
+      "unit_price": 234.74,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-14",
-        "qty": 4954.0,
-        "places": 8.0,
-        "weight_gross": 609.0,
+        "qty": 4954,
+        "places": 8,
+        "weight_gross": 609,
         "driver": "",
         "driver_phone": ""
       },
@@ -735,6 +768,7 @@
           "url": "https://drive.google.com/file/d/1uRE5c63fFJT83H5L8tk_n2zSOuEiQyf2/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -743,16 +777,16 @@
       "contract_no": "631/1-1",
       "order_date": "2026-04-02",
       "item": "брюки шоколад",
-      "ordered_qty": 1000.0,
-      "unit_price": 232.56,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1000,
+      "unit_price": 232.56,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-14",
-        "qty": 990.0,
-        "places": 5.0,
+        "qty": 990,
+        "places": 5,
         "weight_gross": 219.6,
         "driver": "",
         "driver_phone": ""
@@ -767,7 +801,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-03",
-          "amount": 116280.0,
+          "amount": 116280,
           "doc_number": "233",
           "purpose": "договор 631/1-1 от 02.04.2026, по спецификации 1 от 02.04.26, за текстильные изделия (брюки)"
         },
@@ -794,6 +828,7 @@
           "url": "https://drive.google.com/file/d/1_Af3I-ffDY7ZYpDRqVWBZBpw1wTALvhq/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -802,16 +837,16 @@
       "contract_no": "560/1-1",
       "order_date": "2026-03-13",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 3000.0,
-      "unit_price": 416.67,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 3000,
+      "unit_price": 416.67,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-22",
-        "qty": 2960.0,
-        "places": 15.0,
+        "qty": 2960,
+        "places": 15,
         "weight_gross": 1033.4,
         "driver": "",
         "driver_phone": ""
@@ -826,7 +861,7 @@
         {
           "kind": "предоплата",
           "date": "2026-03-19",
-          "amount": 583335.0,
+          "amount": 583335,
           "doc_number": "203",
           "purpose": "договор 560/1-1 от 13.03.2026, по спецификации 1 от 13.03.26, за текстильные изделия (костюм)"
         },
@@ -853,6 +888,7 @@
           "url": "https://drive.google.com/file/d/1qdbkpHqk0QhGECtLXFHIoxce0yayuIw9/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -861,17 +897,17 @@
       "contract_no": "647/1-1",
       "order_date": "2026-04-07",
       "item": "брюки",
-      "ordered_qty": 7500.0,
-      "unit_price": 227.27,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 7500,
+      "unit_price": 227.27,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-30",
-        "qty": 6987.0,
-        "places": 36.0,
-        "weight_gross": 2200.0,
+        "qty": 6987,
+        "places": 36,
+        "weight_gross": 2200,
         "driver": "",
         "driver_phone": ""
       },
@@ -926,6 +962,7 @@
           "url": "https://drive.google.com/file/d/1wL7kE3gs4rY11eLQ8SmKFN48waHso97P/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -934,17 +971,17 @@
       "contract_no": "648/1-1",
       "order_date": "2026-04-07",
       "item": "брюки",
-      "ordered_qty": 8000.0,
-      "unit_price": 227.27,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 8000,
+      "unit_price": 227.27,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-06",
-        "qty": 8080.0,
-        "places": 45.0,
-        "weight_gross": 2136.0,
+        "qty": 8080,
+        "places": 45,
+        "weight_gross": 2136,
         "driver": "",
         "driver_phone": ""
       },
@@ -958,14 +995,14 @@
         {
           "kind": "предоплата",
           "date": "2026-04-09",
-          "amount": 909080.0,
+          "amount": 909080,
           "doc_number": "326",
           "purpose": "дог.648/1-1 от 07.04.2026,по спец.1 от 07.04.26,за текст.изд.(брюки)"
         },
         {
           "kind": "постоплата",
           "date": "2026-06-03",
-          "amount": 909080.0,
+          "amount": 909080,
           "doc_number": "412",
           "purpose": "дог.648/1-1 от 07.04.2026,по спец.1 от 07.04.26,за текст.изд. (брюки)"
         },
@@ -992,6 +1029,7 @@
           "url": "https://drive.google.com/file/d/1zr7mTiTav8pcJVzHcQmYWhkpR9WI25Tu/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1000,16 +1038,16 @@
       "contract_no": "665/1-1",
       "order_date": "2026-04-13",
       "item": "блузка",
-      "ordered_qty": 7200.0,
-      "unit_price": 222.22,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 7200,
+      "unit_price": 222.22,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-06",
-        "qty": 6126.0,
-        "places": 12.0,
+        "qty": 6126,
+        "places": 12,
         "weight_gross": 730.4,
         "driver": "",
         "driver_phone": ""
@@ -1024,7 +1062,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-17",
-          "amount": 799992.0,
+          "amount": 799992,
           "doc_number": "292",
           "purpose": "дог.665/1-1 от 13.04.2026,по спец.1 от 13.04.26,за текст.изд. (блузка)"
         },
@@ -1051,6 +1089,7 @@
           "url": "https://drive.google.com/file/d/1U3VCh9LaW0oKXoi1lNfJXar6m0G4uo1D/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1059,16 +1098,16 @@
       "contract_no": "624/1-1",
       "order_date": "2026-04-01",
       "item": "поло летний",
-      "ordered_qty": 2400.0,
-      "unit_price": 495.33,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2400,
+      "unit_price": 495.33,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-07",
-        "qty": 2419.0,
-        "places": 35.0,
+        "qty": 2419,
+        "places": 35,
         "weight_gross": 1273.7,
         "driver": "",
         "driver_phone": ""
@@ -1083,14 +1122,14 @@
         {
           "kind": "предоплата",
           "date": "",
-          "amount": 576000.0,
+          "amount": 576000,
           "doc_number": "",
           "purpose": ""
         },
         {
           "kind": "постоплата",
           "date": "2026-06-03",
-          "amount": 589440.0,
+          "amount": 589440,
           "doc_number": "410",
           "purpose": "дог.624/1-1 от 01.04.2026,по спец.1 от 01.04.26,за текст.изд. (костюм)"
         }
@@ -1110,6 +1149,7 @@
           "url": "https://drive.google.com/file/d/1VTY89doCHDTLjV2TqQ9pma9cZfU7e-lH/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1118,17 +1158,17 @@
       "contract_no": "736/1-1",
       "order_date": "2026-04-24",
       "item": "рубашка в клетку",
-      "ordered_qty": 580.0,
-      "unit_price": 440.53,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 580,
+      "unit_price": 440.53,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-15",
-        "qty": 590.0,
-        "places": 7.0,
-        "weight_gross": 270.0,
+        "qty": 590,
+        "places": 7,
+        "weight_gross": 270,
         "driver": "",
         "driver_phone": ""
       },
@@ -1169,6 +1209,7 @@
           "url": "https://drive.google.com/file/d/1nzByMFcnvp-Mry3ZRVCNr8sz8c1KEKki/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1177,17 +1218,17 @@
       "contract_no": "728/1-1",
       "order_date": "2026-04-24",
       "item": "брюки",
-      "ordered_qty": 5120.0,
-      "unit_price": 218.34,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 5120,
+      "unit_price": 218.34,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-19",
-        "qty": 4806.0,
-        "places": 24.0,
-        "weight_gross": 1360.0,
+        "qty": 4806,
+        "places": 24,
+        "weight_gross": 1360,
         "driver": "",
         "driver_phone": ""
       },
@@ -1235,6 +1276,7 @@
           "url": "https://drive.google.com/file/d/1lpaQo6vrexsM2r7RfkM_nEpeWWanhddb/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1243,17 +1285,17 @@
       "contract_no": "712/1-1",
       "order_date": "2026-04-20",
       "item": "двойные шорты",
-      "ordered_qty": 3410.0,
-      "unit_price": 473.68,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 3410,
+      "unit_price": 473.68,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-22",
-        "qty": 3410.0,
-        "places": 34.0,
-        "weight_gross": 1290.0,
+        "qty": 3410,
+        "places": 34,
+        "weight_gross": 1290,
         "driver": "",
         "driver_phone": ""
       },
@@ -1301,6 +1343,7 @@
           "url": "https://drive.google.com/file/d/1QF_Xouh-aX7s7OBO9MVf-96Oi8BQW0Sy/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1309,17 +1352,17 @@
       "contract_no": "713/1-1",
       "order_date": "2026-04-20",
       "item": "двойные шорты",
-      "ordered_qty": 3520.0,
-      "unit_price": 473.68,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 3520,
+      "unit_price": 473.68,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-22",
-        "qty": 3520.0,
-        "places": 36.0,
-        "weight_gross": 1305.0,
+        "qty": 3520,
+        "places": 36,
+        "weight_gross": 1305,
         "driver": "",
         "driver_phone": ""
       },
@@ -1340,7 +1383,7 @@
         {
           "kind": "постоплата",
           "date": "2026-06-09",
-          "amount": 805256.0,
+          "amount": 805256,
           "doc_number": "324",
           "purpose": "дог.713/1-1 от 20.04.2026,по спец.1 от 20.04.26,за текст.изд. (костюм)"
         },
@@ -1354,7 +1397,7 @@
         {
           "kind": "предоплата",
           "date": "2026-05-11",
-          "amount": 1114410.0,
+          "amount": 1114410,
           "doc_number": "314",
           "purpose": "дог.713/1-1 от 20.04.2026,по спец.1 от 20.04.26,за текст.изд. (костюм)"
         }
@@ -1374,6 +1417,7 @@
           "url": "https://drive.google.com/file/d/1L88qnRHFN3IYRyB7174QhI3mFjS-vc8a/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1382,17 +1426,17 @@
       "contract_no": "766/1-1",
       "order_date": "2026-05-04",
       "item": "брюки",
-      "ordered_qty": 8354.0,
-      "unit_price": 221.24,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 8354,
+      "unit_price": 221.24,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-28",
-        "qty": 8315.0,
-        "places": 63.0,
-        "weight_gross": 2352.0,
+        "qty": 8315,
+        "places": 63,
+        "weight_gross": 2352,
         "driver": "",
         "driver_phone": ""
       },
@@ -1440,6 +1484,7 @@
           "url": "https://drive.google.com/file/d/11pTa9-HfdHcKYLVSWkMzlx2EAq5KasJn/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1448,17 +1493,17 @@
       "contract_no": "787/1-1",
       "order_date": "2026-05-04",
       "item": "блузка",
-      "ordered_qty": 5098.0,
-      "unit_price": 221.24,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 5098,
+      "unit_price": 221.24,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-28",
-        "qty": 5263.0,
-        "places": 13.0,
-        "weight_gross": 655.0,
+        "qty": 5263,
+        "places": 13,
+        "weight_gross": 655,
         "driver": "",
         "driver_phone": ""
       },
@@ -1506,6 +1551,7 @@
           "url": "https://drive.google.com/file/d/19B2Ax-AFqYoTzWOdKR-Dm2LWyLKYutqu/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1514,17 +1560,17 @@
       "contract_no": "737/1-1",
       "order_date": "2026-04-24",
       "item": "двойные шорты",
-      "ordered_qty": 2200.0,
-      "unit_price": 475.77,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2200,
+      "unit_price": 475.77,
       "workshops": [],
       "photo": "assets/photos/737.jpg",
       "shipment": {
         "date": "2026-06-01",
-        "qty": 2327.0,
-        "places": 22.0,
-        "weight_gross": 800.0,
+        "qty": 2327,
+        "places": 22,
+        "weight_gross": 800,
         "driver": "",
         "driver_phone": ""
       },
@@ -1538,14 +1584,14 @@
         {
           "kind": "предоплата",
           "date": "2026-04-28",
-          "amount": 523347.0,
+          "amount": 523347,
           "doc_number": "251",
           "purpose": "дог.737/1-1 от 24.04.2026,по спец.1 от 24.04.26,за текст.изд. (костюм)"
         },
         {
           "kind": "постоплата",
           "date": "2026-06-25",
-          "amount": 570924.0,
+          "amount": 570924,
           "doc_number": "378/1",
           "purpose": "дог.737/1-1 от 24.04.2026,по спец.1 от 24.04.26,за текст.изд. (костюм)"
         }
@@ -1565,6 +1611,7 @@
           "url": "https://drive.google.com/file/d/18LtOEggYBkrw4xMVi79Hm6zsQgW4E_F0/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1573,17 +1620,17 @@
       "contract_no": "764/1-1",
       "order_date": "2026-05-04",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 6750.0,
-      "unit_price": 398.23,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 6750,
+      "unit_price": 398.23,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-01",
-        "qty": 6693.0,
-        "places": 60.0,
-        "weight_gross": 2311.0,
+        "qty": 6693,
+        "places": 60,
+        "weight_gross": 2311,
         "driver": "",
         "driver_phone": ""
       },
@@ -1597,7 +1644,7 @@
         {
           "kind": "предоплата",
           "date": "2026-05-13",
-          "amount": 1482074.0,
+          "amount": 1482074,
           "doc_number": "278",
           "purpose": "дог.764/1-1 от 04.05.2026,по спец.1 от 04.05.26,за текст.изд. (костюм)"
         },
@@ -1631,6 +1678,7 @@
           "url": "https://drive.google.com/file/d/1O6QDFdbnH6SawKrJq08KGr6DZi4XCdNO/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1639,17 +1687,17 @@
       "contract_no": "809/1-1",
       "order_date": "2026-05-04",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 1225.0,
-      "unit_price": 398.23,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1225,
+      "unit_price": 398.23,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-01",
-        "qty": 1196.0,
-        "places": 10.0,
-        "weight_gross": 390.0,
+        "qty": 1196,
+        "places": 10,
+        "weight_gross": 390,
         "driver": "",
         "driver_phone": ""
       },
@@ -1697,6 +1745,7 @@
           "url": "https://drive.google.com/file/d/15RDFWyoTG8wYjNudZRJ0ZsldojON7G96/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1705,17 +1754,17 @@
       "contract_no": "706/1-1",
       "order_date": "2026-04-21",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 4400.0,
-      "unit_price": 506.55,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 4400,
+      "unit_price": 506.55,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-02",
-        "qty": 3000.0,
-        "places": 31.0,
-        "weight_gross": 1330.0,
+        "qty": 3000,
+        "places": 31,
+        "weight_gross": 1330,
         "driver": "",
         "driver_phone": ""
       },
@@ -1729,7 +1778,7 @@
         {
           "kind": "предоплата",
           "date": "2026-05-11",
-          "amount": 1114410.0,
+          "amount": 1114410,
           "doc_number": "",
           "purpose": ""
         },
@@ -1756,6 +1805,7 @@
           "url": "https://drive.google.com/file/d/1tkKIJyQvhhXPpF00OYv7moc6bdco_STl/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1764,17 +1814,17 @@
       "contract_no": "808/1-1",
       "order_date": "2026-05-06",
       "item": "брюки",
-      "ordered_qty": 5100.0,
-      "unit_price": 221.24,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 5100,
+      "unit_price": 221.24,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-02",
-        "qty": 4569.0,
-        "places": 28.0,
-        "weight_gross": 1250.0,
+        "qty": 4569,
+        "places": 28,
+        "weight_gross": 1250,
         "driver": "",
         "driver_phone": ""
       },
@@ -1788,7 +1838,7 @@
         {
           "kind": "предоплата",
           "date": "2026-05-13",
-          "amount": 564162.0,
+          "amount": 564162,
           "doc_number": "276",
           "purpose": "дог.808/1-1 от 06.05.2026,по спец.1 от 06.05.26,за текст.изд. (брюки)"
         },
@@ -1815,6 +1865,7 @@
           "url": "https://drive.google.com/file/d/15M_WgnxtJlXVh0Nz6fdr3GXwvCJ6S2Zf/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1823,17 +1874,17 @@
       "contract_no": "662/1-1",
       "order_date": "2026-04-13",
       "item": "двойные шорты",
-      "ordered_qty": 1000.0,
-      "unit_price": 480.0,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1000,
+      "unit_price": 480,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-05",
-        "qty": 812.0,
-        "places": 10.0,
-        "weight_gross": 376.0,
+        "qty": 812,
+        "places": 10,
+        "weight_gross": 376,
         "driver": "",
         "driver_phone": ""
       },
@@ -1847,7 +1898,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-17",
-          "amount": 240000.0,
+          "amount": 240000,
           "doc_number": "296",
           "purpose": "дог.662/1-1 от 13.04.2026,по спец.1 от 13.04.26,за текст.изд. (костюм)"
         },
@@ -1874,6 +1925,7 @@
           "url": "https://drive.google.com/file/d/1P3L_6NgPRWoYty4eFX44IMTHFJEg_fee/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1882,17 +1934,17 @@
       "contract_no": "797/1-1",
       "order_date": "2026-05-06",
       "item": "двойка лапша",
-      "ordered_qty": 4720.0,
-      "unit_price": 442.48,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 4720,
+      "unit_price": 442.48,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-05",
-        "qty": 4771.0,
-        "places": 32.0,
-        "weight_gross": 2780.0,
+        "qty": 4771,
+        "places": 32,
+        "weight_gross": 2780,
         "driver": "",
         "driver_phone": ""
       },
@@ -1933,6 +1985,7 @@
           "url": "https://drive.google.com/file/d/1szpA6mmfC9FvUXWo0diVzecoZWfbsHuC/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -1941,17 +1994,17 @@
       "contract_no": "818/1-1",
       "order_date": "2026-05-21",
       "item": "блузка с высоким горлом",
-      "ordered_qty": 1760.0,
-      "unit_price": 190.08,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1760,
+      "unit_price": 190.08,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-24",
-        "qty": 2255.0,
-        "places": 11.0,
-        "weight_gross": 287.0,
+        "qty": 2255,
+        "places": 11,
+        "weight_gross": 287,
         "driver": "",
         "driver_phone": ""
       },
@@ -1992,6 +2045,7 @@
           "url": "https://drive.google.com/file/d/1BdXzHFigpQqRcSYkEB_8wcrb2u_2RQ5Q/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2000,17 +2054,17 @@
       "contract_no": "827/1-1",
       "order_date": "2026-06-11",
       "item": "рубашка клетка",
-      "ordered_qty": 785.0,
-      "unit_price": 418.41,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 785,
+      "unit_price": 418.41,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-01",
-        "qty": 693.0,
-        "places": 11.0,
-        "weight_gross": 295.0,
+        "qty": 693,
+        "places": 11,
+        "weight_gross": 295,
         "driver": "",
         "driver_phone": ""
       },
@@ -2051,6 +2105,7 @@
           "url": "https://drive.google.com/file/d/1IgS2Yd8oyr-UQMjH1tiN7K4fM_KnZYqT/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2059,17 +2114,17 @@
       "contract_no": "832/1-1",
       "order_date": "2026-06-16",
       "item": "фукра костюм",
-      "ordered_qty": 1120.0,
-      "unit_price": 808.51,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1120,
+      "unit_price": 808.51,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-01",
-        "qty": 1065.0,
-        "places": 26.0,
-        "weight_gross": 940.0,
+        "qty": 1065,
+        "places": 26,
+        "weight_gross": 940,
         "driver": "",
         "driver_phone": ""
       },
@@ -2110,6 +2165,7 @@
           "url": "https://drive.google.com/file/d/1L_8azZcU0x_h5irrawwom9oFKj354-Df/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2118,17 +2174,17 @@
       "contract_no": "823/1-1",
       "order_date": "2026-05-29",
       "item": "брюки палаццо",
-      "ordered_qty": 7670.0,
-      "unit_price": 232.37,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 7670,
+      "unit_price": 232.37,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-02",
-        "qty": 5594.0,
-        "places": 52.0,
-        "weight_gross": 2020.0,
+        "qty": 5594,
+        "places": 52,
+        "weight_gross": 2020,
         "driver": "",
         "driver_phone": ""
       },
@@ -2169,6 +2225,7 @@
           "url": "https://drive.google.com/file/d/1hLTXyySOAfXLNcn0O55mAU3j9Hrei023/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2177,17 +2234,17 @@
       "contract_no": "831/1-1",
       "order_date": "2026-06-15",
       "item": "костюм зип/брюки",
-      "ordered_qty": 1000.0,
-      "unit_price": 835.44,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1000,
+      "unit_price": 835.44,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-13",
-        "qty": 995.0,
-        "places": 26.0,
-        "weight_gross": 935.0,
+        "qty": 995,
+        "places": 26,
+        "weight_gross": 935,
         "driver": "",
         "driver_phone": ""
       },
@@ -2201,7 +2258,7 @@
         {
           "kind": "предоплата",
           "date": "2026-06-18",
-          "amount": 417720.0,
+          "amount": 417720,
           "doc_number": "391",
           "purpose": "дог.831/1-1 от 15.06.2026,по спец.1 от 15.06.26,за текст.изд. (костюм)"
         },
@@ -2228,6 +2285,7 @@
           "url": "https://drive.google.com/file/d/1ie9pIJ1-EVfbGCZT8WYsL33F0tyGP3Jw/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2236,17 +2294,17 @@
       "contract_no": "628/1-1",
       "order_date": "2026-04-01",
       "item": "рубашка в клетку",
-      "ordered_qty": 2000.0,
-      "unit_price": 467.29,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2000,
+      "unit_price": 467.29,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-30",
-        "qty": 1984.0,
-        "places": 27.0,
-        "weight_gross": 892.0,
+        "qty": 1984,
+        "places": 27,
+        "weight_gross": 892,
         "driver": "",
         "driver_phone": ""
       },
@@ -2260,7 +2318,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-02",
-          "amount": 467290.0,
+          "amount": 467290,
           "doc_number": "222",
           "purpose": "договор 628/1-1 от 01.04.2026, по спецификации 1 от 01.04.26, за текстильные изделия (рубашка)"
         }
@@ -2280,6 +2338,7 @@
           "url": "https://drive.google.com/file/d/1cJC6_81_UQUCjSX8PMFsnhd6_Wbrc-oy/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2288,17 +2347,17 @@
       "contract_no": "821/1-1",
       "order_date": "2026-05-27",
       "item": "рубашка клетка",
-      "ordered_qty": 1080.0,
-      "unit_price": 410.04,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1080,
+      "unit_price": 410.04,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-13",
-        "qty": 1090.0,
-        "places": 9.0,
-        "weight_gross": 293.0,
+        "qty": 1090,
+        "places": 9,
+        "weight_gross": 293,
         "driver": "",
         "driver_phone": ""
       },
@@ -2339,6 +2398,7 @@
           "url": "https://drive.google.com/file/d/1xQ0uYcoiHmPsc-OOZf3sawChwh7nPXEW/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2347,17 +2407,17 @@
       "contract_no": "839/1-1",
       "order_date": "2026-06-17",
       "item": "костюм зип/брюки",
-      "ordered_qty": 960.0,
-      "unit_price": 1162.16,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 960,
+      "unit_price": 1162.16,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-07-21",
-        "qty": 1018.0,
-        "places": 32.0,
-        "weight_gross": 1065.0,
+        "qty": 1018,
+        "places": 32,
+        "weight_gross": 1065,
         "driver": "",
         "driver_phone": ""
       },
@@ -2391,6 +2451,7 @@
           "url": "https://drive.google.com/file/d/1pJANKviLEj6AhkIZi776DaOFGvY_bDgB/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2399,17 +2460,17 @@
       "contract_no": "881/1-1",
       "order_date": "2026-07-03",
       "item": "водолазка",
-      "ordered_qty": 420.0,
-      "unit_price": 346.53,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 420,
+      "unit_price": 346.53,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-12",
-        "qty": 657.0,
-        "places": 4.0,
-        "weight_gross": 150.0,
+        "qty": 657,
+        "places": 4,
+        "weight_gross": 150,
         "driver": "",
         "driver_phone": ""
       },
@@ -2443,6 +2504,7 @@
           "url": "https://drive.google.com/file/d/1hUjGd09yQ6IB1EcbcC8LVj4gfzXbmD7t/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2451,10 +2513,10 @@
       "contract_no": "848/1-1",
       "order_date": "2026-06-18",
       "item": "костюм джерси",
-      "ordered_qty": 1080.0,
-      "unit_price": 1171.17,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1080,
+      "unit_price": 1171.17,
       "workshops": [
         "Сулайман",
         "Майрам"
@@ -2462,9 +2524,9 @@
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
-        "qty": 916.0,
-        "places": 25.0,
-        "weight_gross": 1131.0,
+        "qty": 916,
+        "places": 25,
+        "weight_gross": 1131,
         "driver": "",
         "driver_phone": ""
       },
@@ -2498,6 +2560,7 @@
           "url": "https://drive.google.com/file/d/13FoXaL__Bmlhn6MUQs2yyzF8-9zVC2GR/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2506,17 +2569,17 @@
       "contract_no": "879/1-1",
       "order_date": "2026-07-02",
       "item": "костюм оксфорд",
-      "ordered_qty": 975.0,
-      "unit_price": 1165.05,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 975,
+      "unit_price": 1165.05,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
-        "qty": 777.0,
-        "places": 20.0,
-        "weight_gross": 694.0,
+        "qty": 777,
+        "places": 20,
+        "weight_gross": 694,
         "driver": "",
         "driver_phone": ""
       },
@@ -2550,6 +2613,7 @@
           "url": "https://drive.google.com/file/d/1XQkIT9wGs3x7TxG2RONHTIiy_WBg4t0S/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2558,16 +2622,16 @@
       "contract_no": "901/1-1",
       "order_date": "2026-07-13",
       "item": "блузка 1 цв",
-      "ordered_qty": 275.0,
-      "unit_price": 223.3,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 275,
+      "unit_price": 223.3,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
-        "qty": 330.0,
-        "places": 2.0,
+        "qty": 330,
+        "places": 2,
         "weight_gross": 65.9,
         "driver": "",
         "driver_phone": ""
@@ -2602,6 +2666,7 @@
           "url": "https://drive.google.com/file/d/1npNlBvEjqimkwneo0mTCVktaqsgfQd0w/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2610,17 +2675,17 @@
       "contract_no": "912/1-1",
       "order_date": "2026-07-13",
       "item": "брюки 3 цв",
-      "ordered_qty": 1830.0,
-      "unit_price": 271.84,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1830,
+      "unit_price": 271.84,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
-        "qty": 1697.0,
-        "places": 16.0,
-        "weight_gross": 617.0,
+        "qty": 1697,
+        "places": 16,
+        "weight_gross": 617,
         "driver": "",
         "driver_phone": ""
       },
@@ -2654,6 +2719,7 @@
           "url": "https://drive.google.com/file/d/1hnTnxCFdib_NhFxxoSz2E_ao0mbHUty1/view?usp=drive_link"
         }
       ],
+      "status": "",
       "note": ""
     },
     {
@@ -2662,17 +2728,17 @@
       "contract_no": "646/1-1",
       "order_date": "2026-04-07",
       "item": "блузка",
-      "ordered_qty": 1530.0,
-      "unit_price": 227.27,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1530,
+      "unit_price": 227.27,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-22",
-        "qty": 1640.0,
-        "places": 2.0,
-        "weight_gross": 187.0,
+        "qty": 1640,
+        "places": 2,
+        "weight_gross": 187,
         "driver": "",
         "driver_phone": ""
       },
@@ -2713,16 +2779,16 @@
       "contract_no": "632/1-1",
       "order_date": "2026-04-02",
       "item": "брюки",
-      "ordered_qty": 6050.0,
-      "unit_price": 232.56,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 6050,
+      "unit_price": 232.56,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-04-23",
-        "qty": 5768.0,
-        "places": 22.0,
+        "qty": 5768,
+        "places": 22,
         "weight_gross": 1609.4,
         "driver": "",
         "driver_phone": ""
@@ -2737,7 +2803,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-03",
-          "amount": 703494.0,
+          "amount": 703494,
           "doc_number": "234",
           "purpose": "договор 632/1-1 от 02.04.2026, по спецификации 1 от 02.04.26, за текстильные изделия (брюки)"
         },
@@ -2771,17 +2837,17 @@
       "contract_no": "697/1-1",
       "order_date": "2026-04-17",
       "item": "поло летний",
-      "ordered_qty": 1200.0,
-      "unit_price": 473.68,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1200,
+      "unit_price": 473.68,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-05-19",
-        "qty": 1209.0,
-        "places": 15.0,
-        "weight_gross": 716.0,
+        "qty": 1209,
+        "places": 15,
+        "weight_gross": 716,
         "driver": "",
         "driver_phone": ""
       },
@@ -2795,7 +2861,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-21",
-          "amount": 710520.0,
+          "amount": 710520,
           "doc_number": "198",
           "purpose": "дог.697/1-1 от 17.04.2026,по спец.1 от 17.04.26,за текст.изд. (костюм)"
         }
@@ -2815,17 +2881,17 @@
       "contract_no": "765/1-1",
       "order_date": "2026-05-04",
       "item": "двойные шорты",
-      "ordered_qty": 2210.0,
-      "unit_price": 477.88,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2210,
+      "unit_price": 477.88,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-01",
-        "qty": 2069.0,
-        "places": 25.0,
-        "weight_gross": 880.0,
+        "qty": 2069,
+        "places": 25,
+        "weight_gross": 880,
         "driver": "",
         "driver_phone": ""
       },
@@ -2873,10 +2939,10 @@
       "contract_no": "727/1-1",
       "order_date": "2026-04-24",
       "item": "поло летний",
-      "ordered_qty": 1800.0,
-      "unit_price": 471.62,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1800,
+      "unit_price": 471.62,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -2897,14 +2963,14 @@
         {
           "kind": "предоплата",
           "date": "",
-          "amount": 710520.0,
+          "amount": 710520,
           "doc_number": "",
           "purpose": ""
         },
         {
           "kind": "постоплата",
           "date": "2026-04-28",
-          "amount": 424458.0,
+          "amount": 424458,
           "doc_number": "246",
           "purpose": "дог.727/1-1 от 24.04.2026,по спец.1 от 24.04.26,за текст.изд. (костюм)"
         }
@@ -2924,10 +2990,10 @@
       "contract_no": "807/1-1",
       "order_date": "2026-05-06",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 1400.0,
-      "unit_price": 371.68,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1400,
+      "unit_price": 371.68,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -2968,17 +3034,17 @@
       "contract_no": "707/1-1",
       "order_date": "2026-04-21",
       "item": "рубашка с шортами сингапур",
-      "ordered_qty": 3950.0,
-      "unit_price": 506.55,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 3950,
+      "unit_price": 506.55,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-06-16",
-        "qty": 3332.0,
-        "places": 33.0,
-        "weight_gross": 1530.0,
+        "qty": 3332,
+        "places": 33,
+        "weight_gross": 1530,
         "driver": "",
         "driver_phone": ""
       },
@@ -3013,7 +3079,7 @@
         {
           "kind": "доп. постоплата",
           "date": "2026-09-03",
-          "amount": 30000.0,
+          "amount": 30000,
           "doc_number": "539",
           "purpose": "дог.707/1-1 от 21.04.2026,по спец.1 от 21.04.26,за текст.изд. (костюм)"
         }
@@ -3033,10 +3099,10 @@
       "contract_no": "890",
       "order_date": "2026-07-09",
       "item": "костюм кашемир",
-      "ordered_qty": 560.0,
-      "unit_price": 941.75,
-      "tnved": "",
       "item_article": "",
+      "tnved": "",
+      "ordered_qty": 560,
+      "unit_price": 941.75,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -3057,7 +3123,7 @@
         {
           "kind": "предоплата",
           "date": "2026-07-15",
-          "amount": 263690.0,
+          "amount": 263690,
           "doc_number": "7",
           "purpose": "дог.890/1-1 от 09.07.2026,по спец.1 от 09.07.26,за текст.изд.(костюм)"
         }
@@ -3077,19 +3143,19 @@
       "contract_no": "882",
       "order_date": "2026-07-06",
       "item": "костюм лининг",
-      "ordered_qty": 1200.0,
-      "unit_price": 1089.11,
-      "tnved": "6112120000",
       "item_article": "",
+      "tnved": "6112120000",
+      "ordered_qty": 1200,
+      "unit_price": 1089.11,
       "workshops": [
         "Майрам"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-07",
-        "qty": 1293.0,
-        "places": 33.0,
-        "weight_gross": 1157.0,
+        "qty": 1293,
+        "places": 33,
+        "weight_gross": 1157,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3103,7 +3169,7 @@
         {
           "kind": "предоплата",
           "date": "2026-07-10",
-          "amount": 653466.0,
+          "amount": 653466,
           "doc_number": "13/3",
           "purpose": "дог.882/1-1 от 06.07.2026,по спец.1 от 06.07.26,за текст.изд. (костюм)"
         }
@@ -3128,19 +3194,19 @@
       "contract_no": "940/1-1",
       "order_date": "2026-08-11",
       "item": "Рубашка женская тёплая в клетку",
-      "ordered_qty": 1565.0,
-      "unit_price": 483.09,
-      "tnved": "6106100000",
       "item_article": "",
+      "tnved": "6106100000",
+      "ordered_qty": 1565,
+      "unit_price": 483.09,
       "workshops": [
         "Сулайман"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-04",
-        "qty": 1316.0,
-        "places": 14.0,
-        "weight_gross": 540.0,
+        "qty": 1316,
+        "places": 14,
+        "weight_gross": 540,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3186,19 +3252,19 @@
       "contract_no": "942/1-1",
       "order_date": "2026-08-13",
       "item": "Спортивный костюм кофта зип/брюки",
-      "ordered_qty": 1800.0,
-      "unit_price": 961.17,
-      "tnved": "6104130000",
       "item_article": "",
+      "tnved": "6104130000",
+      "ordered_qty": 1800,
+      "unit_price": 961.17,
       "workshops": [
         "Майрам"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-07",
-        "qty": 1244.0,
-        "places": 42.0,
-        "weight_gross": 1230.0,
+        "qty": 1244,
+        "places": 42,
+        "weight_gross": 1230,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3244,19 +3310,19 @@
       "contract_no": "943/1-1",
       "order_date": "2026-08-11",
       "item": "Брюки палаццо женские ЛАПША",
-      "ordered_qty": 1450.0,
-      "unit_price": 270.53,
-      "tnved": "6104620000",
       "item_article": "",
+      "tnved": "6104620000",
+      "ordered_qty": 1450,
+      "unit_price": 270.53,
       "workshops": [
         "Нурлан"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-04",
-        "qty": 1244.0,
-        "places": 10.0,
-        "weight_gross": 430.0,
+        "qty": 1244,
+        "places": 10,
+        "weight_gross": 430,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3302,10 +3368,10 @@
       "contract_no": "880",
       "order_date": "2026-07-02",
       "item": "костюм оксфорд",
-      "ordered_qty": 975.0,
-      "unit_price": 1165.05,
-      "tnved": "6104130000",
       "item_article": "",
+      "tnved": "6104130000",
+      "ordered_qty": 975,
+      "unit_price": 1165.05,
       "workshops": [
         "Венера"
       ],
@@ -3313,7 +3379,7 @@
       "shipment": {
         "date": "2026-09-14",
         "qty": null,
-        "places": 34.0,
+        "places": 34,
         "weight_gross": 906.6,
         "driver": "",
         "driver_phone": ""
@@ -3353,19 +3419,19 @@
       "contract_no": "911",
       "order_date": "2026-07-13",
       "item": "рубашка 4 цв",
-      "ordered_qty": 2400.0,
-      "unit_price": 485.44,
-      "tnved": "6106909000",
       "item_article": "",
+      "tnved": "6106909000",
+      "ordered_qty": 2400,
+      "unit_price": 485.44,
       "workshops": [
         "Дача-суу"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-04",
-        "qty": 1986.0,
-        "places": 20.0,
-        "weight_gross": 790.0,
+        "qty": 1986,
+        "places": 20,
+        "weight_gross": 790,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3379,7 +3445,7 @@
         {
           "kind": "предоплата",
           "date": "2026-07-16",
-          "amount": 582528.0,
+          "amount": 582528,
           "doc_number": "410",
           "purpose": "дог.911/1-1 от 13.07.2026,по спец.1 от 13.07.26,за текст.изд. (рубашка)"
         },
@@ -3411,19 +3477,19 @@
       "contract_no": "941/1-1",
       "order_date": "2026-08-11",
       "item": "Рубашка женская Y2K в клетку с полосками",
-      "ordered_qty": 1490.0,
-      "unit_price": 425.12,
-      "tnved": "6106100000",
       "item_article": "",
+      "tnved": "6106100000",
+      "ordered_qty": 1490,
+      "unit_price": 425.12,
       "workshops": [
         "Дача-суу"
       ],
       "photo": "",
       "shipment": {
         "date": "2026-09-07",
-        "qty": 931.0,
-        "places": 7.0,
-        "weight_gross": 224.0,
+        "qty": 931,
+        "places": 7,
+        "weight_gross": 224,
         "driver": "Тагайбек уулу Жаныбек",
         "driver_phone": ""
       },
@@ -3471,14 +3537,14 @@
       "item": "Рубашки",
       "item_article": "РЖТВИЛ01",
       "tnved": "6106100000",
-      "ordered_qty": 2105.0,
-      "unit_price": 440.0,
+      "ordered_qty": 2105,
+      "unit_price": 440,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-10-09",
-        "qty": 2462.0,
-        "places": 15.0,
+        "qty": 2462,
+        "places": 15,
         "weight_gross": 589.9,
         "driver": "Койчубай уулу Анарбек",
         "driver_phone": ""
@@ -3493,7 +3559,7 @@
         {
           "kind": "предоплата",
           "date": "2026-09-14",
-          "amount": 324170.0,
+          "amount": 324170,
           "doc_number": "601",
           "purpose": "дог.1041/1-1 от 10.09.2026,по спец.1 от 10.09.26,за текст.изд. (рубашка)"
         }
@@ -3528,15 +3594,15 @@
       "item": "Спортивный костюм весенний больших",
       "item_article": "СКПУКРА01",
       "tnved": "6104130000",
-      "ordered_qty": 1015.0,
-      "unit_price": 930.0,
+      "ordered_qty": 1015,
+      "unit_price": 930,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-24",
         "qty": null,
-        "places": 15.0,
-        "weight_gross": 634.0,
+        "places": 15,
+        "weight_gross": 634,
         "driver": "",
         "driver_phone": ""
       },
@@ -3585,8 +3651,8 @@
       "item": "Спортивный костюм на молнии больших размеров без начеса",
       "item_article": "СПОРКОСТ01",
       "tnved": "6104130000",
-      "ordered_qty": 2435.0,
-      "unit_price": 990.0,
+      "ordered_qty": 2435,
+      "unit_price": 990,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -3642,8 +3708,8 @@
       "item": "Спортивный костюм на молнии больших",
       "item_article": "СПОРКОСТ01",
       "tnved": "",
-      "ordered_qty": 1950.0,
-      "unit_price": 990.0,
+      "ordered_qty": 1950,
+      "unit_price": 990,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -3664,7 +3730,7 @@
         {
           "kind": "предоплата",
           "date": "2026-09-14",
-          "amount": 579150.0,
+          "amount": 579150,
           "doc_number": "599",
           "purpose": "дог.1042/1-1 от 10.09.2026,по спец.1 от 10.09.26,за текст.изд. (костюм)"
         }
@@ -3695,14 +3761,14 @@
       "item": "Рубашка в клетку",
       "item_article": "РЖТЕПЛАЯ01",
       "tnved": "6106909000",
-      "ordered_qty": 520.0,
-      "unit_price": 500.0,
+      "ordered_qty": 520,
+      "unit_price": 500,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-26",
         "qty": null,
-        "places": 6.0,
+        "places": 6,
         "weight_gross": 275.4,
         "driver": "",
         "driver_phone": ""
@@ -3774,7 +3840,7 @@
         {
           "kind": "предоплата",
           "date": "2026-04-17",
-          "amount": 576000.0,
+          "amount": 576000,
           "doc_number": "295",
           "purpose": "дог.661/1-1 от 13.04.2026,по спец.1 от 13.04.26,за текст.изд. (костюм)"
         }
@@ -3803,7 +3869,7 @@
       "shipment": {
         "date": "2026-10-07",
         "qty": null,
-        "places": 19.0,
+        "places": 19,
         "weight_gross": 649.9,
         "driver": "",
         "driver_phone": ""
@@ -3871,7 +3937,7 @@
         {
           "kind": "предоплата",
           "date": "2026-09-29",
-          "amount": 138600.0,
+          "amount": 138600,
           "doc_number": "620",
           "purpose": "дог.1064/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
         }
@@ -3920,7 +3986,7 @@
         {
           "kind": "предоплата",
           "date": "2026-09-30",
-          "amount": 762300.0,
+          "amount": 762300,
           "doc_number": "646",
           "purpose": "дог.1065/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
         }
@@ -3969,7 +4035,7 @@
         {
           "kind": "предоплата",
           "date": "2026-09-30",
-          "amount": 736890.0,
+          "amount": 736890,
           "doc_number": "645",
           "purpose": "дог.1074/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
         }
@@ -4018,7 +4084,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-07",
-          "amount": 900900.0,
+          "amount": 900900,
           "doc_number": "705",
           "purpose": "дог.1084/1-1 от 02.10.2026,по спец.1 от 02.10.26,за текст.изд. (костюм)"
         }
@@ -4062,7 +4128,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-07",
-          "amount": 591500.0,
+          "amount": 591500,
           "doc_number": "706",
           "purpose": "дог.1092/1-1 от 02.10.2026,по спец.1 от 02.10.26,за текст.изд. (рубашка)"
         }
@@ -4075,69 +4141,13 @@
       "links": [],
       "status": "",
       "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
-    },
-    {
-      "id": "999",
-      "order_no": "",
-      "contract_no": "999",
-      "order_date": "",
-      "item": "",
-      "item_article": "",
-      "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
-      "workshops": [],
-      "photo": "",
-      "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
-        "driver": "",
-        "driver_phone": ""
-      },
-      "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
-        "date": "",
-        "reason": ""
-      },
-      "payments": [],
-      "terms": {
-        "prepay_percent": 50,
-        "lead_time_days": null,
-        "postpay_days": null
-      },
-      "links": [],
-      "note": ""
     }
   ],
-  "workshops": [
-    {
-      "name": "Венера",
-      "color": "#5e30eb"
-    },
-    {
-      "name": "Сулайман",
-      "color": "#0ca30c"
-    },
-    {
-      "name": "Майрам",
-      "color": "#eb6834"
-    },
-    {
-      "name": "Нурлан",
-      "color": "#0061ff"
-    },
-    {
-      "name": "Дача-суу",
-      "color": "#c9a800"
-    }
-  ],
+  "shipments": [],
   "carriage": [
     {
       "date": "2026-05-13",
-      "amount": 323672.0,
+      "amount": 323672,
       "act_no": "Ай-1",
       "act_date": "2026-04-29",
       "doc_number": "14538",
@@ -4145,7 +4155,7 @@
     },
     {
       "date": "2026-05-15",
-      "amount": 459928.0,
+      "amount": 459928,
       "act_no": "3",
       "act_date": "2026-05-13",
       "doc_number": "9524",
@@ -4153,7 +4163,7 @@
     },
     {
       "date": "2026-05-19",
-      "amount": 247360.0,
+      "amount": 247360,
       "act_no": "2",
       "act_date": "2026-05-11",
       "doc_number": "9123",
@@ -4161,7 +4171,7 @@
     },
     {
       "date": "2026-06-05",
-      "amount": 614240.0,
+      "amount": 614240,
       "act_no": "5",
       "act_date": "2026-05-29",
       "doc_number": "7148",
@@ -4169,7 +4179,7 @@
     },
     {
       "date": "2026-06-18",
-      "amount": 831920.0,
+      "amount": 831920,
       "act_no": "6",
       "act_date": "2026-06-11",
       "doc_number": "7213",
@@ -4217,7 +4227,7 @@
     },
     {
       "date": "2026-10-12",
-      "amount": 85000.0,
+      "amount": 85000,
       "act_no": "12",
       "act_date": "2026-10-09",
       "doc_number": "14480",
@@ -4225,7 +4235,7 @@
     },
     {
       "date": "2026-10-12",
-      "amount": 85000.0,
+      "amount": 85000,
       "act_no": "10",
       "act_date": "2026-09-30",
       "doc_number": "14481",
