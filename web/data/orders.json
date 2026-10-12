@@ -3717,8 +3717,8 @@
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": null,
-        "places": null,
+        "qty": 1156,
+        "places": 37,
         "weight_gross": 1153.5,
         "driver": "",
         "driver_phone": ""
@@ -3739,7 +3739,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
