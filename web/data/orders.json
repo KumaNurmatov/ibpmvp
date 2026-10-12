@@ -1129,7 +1129,7 @@
       "item_article": "",
       "tnved": "",
       "ordered_qty": 2400,
-      "unit_price": 495.33,
+      "unit_price": 480,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -1141,7 +1141,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 2428,
         "rejected_qty": null,
         "date": "",
         "reason": ""
