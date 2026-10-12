@@ -77,6 +77,10 @@ mountShell("admin.html");
 
 const KINDS = ["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"];
 
+// Состояние заказа ставится руками: отмену и заморозку из цифр не вывести —
+// по деньгам такой заказ не отличим от того, что шьётся прямо сейчас.
+const STATES = [["", "идёт обычным ходом"], ["отменён", "отменён"], ["заморожен", "заморожен"]];
+
 let data = null;
 let current = null;   // id правимого заказа; null — новый, ещё не сохранённый
 
@@ -176,6 +180,7 @@ function drawEditor(record) {
         ${row("order_date", "Дата заказа", r.order_date, "date")}
         ${row("id", "Ключ карточки", r.id, "text", "подставится из договора")}
         ${row("item", "Изделие", r.item, "text", "например, Костюм летний с шортами")}
+        ${pick("status", "Состояние", r.status, STATES)}
         ${row("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
         ${row("unit_price", "Цена пошива, ₽", r.unit_price, "number")}
         ${calc("order_sum", "Сумма заказа")}
@@ -659,6 +664,17 @@ function row(path, label, value, type = "text", placeholder = "") {
     <th class="key"><label for="${id}" style="margin:0">${escapeHtml(label)}</label></th>
     <td class="val"><input id="${id}" type="${type}" placeholder="${escapeHtml(placeholder)}"
       value="${value === null || value === undefined ? "" : escapeHtml(value)}"></td>
+  </tr>`;
+}
+
+/** Строка с выбором из короткого списка: руками тут писать нечего. */
+function pick(path, label, value, options) {
+  const id = `f-${path.replace(/\./g, "-")}`;
+  return `<tr>
+    <th class="key"><label for="${id}" style="margin:0">${escapeHtml(label)}</label></th>
+    <td class="val"><select id="${id}">${options.map(([key, name]) =>
+      `<option value="${escapeHtml(key)}"${key === (value || "") ? " selected" : ""}>${
+        escapeHtml(name)}</option>`).join("")}</select></td>
   </tr>`;
 }
 

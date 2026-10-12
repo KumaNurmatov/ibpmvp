@@ -265,9 +265,58 @@ function normalize(data) {
       links: (o.links || []).filter((l) => l?.url).map((l) => ({
         title: l.title || "Ссылка", url: l.url,
       })),
+      // «отменён» и «заморожен» нельзя вывести из цифр: у такого заказа есть
+      // предоплата и нет отгрузки — по деньгам он не отличим от того, что
+      // шьётся прямо сейчас. Поэтому это отдельное поле, а не расчёт.
+      status: o.status ?? "",
       note: o.note ?? "",
     })),
+    shipments: (Array.isArray(data?.shipments) ? data.shipments : []).map(normalizeShipment),
+    // Оплаты за доставку из выписки банка: пока не разнесены по отгрузкам,
+    // лежат здесь. Разносятся в карточке отгрузки одним нажатием.
+    carriage: (Array.isArray(data?.carriage) ? data.carriage : []).map((p) => ({
+      date: p.date ?? "", amount: p.amount ?? null, act_no: p.act_no ?? "",
+      act_date: p.act_date ?? "", doc_number: p.doc_number ?? "", purpose: p.purpose ?? "",
+    })),
   };
+}
+
+/**
+ * Отгрузка: в один день уезжает несколько заказов, документы на каждый свои,
+ * а акт карго и оплата по нему — одни на всю машину. Поэтому состав отгрузки
+ * (ключи заказов) и общие сведения хранятся отдельно от заказов.
+ *
+ * Чего здесь нет — веса, мест, количества и суммы: они складываются из
+ * заказов. Хранить их второй раз значит разойтись с ними при первой правке.
+ */
+function normalizeShipment(s, i = 0) {
+  const date = s?.date ?? "";
+  return {
+    id: String(s?.id ?? date ?? i + 1),
+    date,
+    driver: s?.driver ?? "",
+    driver_phone: s?.driver_phone ?? "",
+    // Доставка считается по весу: обычно 80 ₽ за килограмм.
+    rate_per_kg: s?.rate_per_kg ?? DEFAULT_RATE_PER_KG,
+    orders: toList(s?.orders).map(String),
+    act_no: s?.act_no ?? "",
+    act_date: s?.act_date ?? "",
+    links: (s?.links || []).filter((l) => l?.url).map((l) => ({
+      title: l.title || "Ссылка", url: l.url,
+    })),
+    payments: (s?.payments || []).map((p) => ({
+      date: p.date ?? "", amount: p.amount ?? null,
+      doc_number: p.doc_number ?? "", purpose: p.purpose ?? "",
+    })),
+    note: s?.note ?? "",
+  };
+}
+
+/** Ставка доставки по умолчанию: 80 ₽ за килограмм брутто. */
+export const DEFAULT_RATE_PER_KG = 80;
+
+export function blankShipment(date = "") {
+  return normalizeShipment({ date, id: date });
 }
 
 /**

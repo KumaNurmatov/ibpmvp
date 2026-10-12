@@ -9,12 +9,14 @@ const ICONS = {
   dash: "M4 13h7V4H4zM13 20h7v-9h-7zM4 20h7v-5H4zM13 9h7V4h-7z",
   orders: "M5 4h10l4 4v12H5zM15 4v4h4M8 12h8M8 16h5",
   cards: "M4 5h16v14H4zM4 10h16M10 10v9",
+  ship: "M3 8l3-3h7l3 3v8H3zM16 10h3l2 3v3h-5M6 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3M18 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3",
   parse: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4",
 };
 
 const PAGES = [
   ["index.html", "Дашборд", "dash"],
   ["orders.html", "Заказы", "orders"],
+  ["shipments.html", "Отправки", "ship"],
   ["admin.html", "Карточки", "cards"],
   ["parse.html", "Разбор документов", "parse"],
 ];

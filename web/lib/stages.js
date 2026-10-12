@@ -21,6 +21,10 @@ export const STAGES = [
   { key: "acceptance", name: "Приёмка", cls: "warn", hint: "постоплата прошла, приёмка не отмечена" },
   { key: "reconcile", name: "К сверке", cls: "bad", hint: "недоплата больше, чем непринятое" },
   { key: "closed", name: "Закрыт", cls: "ok", hint: "за принятое заплачено полностью" },
+  // Остановленный заказ по цифрам не отличим от шьющегося: предоплата есть,
+  // отгрузки нет. Поэтому стадия берётся из поля «состояние», а не из денег,
+  // и стоит в конце — это не ступень процесса, а выход из него.
+  { key: "stopped", name: "Остановлен", cls: "", hint: "отменён или заморожен — отгрузки не будет" },
 ];
 
 const BY_KEY = new Map(STAGES.map((s) => [s.key, s]));
@@ -38,6 +42,9 @@ const isPostpay = (p) => p.kind.startsWith("постоплата") || p.kind.sta
  */
 export function stageOf(order) {
   const c = order.computed;
+  // Отменённый или замороженный заказ дальше не идёт: показывать его «в
+  // пошиве» и требовать по нему отгрузку — врать про работу, которой нет.
+  if (order.status) return "stopped";
   const shipped = Boolean(order.get("shipment_date")) || order.get("shipped_qty") !== null;
 
   if (!shipped) return order.payments.some(isPrepay) ? "production" : "prepay";
@@ -50,12 +57,15 @@ export function stageOf(order) {
   return c.rejected_qty === null ? "acceptance" : "reconcile";
 }
 
+/** Ступени процесса — без выхода из него: остановленный заказ никуда не идёт. */
+export const FLOW = STAGES.filter((s) => s.key !== "stopped");
+
 /**
  * Воронка: сколько заказов и денег стоит на каждой стадии.
  * Стадии остаются в списке даже пустыми — пустая ступень тоже факт.
  */
 export function funnel(orders) {
-  return STAGES.map((s) => {
+  return FLOW.map((s) => {
     const own = orders.filter((o) => stageOf(o) === s.key);
     return {
       ...s,
@@ -75,6 +85,9 @@ function moneyAtStake(order, key) {
   const c = order.computed;
   if (key === "prepay") return expectedPrepay(order) ?? 0;
   if (key === "production") return 0;
+  // За остановленным заказом стоят уже перечисленные деньги: их придётся
+  // вернуть или зачесть в другой заказ.
+  if (key === "stopped") return c.paid || 0;
   return c.remainder || 0;
 }
 
@@ -96,6 +109,18 @@ export function tasks(orders, today = new Date()) {
   for (const order of orders) {
     const key = stageOf(order);
     if (key === "closed") continue;
+    if (key === "stopped") {
+      // Делать по нему нечего, кроме одного: решить судьбу предоплаты.
+      const paid = order.computed.paid || 0;
+      if (paid > EPS) {
+        out.push({
+          order, stage: key, level: "warn", amount: paid,
+          title: `Заказ ${order.status}: решить судьбу предоплаты`,
+          detail: `Перечислено ${money(paid)}, отгрузки не будет — вернуть или зачесть в другой заказ.`,
+        });
+      }
+      continue;
+    }
     const task = taskFor(order, key, today);
     if (task) out.push(task);
   }

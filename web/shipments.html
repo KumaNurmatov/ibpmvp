@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Отправки</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🚚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="page-head">
+    <div class="grow">
+      <h1>Отправки</h1>
+      <p class="sub" id="updated"></p>
+    </div>
+    <div class="seg" role="group" aria-label="Вид списка">
+      <button id="view-cards" aria-pressed="true">Карточки</button>
+      <button id="view-table" aria-pressed="false">Таблица</button>
+    </div>
+  </div>
+
+  <div class="tiles kpi" id="kpi"></div>
+
+  <div class="card">
+    <div class="grid c3">
+      <div><label for="q">Поиск</label><input id="q" placeholder="договор, дата, водитель, акт"></div>
+      <div><label for="mo">Месяц</label><select id="mo"><option value="">все</option></select></div>
+      <div><label for="pay">Оплата доставки</label><select id="pay">
+        <option value="">любая</option>
+        <option value="none">не оплачена</option>
+        <option value="part">оплачена частично</option>
+        <option value="done">оплачена</option>
+      </select></div>
+    </div>
+    <div class="row-line" style="margin-top:12px">
+      <label style="margin:0"><input type="checkbox" id="only" style="width:auto"> только с несостыковками</label>
+      <span class="src" id="count"></span>
+    </div>
+  </div>
+
+  <div class="folders" id="cards"></div>
+  <div class="card hide" id="table-box"><table class="wide" id="tbl"></table></div>
+</div>
+
+<script type="module">
+import { money } from "./lib/ledger.js";
+import { shipmentsOf } from "./lib/shipments.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
+
+mountShell("shipments.html");
+
+const VIEW_KEY = "ibp.shipmentsView";
+
+// Столбцы таблицы — то же, что в карточке, одной строкой: сначала машина,
+// потом что в ней уехало, потом деньги за доставку.
+const COLUMNS = [
+  ["date", "Дата отгрузки", (s) => `<a href="./shipment.html?id=${encodeURIComponent(s.id)}">${
+      dateRu(s.date)}</a>${s.stored ? "" : '<div class="src">собрана по датам</div>'}`],
+  ["orders", "Заказов", (s) => String(s.totals.orders), "num"],
+  ["contracts", "Договоры", (s) => s.contracts.map((c) => escapeHtml(c)).join(", ") || "—"],
+  ["places", "Мест", (s) => qty(s.totals.places), "num"],
+  ["qty", "Количество", (s) => qty(s.totals.qty), "num"],
+  ["weight", "Вес брутто, кг", (s) => qty(s.totals.weight), "num"],
+  ["sum", "Сумма отгрузки", (s) => money(s.totals.sum), "num"],
+  ["driver", "Водитель", (s) => escapeHtml(s.driver || "—")],
+  ["cost", "Доставка", (s) => s.cost === null ? '<span class="src">нет веса</span>' : money(s.cost), "num"],
+  ["paid", "Оплачено карго", (s) => money(s.paid), "num"],
+  ["due", "Остаток", (s) => s.due === null ? "—"
+      : `<b${s.due > 0.5 ? ' style="color:var(--bad)"' : ""}>${money(s.due)}</b>`, "num"],
+];
+
+const VALUE = {
+  date: (s) => s.date || "",
+  orders: (s) => s.totals.orders,
+  contracts: (s) => s.contracts.join(", "),
+  places: (s) => s.totals.places ?? -1,
+  qty: (s) => s.totals.qty ?? -1,
+  weight: (s) => s.totals.weight ?? -1,
+  sum: (s) => s.totals.sum ?? -1,
+  driver: (s) => s.driver || "",
+  cost: (s) => s.cost ?? -1,
+  paid: (s) => s.paid ?? -1,
+  due: (s) => s.due ?? -1,
+};
+
+let all = [];
+let sort = { key: "date", dir: -1 };
+let view = readView();
+
+try {
+  const { data, orders } = await loadOrders();
+  all = shipmentsOf(data, orders);
+  showUpdated(document.querySelector("#updated"), data?.updated);
+  drawKpi();
+  fillMonths();
+  for (const id of ["q", "mo", "pay", "only"]) {
+    document.querySelector(`#${id}`).addEventListener("input", draw);
+  }
+  document.querySelector("#view-cards").onclick = () => setView("cards");
+  document.querySelector("#view-table").onclick = () => setView("table");
+  draw();
+} catch (err) {
+  fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+
+/** Сводка сверху: сколько машин, сколько в них уехало и сколько должны карго. */
+function drawKpi() {
+  const weight = sum(all.map((s) => s.totals.weight));
+  const cost = sum(all.map((s) => s.cost));
+  const paid = sum(all.map((s) => s.paid));
+  const unpaid = all.filter((s) => (s.due ?? 0) > 0.5);
+
+  document.querySelector("#kpi").innerHTML = [
+    tile("Отгрузок", String(all.length), (() => {
+      const n = sum(all.map((s) => s.totals.orders));
+      return `${n} ${plural(n, "заказ", "заказа", "заказов")}`;
+    })()),
+    tile("Вес брутто", `${qty(weight)} кг`, "сумма по всем машинам"),
+    tile("Доставка", money(cost), "по весу и ставке"),
+    tile("Не оплачено карго", money(cost - paid),
+         `${unpaid.length} ${plural(unpaid.length, "машина", "машины", "машин")}`,
+         cost - paid > 0.5 ? "bad" : "ok"),
+  ].join("");
+}
+
+function fillMonths() {
+  const node = document.querySelector("#mo");
+  for (const m of [...new Set(all.map((s) => (s.date || "").slice(0, 7)))].filter(Boolean).sort().reverse()) {
+    node.append(new Option(monthRu(m), m));
+  }
+}
+
+function filtered() {
+  const q = document.querySelector("#q").value.trim().toLowerCase();
+  const mo = document.querySelector("#mo").value;
+  const pay = document.querySelector("#pay").value;
+  const only = document.querySelector("#only").checked;
+
+  return all.filter((s) => {
+    if (mo && !(s.date || "").startsWith(mo)) return false;
+    if (only && !s.warnings.length) return false;
+    if (pay === "none" && s.paid > 0.5) return false;
+    if (pay === "done" && (s.due === null || s.due > 0.5)) return false;
+    if (pay === "part" && !(s.paid > 0.5 && (s.due ?? 0) > 0.5)) return false;
+    if (!q) return true;
+    const hay = [s.date, dateRu(s.date), s.driver, s.act_no, s.contracts.join(" "),
+                 s.orders.map((o) => o.get("item")).join(" ")].join(" ").toLowerCase();
+    return hay.includes(q);
+  }).sort((a, b) => {
+    const x = VALUE[sort.key](a), y = VALUE[sort.key](b);
+    const cmp = typeof x === "number" && typeof y === "number" ? x - y
+      : String(x).localeCompare(String(y), "ru");
+    return cmp * sort.dir;
+  });
+}
+
+function draw() {
+  const rows = filtered();
+  document.querySelector("#count").textContent =
+    `${rows.length} из ${all.length} · доставка ${money(sum(rows.map((s) => s.cost)))}, ` +
+    `оплачено ${money(sum(rows.map((s) => s.paid)))}`;
+
+  document.querySelector("#cards").classList.toggle("hide", view !== "cards");
+  document.querySelector("#table-box").classList.toggle("hide", view !== "table");
+  document.querySelector("#view-cards").setAttribute("aria-pressed", String(view === "cards"));
+  document.querySelector("#view-table").setAttribute("aria-pressed", String(view === "table"));
+
+  if (view === "cards") drawCards(rows); else drawTable(rows);
+}
+
+/**
+ * Карточка отгрузки — папка: на корешке дата и вес, внутри видны номера
+ * договоров, которые в этот день уехали. Нажатие открывает саму машину.
+ */
+function drawCards(rows) {
+  document.querySelector("#cards").innerHTML = rows.length
+    ? rows.map((s) => {
+        const bad = s.warnings.some((w) => w.level === "error");
+        const done = s.cost ? Math.min(1, Math.max(0, s.paid / s.cost)) : 0;
+        return `<a class="folder" href="./shipment.html?id=${encodeURIComponent(s.id)}">
+          <div class="tab">
+            <span class="when">${dateRu(s.date)}</span>
+            <span class="pill ${bad ? "bad" : s.due > 0.5 ? "warn" : "ok"}">${
+              bad ? "несостыковка" : s.due > 0.5 ? "доставка не оплачена" : "доставка оплачена"}</span>
+          </div>
+          <div class="inside">
+            <div class="nums">
+              <b>${qty(s.totals.weight)}</b><span>кг брутто</span>
+              <b>${qty(s.totals.places)}</b><span>мест</span>
+              <b>${qty(s.totals.qty)}</b><span>штук</span>
+            </div>
+            <div class="chips">${s.contracts.map((c) =>
+              `<span class="chip plain">${escapeHtml(c)}</span>`).join("") ||
+              '<span class="src">заказов нет</span>'}</div>
+          </div>
+          <div class="meta">
+            <span>${escapeHtml(s.driver || "водитель не указан")}</span>
+            <span>отгрузка ${money(s.totals.sum)}</span>
+          </div>
+          <div class="prog"><span>Доставка ${s.cost === null ? "" : money(s.cost)}</span>
+            <b>${money(s.paid)} · ${(done * 100).toFixed(0)}%</b></div>
+          <div class="bar ${done >= 0.999 ? "" : done > 0 ? "part" : "none"}">
+            <i style="width:${(done * 100).toFixed(1)}%"></i></div>
+        </a>`;
+      }).join("")
+    : '<div class="card src">Ничего не нашлось.</div>';
+}
+
+function drawTable(rows) {
+  const head = COLUMNS.map(([key, name, , cls]) =>
+    `<th class="sortable ${cls || ""}" data-key="${key}">${name}${
+      sort.key === key ? (sort.dir > 0 ? " ↑" : " ↓") : ""}</th>`).join("");
+
+  const body = rows.length
+    ? rows.map((s) => `<tr class="row">${COLUMNS.map(([, , render, cls]) =>
+        `<td class="${cls || ""}">${render(s)}</td>`).join("")}</tr>`).join("")
+    : `<tr><td colspan="${COLUMNS.length}" class="src">Ничего не нашлось.</td></tr>`;
+
+  const table = document.querySelector("#tbl");
+  table.innerHTML = `<tr>${head}</tr>${body}`;
+  for (const th of table.querySelectorAll("th.sortable")) {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      sort = { key, dir: sort.key === key ? -sort.dir : 1 };
+      draw();
+    });
+  }
+}
+
+function tile(name, value, hint, cls = "") {
+  return `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
+    <div class="hint">${escapeHtml(hint)}</div></div>`;
+}
+
+function setView(next) {
+  view = next;
+  try { localStorage.setItem(VIEW_KEY, next); } catch { /* приватное окно */ }
+  draw();
+}
+
+function readView() {
+  try { return localStorage.getItem(VIEW_KEY) === "table" ? "table" : "cards"; } catch { return "cards"; }
+}
+
+// Объявлениями функций, а не стрелочными константами: страница рисуется из
+// верхнего await, а до этих строк он ещё не дошёл бы.
+function sum(values) {
+  return values.reduce((acc, v) => acc + (v || 0), 0);
+}
+
+function monthRu(m) {
+  const months = ["январь", "февраль", "март", "апрель", "май", "июнь",
+                  "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"];
+  const [year, month] = m.split("-");
+  return `${months[Number(month) - 1]} ${year}`;
+}
+
+function plural(n, one, few, many) {
+  const t = n % 10, h = n % 100;
+  if (t === 1 && h !== 11) return one;
+  if (t >= 2 && t <= 4 && (h < 12 || h > 14)) return few;
+  return many;
+}
+</script>
+</body>
+</html>

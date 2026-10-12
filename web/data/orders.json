@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-10",
+  "updated": "2026-10-12",
   "contractor": "Айзада (Az)",
   "orders": [
     {
@@ -2610,6 +2610,722 @@
         }
       ],
       "note": ""
+    },
+    {
+      "id": "646",
+      "order_no": "Аи07.04.26/1",
+      "contract_no": "646/1-1",
+      "order_date": "2026-04-07",
+      "item": "блузка",
+      "ordered_qty": 1530.0,
+      "unit_price": 227.27,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "2026-04-22",
+        "qty": 1640.0,
+        "places": 2.0,
+        "weight_gross": 187.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 173861.55,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": 199770.33,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: заказ от 07.04.26 -1 - Айзада (Az).pdf; документы: Аи07.04.26/1_646; отправка: отправка 646.pdf."
+    },
+    {
+      "id": "632",
+      "order_no": "Аи02.04.26/2",
+      "contract_no": "632/1-1",
+      "order_date": "2026-04-02",
+      "item": "брюки",
+      "ordered_qty": 6050.0,
+      "unit_price": 232.56,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "2026-04-23",
+        "qty": 5768.0,
+        "places": 22.0,
+        "weight_gross": 1609.4,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 703494.0,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": 629307.36,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: Айзада (Az) к дог 632 брюки синг.pdf; документы: Аи02.04.26/2_632; отправка: отправка 632.pdf."
+    },
+    {
+      "id": "697",
+      "order_no": "Аи 17.04.26/1",
+      "contract_no": "697/1-1",
+      "order_date": "2026-04-17",
+      "item": "поло летний",
+      "ordered_qty": 1200.0,
+      "unit_price": 473.68,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "2026-05-19",
+        "qty": 1209.0,
+        "places": 15.0,
+        "weight_gross": 716.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 710520.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (6).pdf; документы: Аи 17.04.26/1_697; отправка: отправка 697.pdf."
+    },
+    {
+      "id": "765",
+      "order_no": "Аи 04.05.26/2",
+      "contract_no": "765/1-1",
+      "order_date": "2026-05-04",
+      "item": "двойные шорты",
+      "ordered_qty": 2210.0,
+      "unit_price": 477.88,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "2026-06-01",
+        "qty": 2069.0,
+        "places": 25.0,
+        "weight_gross": 880.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 528057.4,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": 254232.16,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (16).pdf; документы: Аи 04.05.26/2_765; отправка: отправак 765.pdf."
+    },
+    {
+      "id": "727",
+      "order_no": "Аи 24.04.26/1",
+      "contract_no": "727/1-1",
+      "order_date": "2026-04-24",
+      "item": "поло летний",
+      "ordered_qty": 1800.0,
+      "unit_price": 471.62,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 710520.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "отменён",
+      "note": "Заказ отменён по реестру. Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (6).pdf; документы: Аи 24.04.26/1_727."
+    },
+    {
+      "id": "807",
+      "order_no": "Аи 06.05.26/1",
+      "contract_no": "807/1-1",
+      "order_date": "2026-05-06",
+      "item": "рубашка с шортами сингапур",
+      "ordered_qty": 1400.0,
+      "unit_price": 371.68,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 260162.5,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "отменён",
+      "note": "Заказ отменён по реестру. Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (2).pdf; документы: Аи 06.05.26/1_807."
+    },
+    {
+      "id": "707",
+      "order_no": "Аи21.04.26/2",
+      "contract_no": "707/1-1",
+      "order_date": "2026-04-21",
+      "item": "рубашка с шортами сингапур",
+      "ordered_qty": 3950.0,
+      "unit_price": 506.55,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "2026-06-16",
+        "qty": 3332.0,
+        "places": 33.0,
+        "weight_gross": 1530.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 1000436.25,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": 400431.8,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "",
+          "amount": 260162.5,
+          "doc_number": "",
+          "purpose": ""
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "",
+          "amount": 30000.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (10).pdf; документы: Аи21.04.26/2_707; отправка: отправка 707.pdf."
+    },
+    {
+      "id": "890",
+      "order_no": "Аи09.07.26/1",
+      "contract_no": "890",
+      "order_date": "2026-07-09",
+      "item": "костюм кашемир",
+      "ordered_qty": 560.0,
+      "unit_price": 941.75,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 263690.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "заморожен",
+      "note": "Состояние по реестру: заморожен, не смогли распечатать лекала. Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (3).pdf; документы: 890."
+    },
+    {
+      "id": "882",
+      "order_no": "Аи 06.07.26/1",
+      "contract_no": "882",
+      "order_date": "2026-07-06",
+      "item": "костюм лининг",
+      "ordered_qty": 1200.0,
+      "unit_price": 1089.11,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Майрам"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "2026-09-07",
+        "qty": 1293.0,
+        "places": 33.0,
+        "weight_gross": 1157.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 653466.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az).pdf; документы: 882."
+    },
+    {
+      "id": "940",
+      "order_no": "Аи 11.08.26/1",
+      "contract_no": "940/1-1",
+      "order_date": "2026-08-11",
+      "item": "Рубашка женская тёплая в клетку",
+      "ordered_qty": 1565.0,
+      "unit_price": 483.09,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Сулайман"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "2026-09-04",
+        "qty": 1316.0,
+        "places": 14.0,
+        "weight_gross": 540.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 264612.55,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (6).pdf; документы: Аи 11.08.26/1_940."
+    },
+    {
+      "id": "942",
+      "order_no": "Аи 13.08.26/1",
+      "contract_no": "942/1-1",
+      "order_date": "2026-08-13",
+      "item": "Спортивный костюм кофта зип/брюки",
+      "ordered_qty": 1800.0,
+      "unit_price": 961.17,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Майрам"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "2026-09-07",
+        "qty": 1244.0,
+        "places": 42.0,
+        "weight_gross": 1230.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 605537.1,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (7).pdf; документы: Аи 13.08.26/1_942."
+    },
+    {
+      "id": "943",
+      "order_no": "Аи 11.08.26/4",
+      "contract_no": "943/1-1",
+      "order_date": "2026-08-11",
+      "item": "Брюки палаццо женские ЛАПША",
+      "ordered_qty": 1450.0,
+      "unit_price": 270.53,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Нурлан"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "2026-09-04",
+        "qty": 1244.0,
+        "places": 10.0,
+        "weight_gross": 430.0,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 137293.98,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (4).pdf; документы: Аи 11.08.26/4_943."
+    },
+    {
+      "id": "880",
+      "order_no": "Аи 02.07.26/2",
+      "contract_no": "880",
+      "order_date": "2026-07-02",
+      "item": "костюм оксфорд",
+      "ordered_qty": 975.0,
+      "unit_price": 1165.05,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Венера"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 567961.88,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: _Учет Бишкек (NEW) - Айзада (Az) (1) (1).pdf; документы: 880."
+    },
+    {
+      "id": "911",
+      "order_no": "Аи13.07.26/2",
+      "contract_no": "911",
+      "order_date": "2026-07-13",
+      "item": "рубашка 4 цв",
+      "ordered_qty": 2400.0,
+      "unit_price": 485.44,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Дача-суу"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 582528.0,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (1).pdf; документы: 911."
+    },
+    {
+      "id": "941",
+      "order_no": "Аи 11.08.26/2",
+      "contract_no": "941/1-1",
+      "order_date": "2026-08-11",
+      "item": "Рубашка женская Y2K в клетку с полосками",
+      "ordered_qty": 1490.0,
+      "unit_price": 425.12,
+      "tnved": "",
+      "item_article": "",
+      "workshops": [
+        "Дача-суу"
+      ],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "",
+          "amount": 221700.08,
+          "doc_number": "",
+          "purpose": ""
+        }
+      ],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "Файлы по реестру (ссылок в книге нет) — учёт: БИШКЕК NEW - Айзада (Az) (1) (2).pdf; документы: Аи 11.08.26/2_941."
     }
   ],
   "workshops": [
@@ -2632,6 +3348,104 @@
     {
       "name": "Дача-суу",
       "color": "#c9a800"
+    }
+  ],
+  "carriage": [
+    {
+      "date": "2026-05-13",
+      "amount": 323672.0,
+      "act_no": "Ай-1",
+      "act_date": "2026-04-29",
+      "doc_number": "14538",
+      "purpose": "договору перевозки груза 03.04.2026 от 03.04.26,за услуги доставки товара, Акт Ай-1 от 29.04.2026"
+    },
+    {
+      "date": "2026-05-15",
+      "amount": 459928.0,
+      "act_no": "3",
+      "act_date": "2026-05-13",
+      "doc_number": "9524",
+      "purpose": "договору перевозки груза 03.04.2026 от 03.04.26,за услуги доставки товара, Акт 3 от 13.05.2026"
+    },
+    {
+      "date": "2026-05-19",
+      "amount": 247360.0,
+      "act_no": "2",
+      "act_date": "2026-05-11",
+      "doc_number": "9123",
+      "purpose": "договору перевозки груза 03.04.2026 от 03.04.26,за услуги доставки товара, Акт 2 от 11.05.2026"
+    },
+    {
+      "date": "2026-06-05",
+      "amount": 614240.0,
+      "act_no": "5",
+      "act_date": "2026-05-29",
+      "doc_number": "7148",
+      "purpose": "договору перевозки груза 03.04.2026 от 03.04.26,за услуги доставки товара, Акт 5 от 29.05.2026"
+    },
+    {
+      "date": "2026-06-18",
+      "amount": 831920.0,
+      "act_no": "6",
+      "act_date": "2026-06-11",
+      "doc_number": "7213",
+      "purpose": "договору перевозки груза 03.04.2026 от 03.04.26,за услуги доставки товара, Акт 6 от 11.06.2026"
+    },
+    {
+      "date": "2026-07-22",
+      "amount": 1232739.2,
+      "act_no": "08/07-1",
+      "act_date": "2026-07-08",
+      "doc_number": "5104",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 08/07-1 от 08.07.2026"
+    },
+    {
+      "date": "2026-08-07",
+      "amount": 98128.8,
+      "act_no": "6",
+      "act_date": "2026-07-22",
+      "doc_number": "6309",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 6 от 22.07.2026"
+    },
+    {
+      "date": "2026-09-23",
+      "amount": 72789.6,
+      "act_no": "6",
+      "act_date": "2026-07-22",
+      "doc_number": "4030",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 6 от 22.07.2026"
+    },
+    {
+      "date": "2026-09-24",
+      "amount": 561929.6,
+      "act_no": "6",
+      "act_date": "2026-07-22",
+      "doc_number": "5021",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 6 от 22.07.2026"
+    },
+    {
+      "date": "2026-10-12",
+      "amount": 72046.4,
+      "act_no": "11",
+      "act_date": "2026-10-09",
+      "doc_number": "14476",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 11 от 09.10.2026"
+    },
+    {
+      "date": "2026-10-12",
+      "amount": 85000.0,
+      "act_no": "12",
+      "act_date": "2026-10-09",
+      "doc_number": "14480",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 12 от 09.10.2026"
+    },
+    {
+      "date": "2026-10-12",
+      "amount": 85000.0,
+      "act_no": "10",
+      "act_date": "2026-09-30",
+      "doc_number": "14481",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 10 от 30.09.2026"
     }
   ]
 }
