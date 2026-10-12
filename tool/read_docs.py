@@ -55,14 +55,20 @@ def main(argv: list[str] | None = None) -> int:
     for path in args.files:
         # .txt — это уже распознанный текст: распознавание долгое, и
         # перечитывать его после правки разбора надо без повторного прогона.
-        text = path.read_text("utf-8") if path.suffix.lower() == ".txt" else pdf_text(path)
-        scanned = len(text.strip()) < 200
-        if scanned and args.ocr:
+        # .txt сюда попадает только из --save-text, то есть это распознанный
+        # скан: признак надо сохранить, по нему в карточке ставится оговорка.
+        recognised = path.suffix.lower() == ".txt"
+        text = path.read_text("utf-8") if recognised else pdf_text(path)
+        # Текста нет — значит скан, и читать его нечем без распознавания.
+        # Уже распознанный .txt текстом как раз богат, просто он машинный.
+        needs_ocr = not recognised and len(text.strip()) < 200
+        scanned = recognised or needs_ocr
+        if needs_ocr and args.ocr:
             text = ocr(path, args.dpi)
             if args.save_text:
                 args.save_text.mkdir(parents=True, exist_ok=True)
                 (args.save_text / f"{path.stem}.txt").write_text(text, "utf-8")
-        elif scanned:
+        elif needs_ocr:
             out.append({"file": path.name, "scanned": True, "read": False})
             continue
         found = read_order(text) if is_order_doc(text) else read(text)
@@ -174,19 +180,33 @@ def cmr_line(flat: str) -> dict:
     Всё это стоит там в одну строку и в одном порядке, поэтому читается
     вместе: по отдельности код ТН ВЭД путался с ИНН покупателя, а вес
     слипался с кодом.
+
+    В распознанном скане строка рвётся мусором («Костюм _ `|>6104192000 |
+    649,90 кг»), поэтому между полями допускается что угодно неразрядное, а
+    если строка не собралась целиком — читаются хотя бы код с весом: они
+    стоят рядом и в развале.
     """
-    # В распознанном тексте между колонками попадается мусор («| », «. »),
-    # поэтому разделители допускаются, а не требуются точными.
-    m = re.search(r"(\d{1,4})\s+(?:Мешк\w*|Коробк\w*|Пакет\w*)\s+"
-                  r"([А-ЯЁа-яё][А-ЯЁа-яё \-]{2,40}?)\s+(\d{10})\s*[|!,.]?\s*"
-                  r"([\d \u00a0]+(?:,\d+)?)\s*кг", flat)
-    if not m:
-        return {"places": None, "item": "", "tnved": "", "weight": None}
+    pack = r"(?:Мешк\w*|Коробк\w*|Пакет\w*)"
+    junk = r"[\s_`'|>!.,:;~-]*"
+    whole = re.search(rf"(\d{{1,4}}){junk}{pack}{junk}"
+                      rf"([А-ЯЁа-яё][А-ЯЁа-яё \-]{{2,40}}?){junk}"
+                      rf"(6\d{{9}}){junk}([\d \u00a0]+(?:,\d+)?)\s*кг", flat)
+    if whole:
+        return {
+            "places": number(whole.group(1)),
+            "item": whole.group(2).strip(" -_"),
+            "tnved": whole.group(3),
+            "weight": number(whole.group(4)),
+        }
+
+    pair = re.search(rf"\b(6\d{{9}})\b{junk}([\d \u00a0]+(?:,\d+)?)\s*кг", flat)
+    places = re.search(rf"(\d{{1,4}}){junk}{pack}", flat)
+    item = re.search(rf"{pack}{junk}([А-ЯЁа-яё][А-ЯЁа-яё \-]{{2,40}}?){junk}6\d{{9}}", flat)
     return {
-        "places": number(m.group(1)),
-        "item": m.group(2).strip(" -"),
-        "tnved": m.group(3),
-        "weight": number(m.group(4)),
+        "places": number(places.group(1)) if places else None,
+        "item": item.group(1).strip(" -_") if item else "",
+        "tnved": pair.group(1) if pair else "",
+        "weight": number(pair.group(2)) if pair else None,
     }
 
 

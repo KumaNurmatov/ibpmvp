@@ -178,7 +178,14 @@ def apply(order: dict, doc: dict, filled: list[str], conflicts: list[str]) -> No
         conflicts.append(f"{name}: в CMR вес {doc['weight_gross']}, "
                          f"в упаковочном {doc['weight_other']} ({doc['file']})")
 
-    note = f"Документы отправки: {doc['file']}"
+    # Распознанный текст лежит рядом в .txt, но в карточке надо называть сам
+    # документ: открывать будут его.
+    name = re.sub(r"\.txt$", ".pdf", doc["file"], flags=re.I)
+    note = f"Документы отправки: {name}"
+    if doc.get("scanned"):
+        # Распознавание путает цифры чаще, чем хотелось бы: пусть в карточке
+        # будет видно, что эти числа прочитаны машиной со скана.
+        note += " (вычитано распознаванием скана — цифры стоит сверить)"
     if doc.get("doc_no"):
         note += f", ТТН № {doc['doc_no']}"
     if doc.get("plate"):
