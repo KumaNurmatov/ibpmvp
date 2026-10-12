@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Карточка отгрузки</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🚚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./styles.css">
+<style>
+  .calc td:first-child { color: var(--muted); }
+  .calc .formula { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .calc tr.total td { border-top: 2px solid var(--axis); font-size: 16px; }
+  .links a { display: inline-block; margin: 0 10px 8px 0; }
+  /* Выбор состава: заказы того же дня стоят первыми и отмечены галочкой. */
+  .pickers { display: grid; gap: 8px; max-height: 320px; overflow: auto; }
+  .pickers label { display: flex; gap: 10px; align-items: baseline; margin: 0;
+    padding: 8px 10px; border-radius: var(--r-sm); background: var(--bg); }
+  .pickers label.off { opacity: .68; }
+  .pickers input { width: auto; margin: 0; }
+  .pickers .src { margin-left: auto; text-align: right; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="sub"><a href="./shipments.html">← ко всем отправкам</a></p>
+  <div id="body"></div>
+  <div id="editor"></div>
+</div>
+
+<script type="module">
+import { money } from "./lib/ledger.js";
+import { freeCarriage, shipmentsOf } from "./lib/shipments.js";
+import { blankShipment, canEdit, save } from "./lib/store.js";
+import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty } from "./lib/shell.js";
+
+mountShell("shipments.html");
+
+const id = new URLSearchParams(location.search).get("id");
+
+let data = null;
+let orders = [];
+let list = [];
+
+try {
+  const loaded = await loadOrders();
+  data = loaded.data;
+  orders = loaded.orders;
+  list = shipmentsOf(data, orders);
+  const current = list.find((s) => s.id === id);
+  if (!current) {
+    fatal(`Отгрузка «${id || "без даты"}» не найдена.`);
+  } else {
+    document.title = `Отгрузка ${dateRu(current.date)}`;
+    render(current);
+    if (canEdit()) drawEditor(current);
+  }
+} catch (err) {
+  fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+
+/**
+ * Карточка машины. Сверху общие сведения — вес, дата, водитель: это то, что
+ * спрашивают про отгрузку первым. Ниже разбивка по заказам со ссылками на их
+ * документы, и в самом низу доставка: акт, оплаты, остаток.
+ */
+function render(s) {
+  const bad = s.warnings.some((w) => w.level === "error");
+  const done = s.cost ? Math.min(1, Math.max(0, s.paid / s.cost)) : 0;
+
+  document.querySelector("#body").innerHTML = `
+    <div class="row-line" style="margin-bottom:6px">
+      <h1 style="margin:0">Отгрузка ${dateRu(s.date)}</h1>
+      <span class="pill">${s.totals.orders} ${plural(s.totals.orders, "заказ", "заказа", "заказов")}</span>
+      <span class="pill ${bad ? "bad" : s.due > 0.5 ? "warn" : "ok"}">${
+        bad ? "несостыковка" : s.due > 0.5 ? "доставка не оплачена" : "доставка оплачена"}</span>
+      ${canEdit() ? '<span class="row-line" style="margin-left:auto"><a class="btn" href="#editor">Править</a></span>' : ""}
+    </div>
+    <p class="sub">${s.contracts.map((c) => escapeHtml(c)).join(" · ") || "заказов в отгрузке нет"}${
+      s.stored ? "" : " · отгрузка собрана по датам отправки из карточек заказов"}</p>
+
+    ${s.warnings.length ? `<div class="todo">${s.warnings.map((w) =>
+      `<div class="item ${w.level}"><div class="what">${escapeHtml(w.message)}</div></div>`).join("")}</div>` : ""}
+
+    <div class="tiles">
+      ${tile("Вес брутто", `${qty(s.totals.weight)} кг`, `${qty(s.totals.places)} мест`)}
+      ${tile("Сумма отгрузки", money(s.totals.sum), `${qty(s.totals.qty)} шт по цене пошива`)}
+      ${tile("Доставка", s.cost === null ? "—" : money(s.cost),
+             `${qty(s.totals.weight)} кг × ${money(s.rate_per_kg)}`)}
+      ${tile("Остаток по доставке", s.due === null ? "—" : money(s.due),
+             `оплачено ${money(s.paid)}`, (s.due || 0) > 0.5 ? "bad" : "ok")}
+    </div>
+
+    <h2>Общие сведения</h2>
+    <div class="card"><table>
+      <tr><th>Дата отгрузки</th><td>${dateRu(s.date)}</td>
+          <th>Общий вес брутто</th><td><b>${qty(s.totals.weight)} кг</b></td></tr>
+      <tr><th>Водитель</th><td>${escapeHtml(s.driver || "—")}</td>
+          <th>Телефон</th><td>${phone(s.driver_phone)}</td></tr>
+      <tr><th>Акт об оказании услуг</th><td>${s.act_no
+            ? `${escapeHtml(s.act_no)}${s.act_date ? ` от ${dateRu(s.act_date)}` : ""}` : "—"}</td>
+          <th>Ставка доставки</th><td>${money(s.rate_per_kg)} за кг</td></tr>
+      ${s.note ? `<tr><th>Заметка</th><td colspan="3">${escapeHtml(s.note)}</td></tr>` : ""}
+    </table></div>
+
+    <h2>Заказы в отгрузке</h2>
+    <div class="card"><div class="scroll-x">${s.orders.length ? `<table class="wide">
+      <tr><th>Договор</th><th>Дата</th><th class="num">Мест</th><th class="num">Количество</th>
+          <th class="num">Вес брутто</th><th class="num">Сумма отгрузки</th>
+          <th>Водитель</th><th>Телефон</th><th>Документы</th></tr>
+      ${s.orders.map((o) => `<tr>
+        <td><a href="./order.html?id=${encodeURIComponent(o.key)}">${
+          escapeHtml(o.contract_no || o.key)}</a>
+          <div class="src">${escapeHtml(o.get("item") || "")}</div></td>
+        <td>${stamp(o, s)}</td>
+        <td class="num">${qty(o.get("places"))}</td>
+        <td class="num">${qty(o.get("shipped_qty"))}</td>
+        <td class="num">${qty(o.get("weight_gross"))}</td>
+        <td class="num">${money(o.computed.shipment_sum)}</td>
+        <td>${escapeHtml(o.get("driver") || "—")}</td>
+        <td>${phone(o.get("driver_phone"))}</td>
+        <td>${docs(o)}</td></tr>`).join("")}
+      <tr class="row total"><td><b>Итого</b></td><td></td>
+        <td class="num"><b>${qty(s.totals.places)}</b></td>
+        <td class="num"><b>${qty(s.totals.qty)}</b></td>
+        <td class="num"><b>${qty(s.totals.weight)}</b></td>
+        <td class="num"><b>${money(s.totals.sum)}</b></td>
+        <td colspan="3"></td></tr>
+      </table>` : '<span class="src">В отгрузке нет заказов — добавьте их ниже.</span>'}</div></div>
+
+    <h2>Доставка и оплаты</h2>
+    <div class="card">
+      <table class="calc">
+        ${calcRow("Доставка по весу", s.cost, s.cost === null
+          ? "нет веса брутто ни у одного заказа"
+          : `${qty(s.totals.weight)} кг × ${money(s.rate_per_kg)}`)}
+        ${calcRow("Оплачено карго", s.paid, s.payments.map((p) => money(p.amount)).join(" + ")
+          || "оплат нет")}
+        ${calcRow("Остаток по доставке", s.due, `${money(s.cost)} − ${money(s.paid)}`, true)}
+      </table>
+      <div class="prog" style="margin-top:12px"><span>Оплачено</span>
+        <b>${(done * 100).toFixed(0)}%</b></div>
+      <div class="bar ${done >= 0.999 ? "" : done > 0 ? "part" : "none"}">
+        <i style="width:${(done * 100).toFixed(1)}%"></i></div>
+      ${s.payments.length ? `<table style="margin-top:14px">
+        <tr><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
+        ${s.payments.map((p) => `<tr><td>${dateRu(p.date)}</td>
+          <td class="num">${money(p.amount)}</td>
+          <td>${escapeHtml(p.doc_number || "—")}${p.purpose
+            ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
+        </table>` : ""}
+    </div>
+
+    ${s.links.length ? `<h2>Документы по доставке</h2><div class="card links">
+      ${s.links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
+        ${escapeHtml(l.title)} ↗</a>`).join("")}</div>` : ""}
+
+    ${s.docs.length ? `<h2>Документы заказов</h2><div class="card links">
+      ${s.docs.map((d) => `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">
+        ${escapeHtml(d.contract)}: ${escapeHtml(d.title)} ↗</a>`).join("")}
+      <p class="src" style="margin:4px 0 0">Ссылки взяты из карточек заказов — в отгрузку их
+        вставлять не нужно.</p></div>` : ""}
+  `;
+}
+
+// ── правка ─────────────────────────────────────────────────────────────
+// Общие сведения, состав машины, акт и оплаты. Состав — отметками: заказы
+// того же дня стоят первыми, чужой день помечен, и предупреждение видно
+// сразу, до сохранения.
+
+function drawEditor(s) {
+  const r = structuredClone({
+    ...blankShipment(s.date),
+    ...s.record,
+    id: s.id,
+    orders: s.orders.map((o) => String(o.key)),
+    driver: s.record.driver || s.driver,
+    driver_phone: s.record.driver_phone || s.driver_phone,
+  });
+  if (!r.payments.length) r.payments = [{ date: "", amount: null, doc_number: "", purpose: "" }];
+  if (!r.links.length) r.links = [{ title: "", url: "" }];
+
+  document.querySelector("#editor").innerHTML = `
+    <h2>Править отгрузку</h2>
+    <div class="card">
+      <table class="sheet">
+        ${row("date", "Дата отгрузки", r.date, "date")}
+        ${row("driver", "Водитель", r.driver, "text", "ФИО по CMR")}
+        ${row("driver_phone", "Телефон водителя", r.driver_phone, "tel", "+996 700 000 000")}
+        ${row("act_no", "Акт об оказании услуг №", r.act_no, "text", "например, 11")}
+        ${row("act_date", "Дата акта", r.act_date, "date")}
+        ${row("rate_per_kg", "Ставка доставки, ₽ за кг", r.rate_per_kg, "number")}
+        ${calc("weight", "Общий вес брутто")}
+        ${calc("cost", "Доставка по весу")}
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Состав машины</h2>
+      <p class="src" style="margin:-6px 0 10px">
+        Отмечены заказы, которые уехали в этой отгрузке. Если у заказа в его
+        карточке стоит другая дата отправки, это видно здесь же — и попадёт в
+        предупреждения карточки.
+      </p>
+      <div class="pickers" id="pick"></div>
+      <div id="pick-warn"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Оплаты за доставку</h2>
+      <p class="src" style="margin:-6px 0 10px">
+        Оплата идёт по акту карго — одной суммой на всю машину.
+      </p>
+      <table class="sheet-rows" id="pays"></table>
+      <div class="row-line" style="margin-top:10px">
+        <button id="add-pay">+ Строка оплаты</button>
+        <span class="src" id="free-state"></span>
+      </div>
+      <div id="free"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Документы по доставке</h2>
+      <p class="src" style="margin:-6px 0 10px">
+        Акт, счёт, платёжка. Спецификации и отправки по заказам сюда не
+        нужны — они уже прикреплены к карточкам заказов.
+      </p>
+      <table class="sheet-rows" id="links"></table>
+      <button id="add-link" style="margin-top:10px">+ Строка ссылки</button>
+      <div style="margin-top:12px">
+        <label for="f-note">Заметка</label>
+        <textarea id="f-note" rows="2">${escapeHtml(r.note)}</textarea>
+      </div>
+    </div>
+
+    <div class="row-line">
+      <button id="do-save" class="primary">Сохранить в репозиторий</button>
+      ${s.stored ? '<button id="do-delete" class="danger">Разобрать отгрузку</button>' : ""}
+      <span class="src" id="save-state"></span>
+    </div>`;
+
+  drawRows(r);
+  drawPick(r);
+  recalc(r);
+
+  const editor = document.querySelector("#editor");
+  editor.addEventListener("input", (e) => {
+    if (e.target.closest(".pickers")) return;      // состав правится отметками
+    collect(r);
+    recalc(r);
+  });
+  document.querySelector("#add-pay").onclick = () => {
+    r.payments.push({ date: "", amount: null, doc_number: "", purpose: "" });
+    drawRows(r);
+  };
+  document.querySelector("#add-link").onclick = () => {
+    r.links.push({ title: "", url: "" });
+    drawRows(r);
+  };
+  document.querySelector("#do-save").onclick = () => persist(r, s);
+  document.querySelector("#do-delete")?.addEventListener("click", () => remove(r, s));
+
+  function drawRows(rec) {
+    document.querySelector("#pays").innerHTML =
+      `<tr><th>Дата</th><th class="num">Сумма, ₽</th><th>Документ</th><th>Назначение</th><th></th></tr>` +
+      (rec.payments.map((p, i) => `<tr>
+        <td><input type="date" data-pay="${i}" data-k="date" value="${escapeHtml(p.date)}"></td>
+        <td><input type="number" step="0.01" class="num" data-pay="${i}" data-k="amount" value="${p.amount ?? ""}"></td>
+        <td><input data-pay="${i}" data-k="doc_number" value="${escapeHtml(p.doc_number)}" placeholder="№ п/п"></td>
+        <td><input data-pay="${i}" data-k="purpose" value="${escapeHtml(p.purpose)}" placeholder="акт 11 от 09.10.26"></td>
+        <td class="drop"><button data-drop-pay="${i}" title="Убрать строку">✕</button></td>
+      </tr>`).join("") || '<tr><td colspan="5" class="src">Оплат пока нет.</td></tr>');
+
+    document.querySelector("#links").innerHTML =
+      `<tr><th>Название</th><th>Адрес файла или папки</th><th></th></tr>` +
+      (rec.links.map((l, i) => `<tr>
+        <td><input data-link="${i}" data-k="title" value="${escapeHtml(l.title)}" placeholder="например, Акт 11 от 09.10.26"></td>
+        <td><input data-link="${i}" data-k="url" value="${escapeHtml(l.url)}" placeholder="https://drive.google.com/…"></td>
+        <td class="drop"><button data-drop-link="${i}" title="Убрать строку">✕</button></td>
+      </tr>`).join("") || '<tr><td colspan="3" class="src">Ссылок пока нет.</td></tr>');
+
+    for (const b of document.querySelectorAll("[data-drop-pay]")) {
+      b.onclick = () => { rec.payments.splice(+b.dataset.dropPay, 1); drawRows(rec); recalc(rec); };
+    }
+    for (const b of document.querySelectorAll("[data-drop-link]")) {
+      b.onclick = () => { rec.links.splice(+b.dataset.dropLink, 1); drawRows(rec); recalc(rec); };
+    }
+    drawFree(rec);
+  }
+
+  /**
+   * Оплаты за доставку из выписки, ещё не разнесённые по машинам. Переносить
+   * цифры руками незачем: нажал — строка оплаты заполнилась.
+   */
+  function drawFree(rec) {
+    const box = document.querySelector("#free");
+    const free = freeCarriage(data);
+    document.querySelector("#free-state").textContent = free.length
+      ? "ниже — оплаты за доставку из выписки, ещё не разнесённые по отгрузкам"
+      : "";
+    box.innerHTML = free.length ? `<table class="sheet-rows" style="margin-top:10px">
+      <tr><th>Дата</th><th class="num">Сумма</th><th>Акт</th><th></th></tr>
+      ${free.map((p, i) => `<tr>
+        <td>${dateRu(p.date)}</td><td class="num">${money(p.amount)}</td>
+        <td>${escapeHtml(p.act_no ? `${p.act_no} от ${dateRu(p.act_date)}` : p.purpose || "—")}</td>
+        <td class="drop"><button data-take="${i}" title="Отнести к этой отгрузке">взять</button></td>
+      </tr>`).join("")}</table>` : "";
+
+    for (const b of box.querySelectorAll("[data-take]")) {
+      b.onclick = () => {
+        const p = free[+b.dataset.take];
+        rec.payments = rec.payments.filter((x) => x.amount !== null || x.date);
+        rec.payments.push({
+          date: p.date, amount: p.amount, doc_number: p.doc_number,
+          purpose: p.purpose || (p.act_no ? `акт ${p.act_no} от ${p.act_date}` : ""),
+        });
+        drawRows(rec);
+        recalc(rec);
+      };
+    }
+  }
+}
+
+/**
+ * Состав: отметки по заказам. Сначала те, у кого дата отправки совпадает с
+ * отгрузкой, потом уже отмеченные с другой датой, потом всё остальное —
+ * искать нужный заказ в списке из полусотни иначе невозможно.
+ */
+function drawPick(r) {
+  const key = String(r.date || "").slice(0, 10);
+  const rank = (o) => {
+    const own = String(o.get("shipment_date") || "").slice(0, 10);
+    if (own && own === key) return 0;
+    if (r.orders.includes(String(o.key))) return 1;
+    return own ? 2 : 3;
+  };
+  const sorted = [...orders].sort((a, b) =>
+    rank(a) - rank(b) ||
+    String(b.get("shipment_date") || "").localeCompare(String(a.get("shipment_date") || "")));
+
+  document.querySelector("#pick").innerHTML = sorted.map((o) => {
+    const on = r.orders.includes(String(o.key));
+    const own = String(o.get("shipment_date") || "").slice(0, 10);
+    const other = taken(o.key, r.id);
+    return `<label class="${on ? "" : "off"}">
+      <input type="checkbox" data-pick="${escapeHtml(String(o.key))}" ${on ? "checked" : ""}>
+      <span><b>${escapeHtml(o.contract_no || o.key)}</b>
+        <span class="src">${escapeHtml(o.get("item") || "")}</span></span>
+      <span class="src">${own ? `отправка ${dateRu(own)}` : "даты отправки нет"}${
+        o.get("weight_gross") !== null ? ` · ${qty(o.get("weight_gross"))} кг` : " · веса нет"}${
+        other ? ` · уже в отгрузке ${dateRu(other)}` : ""}</span>
+    </label>`;
+  }).join("");
+
+  for (const box of document.querySelectorAll("[data-pick]")) {
+    box.onchange = () => {
+      const k = box.dataset.pick;
+      r.orders = box.checked ? [...new Set([...r.orders, k])] : r.orders.filter((x) => x !== k);
+      drawPick(r);
+      recalc(r);
+    };
+  }
+}
+
+/** В какой другой отгрузке уже лежит заказ: один заказ — одна машина. */
+function taken(orderKey, selfId) {
+  const other = (data.shipments || []).find((s) =>
+    (s.id || s.date) !== selfId && (s.orders || []).map(String).includes(String(orderKey)));
+  return other ? other.date : "";
+}
+
+/** Пересчёт считаемых строк и предупреждений — на каждую правку. */
+function recalc(r) {
+  const own = r.orders.map((k) => orders.find((o) => String(o.key) === k)).filter(Boolean);
+  const weight = own.map((o) => o.get("weight_gross")).filter((v) => v !== null);
+  const total = weight.length ? weight.reduce((a, b) => a + b, 0) : null;
+  const rate = r.rate_per_kg ?? 0;
+
+  show("weight", total === null ? "—" : `${qty(total)} кг`,
+       `= сумма по ${own.length} ${plural(own.length, "заказу", "заказам", "заказам")}`);
+  show("cost", total === null ? "—" : money(total * rate),
+       total === null ? "нужен вес брутто хотя бы у одного заказа"
+         : `= ${qty(total)} кг × ${money(rate)}`);
+
+  const key = String(r.date || "").slice(0, 10);
+  const off = own.filter((o) => {
+    const d = String(o.get("shipment_date") || "").slice(0, 10);
+    return d && key && d !== key;
+  });
+  document.querySelector("#pick-warn").innerHTML = off.length
+    ? `<div class="flag warn" style="margin-top:10px">Даты не сходятся:
+        ${off.map((o) => `${escapeHtml(o.contract_no || o.key)} — отправка
+          ${dateRu(o.get("shipment_date"))}`).join(", ")}.
+        Либо заказ не из этой машины, либо дату в его карточке надо поправить.</div>`
+    : "";
+}
+
+function collect(r) {
+  for (const input of document.querySelectorAll("#editor [id^='f-']")) {
+    const key = input.id.slice(2).replace(/-/g, "_");
+    r[key] = input.type === "number" ? numOrNull(input.value) : input.value;
+  }
+  for (const input of document.querySelectorAll("#editor [data-pay]")) {
+    const pay = r.payments[+input.dataset.pay];
+    if (pay) pay[input.dataset.k] = input.dataset.k === "amount" ? numOrNull(input.value) : input.value;
+  }
+  for (const input of document.querySelectorAll("#editor [data-link]")) {
+    const link = r.links[+input.dataset.link];
+    if (link) link[input.dataset.k] = input.value;
+  }
+  return r;
+}
+
+async function persist(r, s) {
+  collect(r);
+  if (!String(r.date || "").trim()) {
+    say("укажите дату отгрузки — по ней отгрузка и находится", "");
+    return;
+  }
+  r.payments = r.payments.filter((p) => p.amount !== null || p.date);
+  r.links = r.links.filter((l) => String(l.url || "").trim());
+  const next = { ...r, id: r.id || r.date };
+
+  const all = [...(data.shipments || [])];
+  const i = all.findIndex((x) => (x.id || x.date) === s.id);
+  if (i >= 0) all[i] = next; else all.push(next);
+  data.shipments = all;
+
+  say("сохраняю…", "");
+  try {
+    const result = await save(data, `Отгрузка ${next.date}: ${i >= 0 ? "правка" : "новая карточка"}`);
+    say(`Сохранено${result.commit
+      ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}` +
+      " · на сайте появится примерно через минуту", "saved");
+    // Ключ мог смениться вместе с датой — дальше правим уже новую карточку.
+    if (next.id !== s.id) location.replace(`./shipment.html?id=${encodeURIComponent(next.id)}`);
+  } catch (err) {
+    say(err.message, "");
+    fatal(`Сохранить не удалось: ${err.message}`);
+  }
+}
+
+/**
+ * Разобрать отгрузку: убираем запись, а заказы остаются — они снова соберутся
+ * в отгрузку по датам отправки из своих карточек. Терять тут нечего.
+ */
+async function remove(r, s) {
+  if (!confirm(`Разобрать отгрузку ${dateRu(s.date)}? Заказы останутся, ` +
+               "отгрузка снова соберётся по их датам отправки.")) return;
+  const was = data.shipments;
+  data.shipments = (data.shipments || []).filter((x) => (x.id || x.date) !== s.id);
+  try {
+    await save(data, `Разобрать отгрузку ${s.date}`);
+    location.replace("./shipments.html");
+  } catch (err) {
+    data.shipments = was;
+    say(err.message, "");
+    fatal(`Не удалось: ${err.message}`);
+  }
+}
+
+// ── мелочи разметки ────────────────────────────────────────────────────
+
+function stamp(o, s) {
+  const own = String(o.get("shipment_date") || "").slice(0, 10);
+  if (!own) return '<span class="src">нет даты</span>';
+  if (own === String(s.date || "").slice(0, 10)) return dateRu(own);
+  return `<span style="color:var(--bad)">${dateRu(own)}</span>`;
+}
+
+function docs(o) {
+  const links = o.links || [];
+  if (!links.length) return '<span class="src">нет</span>';
+  return links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${
+    escapeHtml(l.title)} ↗</a>`).join("<br>");
+}
+
+function phone(value) {
+  if (!value) return "—";
+  return `<a href="tel:${escapeHtml(String(value).replace(/[^+\d]/g, ""))}">${escapeHtml(value)}</a>`;
+}
+
+function tile(name, value, hint, cls = "") {
+  return `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>
+    <div class="hint">${escapeHtml(hint)}</div></div>`;
+}
+
+function calcRow(name, value, formula, total = false) {
+  return `<tr class="${total ? "total" : ""}"><td>${escapeHtml(name)}
+    <div class="formula">${escapeHtml(formula)}</div></td>
+    <td class="num">${money(value)}</td></tr>`;
+}
+
+function row(key, label, value, type = "text", placeholder = "") {
+  const id = `f-${key.replace(/_/g, "-")}`;
+  return `<tr>
+    <th class="key"><label for="${id}" style="margin:0">${escapeHtml(label)}</label></th>
+    <td class="val"><input id="${id}" type="${type}" placeholder="${escapeHtml(placeholder)}"
+      value="${value === null || value === undefined ? "" : escapeHtml(value)}"></td>
+  </tr>`;
+}
+
+function calc(key, label) {
+  return `<tr class="calc">
+    <th class="key">${escapeHtml(label)}</th><td class="val" id="c-${key}"></td></tr>`;
+}
+
+function show(key, value, formula) {
+  const node = document.querySelector(`#c-${key}`);
+  if (node) {
+    node.innerHTML = `<span class="value">${escapeHtml(value)}</span>
+      <span class="formula">${escapeHtml(formula)}</span>`;
+  }
+}
+
+function say(html, cls) {
+  const node = document.querySelector("#save-state");
+  if (!node) return;
+  node.innerHTML = html;
+  node.className = `src ${cls}`;
+}
+
+function numOrNull(v) {
+  return v === "" || v === null ? null : Number(v);
+}
+
+function plural(n, one, few, many) {
+  const t = n % 10, h = n % 100;
+  if (t === 1 && h !== 11) return one;
+  if (t >= 2 && t <= 4 && (h < 12 || h > 14)) return few;
+  return many;
+}
+</script>
+</body>
+</html>

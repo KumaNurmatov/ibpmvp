@@ -58,6 +58,7 @@ export class Order {
     this.workshops = [];
     this.photo = "";
     this.note = "";
+    this.status = "";
   }
 
   get(name) {
@@ -601,6 +602,8 @@ export function orderFromRecord(record) {
     : String(record.workshop || "").split(",").map((w) => w.trim()).filter(Boolean);
   order.photo = record.photo || "";
   order.note = record.note || "";
+  // Отменён или заморожен — это решение людей, а не следствие цифр.
+  order.status = record.status || "";
   order.record = record;
   return compute(order);
 }

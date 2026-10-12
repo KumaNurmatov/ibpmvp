@@ -75,6 +75,29 @@ describe("стадия заказа", () => {
   });
 });
 
+describe("остановленный заказ", () => {
+  it("отменённый не числится в пошиве", () => {
+    // По деньгам он от пошива не отличим: предоплата есть, отгрузки нет.
+    assert.equal(stageOf(order({ shipment: {}, payments: [PREPAY], status: "отменён" })), "stopped");
+  });
+
+  it("дело по нему одно — решить судьбу предоплаты", () => {
+    const [task] = tasks([order({ shipment: {}, payments: [PREPAY], status: "отменён" })]);
+    assert.match(task.title, /предоплаты/);
+    assert.equal(task.amount, PREPAY.amount);
+  });
+
+  it("а без предоплаты делать нечего", () => {
+    assert.deepEqual(tasks([order({ shipment: {}, payments: [], status: "отменён" })]), []);
+  });
+
+  it("в воронку он не попадает: это выход из процесса, а не ступень", () => {
+    const rows = funnel([order({ shipment: {}, payments: [PREPAY], status: "отменён" })]);
+    assert.ok(!rows.some((r) => r.key === "stopped"));
+    assert.equal(rows.reduce((s, r) => s + r.count, 0), 0, "он не должен попасть и на чужую ступень");
+  });
+});
+
 describe("воронка", () => {
   it("держит все ступени, даже пустые", () => {
     const rows = funnel([order()]);

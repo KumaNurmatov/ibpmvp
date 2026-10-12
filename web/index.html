@@ -26,6 +26,7 @@
     чтобы увидеть её заказы.
   </p>
   <div class="flow" id="flow"></div>
+  <p class="section-note after" id="flow-out"></p>
 
   <div class="tiles kpi" id="tiles"></div>
 
@@ -92,7 +93,18 @@ function drawFlow(orders) {
        <b>${s.count}</b>
        <span class="sum">${s.sum ? money(s.sum) : escapeHtml(s.hint)}</span>
      </a>`).join("");
+
+  // Остановленные заказы в воронку не входят — они из неё выпали. Но и молчать
+  // о них нельзя: за ними стоит уже перечисленная предоплата.
+  const stopped = orders.filter((o) => stageOf(o) === "stopped");
+  const stuck = stopped.reduce((s, o) => s + (o.computed.paid || 0), 0);
+  document.querySelector("#flow-out").innerHTML = stopped.length
+    ? `Вне процесса: <a href="./orders.html?stage=stopped">${stopped.length}
+       ${plural(stopped.length, "остановленный заказ", "остановленных заказа", "остановленных заказов")}</a>${
+       stuck ? `, предоплат на ${money(stuck)} — вернуть или зачесть` : ""}.`
+    : "";
 }
+
 
 function drawTiles(orders) {
   const open = orders.filter((o) => stageOf(o) !== "closed");
