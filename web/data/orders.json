@@ -1745,7 +1745,7 @@
       },
       "acceptance": {
         "accepted_qty": null,
-        "rejected_qty": null,
+        "rejected_qty": 77,
         "date": "",
         "reason": ""
       },
@@ -1767,7 +1767,7 @@
         {
           "kind": "постоплата",
           "date": "2026-10-12",
-          "amount": 27876.1,
+          "amount": 27876,
           "doc_number": "750",
           "purpose": "дог.809/1-1 от 07.05.2026,по спец.1 от 07.05.26,за текст.изд. (костюм)"
         }
