@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import difflib
 import json
 import re
 import subprocess
@@ -52,7 +53,9 @@ def main(argv: list[str] | None = None) -> int:
 
     out = []
     for path in args.files:
-        text = pdf_text(path)
+        # .txt — это уже распознанный текст: распознавание долгое, и
+        # перечитывать его после правки разбора надо без повторного прогона.
+        text = path.read_text("utf-8") if path.suffix.lower() == ".txt" else pdf_text(path)
         scanned = len(text.strip()) < 200
         if scanned and args.ocr:
             text = ocr(path, args.dpi)
@@ -129,8 +132,12 @@ def read(text: str) -> dict:
         "doc_no": first(r"ТОВАРНО-ТРАНСПОРТНАЯ НАКЛАДНАЯ\s*№\s*([\w/.-]+)", flat)
                   or first(r"Упаковочный лист\s*№\s*([\w/.-]+)", flat)
                   or first(r"Инвойс\s*№\s*([\w/.-]+)", flat),
+        # Дата отгрузки написана в пачке несколько раз; берём первое, что
+        # нашлось, — в распознанном тексте уцелевает не всякое место.
         "date": date(first(r"Дата составления\s*(\d{2}\.\d{2}\.\d{4})", flat)
-                     or first(r"Дата поставки:?\s*(\d{2}\.\d{2}\.\d{4})", flat)),
+                     or first(r"Дата поставки:?\s*(\d{2}\.\d{2}\.\d{4})", flat)
+                     or first(r"Инвойс\s*№?\s*[\w/.-]*\s*о[тг]\s*(\d{2}\.\d{2}\.\d{4})", flat)
+                     or first(r"Счет-фактура:?\s*№?\s*[\w/.-]*\s*о[тг]\s*(\d{2}\.\d{2}\.\d{4})", flat)),
         "item": cmr["item"],
         "tnved": cmr["tnved"],
         "qty": totals["qty"],
@@ -150,6 +157,17 @@ def read(text: str) -> dict:
 
 # ── отдельные поля ────────────────────────────────────────────────────────
 
+def month_number(word: str) -> int | None:
+    """Месяц словом. В распознанном тексте он рвётся пробелами: «авт уста»."""
+    plain = re.sub(r"[^а-яё]", "", (word or "").lower())
+    if plain in MONTHS:
+        return MONTHS[plain]
+    # «авт уста» вместо «августа»: буквы распознались неточно, но название
+    # месяца всё равно узнаваемо.
+    close = difflib.get_close_matches(plain, list(MONTHS), n=1, cutoff=0.6)
+    return MONTHS[close[0]] if close else None
+
+
 def cmr_line(flat: str) -> dict:
     """Строка груза в CMR: мест, род упаковки, товар, код ТН ВЭД, вес брутто.
 
@@ -157,8 +175,10 @@ def cmr_line(flat: str) -> dict:
     вместе: по отдельности код ТН ВЭД путался с ИНН покупателя, а вес
     слипался с кодом.
     """
-    m = re.search(r"(\d{1,4})\s+(?:Мешки|Мешок|Коробки|Коробок|мешки|Пакеты)\s+"
-                  r"([А-ЯЁа-яё][А-ЯЁа-яё \-]{2,40}?)\s+(\d{10})\s+"
+    # В распознанном тексте между колонками попадается мусор («| », «. »),
+    # поэтому разделители допускаются, а не требуются точными.
+    m = re.search(r"(\d{1,4})\s+(?:Мешк\w*|Коробк\w*|Пакет\w*)\s+"
+                  r"([А-ЯЁа-яё][А-ЯЁа-яё \-]{2,40}?)\s+(\d{10})\s*[|!,.]?\s*"
                   r"([\d \u00a0]+(?:,\d+)?)\s*кг", flat)
     if not m:
         return {"places": None, "item": "", "tnved": "", "weight": None}
@@ -195,11 +215,11 @@ def contract(flat: str) -> str:
 
 
 def contract_date(flat: str) -> str:
-    m = re.search(r"[Дд]оговор(?:у)?\s+поставки\s*№\s*[\d/-]+\s*от\s*«?(\d{1,2})»?\s*"
-                  r"([а-яё]+)\s*(\d{4})", flat)
+    m = re.search(r"[Дд]оговор(?:у)?\s+поставки\s*№\s*[\d/-]+\s*от\s*[«<]?(\d{1,2})[»>]?\s*"
+                  r"([а-яё]+(?:\s[а-яё]+)?)\s*(\d{4})", flat)
     if not m:
         return ""
-    day, month, year = m.group(1), MONTHS.get(m.group(2).lower()), m.group(3)
+    day, month, year = m.group(1), month_number(m.group(2)), m.group(3)
     if not month:
         return ""
     try:

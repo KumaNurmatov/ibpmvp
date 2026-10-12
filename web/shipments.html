@@ -24,6 +24,7 @@
   </div>
 
   <div class="tiles kpi" id="kpi"></div>
+  <p class="section-note after" id="free-note"></p>
 
   <div class="card">
     <div class="grid c3">
@@ -48,7 +49,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
-import { shipmentsOf } from "./lib/shipments.js";
+import { freeCarriage, shipmentsOf } from "./lib/shipments.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
 
 mountShell("shipments.html");
@@ -88,12 +89,14 @@ const VALUE = {
 };
 
 let all = [];
+let free = [];
 let sort = { key: "date", dir: -1 };
 let view = readView();
 
 try {
   const { data, orders } = await loadOrders();
   all = shipmentsOf(data, orders);
+  free = freeCarriage(data);
   showUpdated(document.querySelector("#updated"), data?.updated);
   drawKpi();
   fillMonths();
@@ -113,6 +116,16 @@ function drawKpi() {
   const cost = sum(all.map((s) => s.cost));
   const paid = sum(all.map((s) => s.paid));
   const unpaid = all.filter((s) => (s.due ?? 0) > 0.5);
+
+  // Оплаты за доставку из выписки, пока не привязанные к машинам: без этой
+  // строки «не оплачено» читается как «денег не переводили», хотя они ушли.
+  const loose = free.reduce((s, p) => s + (p.amount || 0), 0);
+  document.querySelector("#free-note").innerHTML = free.length
+    ? `Из выписки не разнесено по машинам: ${free.length}
+       ${plural(free.length, "оплата", "оплаты", "оплат")} на ${money(loose)}.
+       Акт карго бывает сразу на несколько отгрузок, поэтому разносят их руками —
+       в карточке отгрузки они предлагаются списком.`
+    : "";
 
   document.querySelector("#kpi").innerHTML = [
     tile("Отгрузок", String(all.length), (() => {
