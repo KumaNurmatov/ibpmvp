@@ -1328,7 +1328,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 3383,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -1354,6 +1354,13 @@
           "amount": 447627.6,
           "doc_number": "355",
           "purpose": "дог.712/1-1 от 20.04.2026,по спец.1 от 20.04.26,за текст.изд. (костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": 143525.04,
+          "doc_number": "Учтена Переплата заказ Аи 17.04.26/1 ",
+          "purpose": ""
         }
       ],
       "terms": {
