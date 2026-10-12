@@ -3711,14 +3711,14 @@
       "item": "Спортивный костюм на молнии больших размеров без начеса",
       "item_article": "СПОРКОСТ01",
       "tnved": "6104130000",
-      "ordered_qty": 2435,
-      "unit_price": 990,
+      "ordered_qty": 2400,
+      "unit_price": 979.22,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": null,
-        "places": null,
+        "qty": 1156,
+        "places": 37,
         "weight_gross": 1153.5,
         "driver": "",
         "driver_phone": ""
@@ -3739,7 +3739,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
