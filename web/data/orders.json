@@ -3711,14 +3711,14 @@
       "item": "Спортивный костюм на молнии больших размеров без начеса",
       "item_article": "СПОРКОСТ01",
       "tnved": "6104130000",
-      "ordered_qty": 2435,
-      "unit_price": 990,
+      "ordered_qty": 2400,
+      "unit_price": 979.22,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": null,
-        "places": null,
+        "qty": 1156,
+        "places": 37,
         "weight_gross": 1153.5,
         "driver": "",
         "driver_phone": ""
@@ -3739,7 +3739,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3822,12 +3822,12 @@
       "item_article": "РЖТЕПЛАЯ01",
       "tnved": "6106909000",
       "ordered_qty": 520,
-      "unit_price": 500,
+      "unit_price": 489.43,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-26",
-        "qty": null,
+        "qty": 664,
         "places": 6,
         "weight_gross": 275.4,
         "driver": "",
@@ -3849,7 +3849,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3878,15 +3878,13 @@
       "item": "Спортивный костюм",
       "item_article": "",
       "tnved": "6104192000",
-      "ordered_qty": 720,
-      "unit_price": 1267.51,
-      "workshops": [
-        "Нурлан"
-      ],
+      "ordered_qty": null,
+      "unit_price": null,
+      "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": 615,
+        "qty": null,
         "places": 19,
         "weight_gross": 649.9,
         "driver": "",
@@ -3908,7 +3906,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 35,
+        "prepay_percent": 50,
         "lead_time_days": null,
         "postpay_days": null
       },
