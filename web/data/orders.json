@@ -619,7 +619,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 1149,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -645,6 +645,13 @@
           "amount": 25509.27,
           "doc_number": "749",
           "purpose": "дог.558/1-1 от 13.03.26,по спец.1 от 13.03.26,за текст.изд.(костюм)"
+        },
+        {
+          "kind": "перенос",
+          "date": "",
+          "amount": 14953.71,
+          "doc_number": "Аи 13.04.26",
+          "purpose": ""
         }
       ],
       "terms": {
