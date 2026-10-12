@@ -1604,7 +1604,7 @@
       },
       "acceptance": {
         "accepted_qty": null,
-        "rejected_qty": null,
+        "rejected_qty": 27,
         "date": "",
         "reason": ""
       },
