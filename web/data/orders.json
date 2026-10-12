@@ -3655,12 +3655,12 @@
       "item_article": "СКПУКРА01",
       "tnved": "6104130000",
       "ordered_qty": 1015,
-      "unit_price": 930,
+      "unit_price": 929.96,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-24",
-        "qty": null,
+        "qty": 794,
         "places": 15,
         "weight_gross": 634,
         "driver": "",
@@ -3682,7 +3682,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3711,14 +3711,14 @@
       "item": "Спортивный костюм на молнии больших размеров без начеса",
       "item_article": "СПОРКОСТ01",
       "tnved": "6104130000",
-      "ordered_qty": 2400,
-      "unit_price": 979.22,
+      "ordered_qty": 2435,
+      "unit_price": 990,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": 1156,
-        "places": 37,
+        "qty": null,
+        "places": null,
         "weight_gross": 1153.5,
         "driver": "",
         "driver_phone": ""
@@ -3739,7 +3739,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 35,
+        "prepay_percent": 50,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3822,12 +3822,12 @@
       "item_article": "РЖТЕПЛАЯ01",
       "tnved": "6106909000",
       "ordered_qty": 520,
-      "unit_price": 489.43,
+      "unit_price": 500,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-26",
-        "qty": 664,
+        "qty": null,
         "places": 6,
         "weight_gross": 275.4,
         "driver": "",
@@ -3849,7 +3849,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 35,
+        "prepay_percent": 50,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3878,13 +3878,15 @@
       "item": "Спортивный костюм",
       "item_article": "",
       "tnved": "6104192000",
-      "ordered_qty": null,
-      "unit_price": null,
-      "workshops": [],
+      "ordered_qty": 720,
+      "unit_price": 1267.51,
+      "workshops": [
+        "Нурлан"
+      ],
       "photo": "",
       "shipment": {
         "date": "2026-10-07",
-        "qty": null,
+        "qty": 615,
         "places": 19,
         "weight_gross": 649.9,
         "driver": "",
@@ -3906,7 +3908,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
