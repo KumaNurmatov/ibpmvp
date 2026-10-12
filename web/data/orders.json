@@ -3113,7 +3113,7 @@
       },
       "acceptance": {
         "accepted_qty": null,
-        "rejected_qty": null,
+        "rejected_qty": -6.329,
         "date": "",
         "reason": ""
       },
@@ -3133,10 +3133,10 @@
           "purpose": "дог.707/1-1 от 21.04.2026,по спец.1 от 21.04.26,за текст.изд.(костюм)"
         },
         {
-          "kind": "доп. постоплата",
+          "kind": "перенос",
           "date": "",
           "amount": 260162.5,
-          "doc_number": "",
+          "doc_number": "перенос 807 - отмененный",
           "purpose": ""
         },
         {
