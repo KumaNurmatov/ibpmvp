@@ -1797,10 +1797,10 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
+        "accepted_qty": 2959,
+        "rejected_qty": 41,
         "date": "",
-        "reason": ""
+        "reason": "брак"
       },
       "payments": [
         {
