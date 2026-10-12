@@ -873,7 +873,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 2947,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -892,6 +892,13 @@
           "amount": 535007.28,
           "doc_number": "419",
           "purpose": "дог.560/1-1 от 13.03.26,по спец.1 от 13.03.26,за текст.изд.(костюм)"
+        },
+        {
+          "kind": "перенос",
+          "date": "",
+          "amount": 109584.21,
+          "doc_number": "Учтена предоплата заказ Аи 13.04.26",
+          "purpose": ""
         }
       ],
       "terms": {
