@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-12",
+  "updated": "2026-10-11",
   "contractor": "Айзада (Az)",
   "orders": [
     {
@@ -24,7 +24,7 @@
         "driver_phone": "+996 702 198 366"
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 812,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -47,8 +47,8 @@
       ],
       "terms": {
         "prepay_percent": 50,
-        "lead_time_days": 7,
-        "postpay_days": 20
+        "lead_time_days": 0,
+        "postpay_days": 0
       },
       "links": [
         {
@@ -149,7 +149,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 706,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -1519,7 +1519,7 @@
       "tnved": "",
       "item_article": "",
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/737.jpg",
       "shipment": {
         "date": "2026-06-01",
         "qty": 2327.0,
@@ -2455,7 +2455,10 @@
       "unit_price": 1171.17,
       "tnved": "",
       "item_article": "",
-      "workshops": [],
+      "workshops": [
+        "Сулайман",
+        "Майрам"
+      ],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
@@ -2466,7 +2469,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 900,
         "rejected_qty": null,
         "date": "",
         "reason": ""
@@ -4072,6 +4075,41 @@
       "links": [],
       "status": "",
       "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+    },
+    {
+      "id": "999",
+      "order_no": "",
+      "contract_no": "999",
+      "order_date": "",
+      "item": "",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": null,
+      "unit_price": null,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 50,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "note": ""
     }
   ],
   "workshops": [
