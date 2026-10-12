@@ -3822,12 +3822,12 @@
       "item_article": "РЖТЕПЛАЯ01",
       "tnved": "6106909000",
       "ordered_qty": 520,
-      "unit_price": 500,
+      "unit_price": 489.43,
       "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-09-26",
-        "qty": null,
+        "qty": 664,
         "places": 6,
         "weight_gross": 275.4,
         "driver": "",
@@ -3849,7 +3849,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
