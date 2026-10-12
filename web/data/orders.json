@@ -940,10 +940,10 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 6611,
         "rejected_qty": null,
         "date": "",
-        "reason": ""
+        "reason": "(отсутствующие + брак) "
       },
       "payments": [
         {
