@@ -1158,7 +1158,7 @@
           "kind": "предоплата",
           "date": "",
           "amount": 576000,
-          "doc_number": "перенос 661",
+          "doc_number": "",
           "purpose": ""
         },
         {
@@ -3872,50 +3872,6 @@
       ],
       "status": "",
       "note": "В бланке набран договор 1002, в имени файла 1003. Документы отправки: 1003 отправка.pdf (вычитано распознаванием скана — цифры стоит сверить), ТТН № 26/09-1."
-    },
-    {
-      "id": "661",
-      "order_no": "",
-      "contract_no": "661/1-1",
-      "order_date": "2026-04-13",
-      "item": "Костюм",
-      "item_article": "",
-      "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
-      "workshops": [],
-      "photo": "",
-      "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
-        "driver": "",
-        "driver_phone": ""
-      },
-      "acceptance": {
-        "accepted_qty": null,
-        "rejected_qty": null,
-        "date": "",
-        "reason": ""
-      },
-      "payments": [
-        {
-          "kind": "предоплата",
-          "date": "2026-04-17",
-          "amount": 576000,
-          "doc_number": "295",
-          "purpose": "дог.661/1-1 от 13.04.2026,по спец.1 от 13.04.26,за текст.изд. (костюм)"
-        }
-      ],
-      "terms": {
-        "prepay_percent": 50,
-        "lead_time_days": null,
-        "postpay_days": null
-      },
-      "links": [],
-      "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
     },
     {
       "id": "1009",
