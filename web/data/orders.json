@@ -2580,10 +2580,7 @@
       "tnved": "",
       "ordered_qty": 1080,
       "unit_price": 1171.17,
-      "workshops": [
-        "Сулайман",
-        "Майрам"
-      ],
+      "workshops": [],
       "photo": "",
       "shipment": {
         "date": "2026-08-13",
@@ -2594,7 +2591,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": 900,
+        "accepted_qty": null,
         "rejected_qty": null,
         "date": "",
         "reason": ""
