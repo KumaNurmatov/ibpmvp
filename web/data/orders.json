@@ -240,7 +240,7 @@
         "driver_phone": ""
       },
       "acceptance": {
-        "accepted_qty": null,
+        "accepted_qty": 677,
         "rejected_qty": null,
         "date": "",
         "reason": ""
