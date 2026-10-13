@@ -592,6 +592,13 @@
           "amount": -29629.44,
           "doc_number": "513",
           "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "",
+          "amount": -2314.8,
+          "doc_number": "",
+          "purpose": ""
         }
       ],
       "terms": {
