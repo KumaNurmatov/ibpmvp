@@ -3784,7 +3784,10 @@
       "tnved": "",
       "ordered_qty": 1950,
       "unit_price": 990,
-      "workshops": [],
+      "workshops": [
+        "Сулайман",
+        "Майрам"
+      ],
       "photo": "",
       "shipment": {
         "date": "",
