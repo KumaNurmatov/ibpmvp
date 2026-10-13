@@ -4188,8 +4188,20 @@
       ],
       "act_no": "",
       "act_date": "",
-      "links": [],
-      "payments": [],
+      "links": [
+        {
+          "title": "Акт №11 от 09.10.2026 г ",
+          "url": "https://drive.google.com/file/d/1KiWbaKJ4YOJDKicmX2-LCWGQq_06P-OM/view?usp=share_link"
+        }
+      ],
+      "payments": [
+        {
+          "date": "2026-10-12",
+          "amount": 72046.4,
+          "doc_number": "14476",
+          "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 11 от 09.10.2026"
+        }
+      ],
       "note": ""
     }
   ],
