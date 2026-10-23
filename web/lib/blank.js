@@ -53,6 +53,14 @@ export function fields(order) {
   };
 }
 
+/**
+ * Линия реза поперёк листа — посередине зазора между верхними и нижними
+ * копиями. Раньше она стояла у самого верха нижних копий (поле + половина
+ * листа − 0,7), а зазор между ними 17 мм — линия «уплывала» вниз.
+ */
+export const FOLD = (LAYOUT.margin + LAYOUT.rowHeight * ROWS.length +
+  LAYOUT.margin + LAYOUT.halfHeight) / 2;
+
 /** Левые верхние углы четырёх копий. */
 export function corners() {
   const { margin, copyWidth, gap, halfHeight } = LAYOUT;
@@ -104,8 +112,7 @@ export function blankPdf(order, fonts) {
 
   // Линии реза: по ним лист делят на четыре бланка.
   const dash = [3, 3];
-  const fold = LAYOUT.margin + LAYOUT.halfHeight - 0.7;   // ровно между копиями
-  doc.line(0, mm(fold), mm(PAGE.width), mm(fold), { color: LAYOUT.cut, width: 0.5, dash });
+  doc.line(0, mm(FOLD), mm(PAGE.width), mm(FOLD), { color: LAYOUT.cut, width: 0.5, dash });
   doc.line(mm(PAGE.width / 2), 0, mm(PAGE.width / 2), mm(PAGE.height),
            { color: LAYOUT.cut, width: 0.5, dash });
 
@@ -135,7 +142,7 @@ export function blankHtml(order) {
 
   return `<div class="bl-sheet" style="width:${PAGE.width}mm; height:${PAGE.height}mm">
     ${corners().map(copy).join("")}
-    <div class="bl-fold" style="top:${LAYOUT.margin + LAYOUT.halfHeight - 0.7}mm"></div>
+    <div class="bl-fold" style="top:${FOLD}mm"></div>
     <div class="bl-fold v" style="left:${PAGE.width / 2}mm"></div>
   </div>`;
 }

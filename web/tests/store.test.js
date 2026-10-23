@@ -45,6 +45,7 @@ describe("путь к фото", () => {
   it("имя файла собирается из ключа заказа", () => {
     assert.equal(photoSitePath("666"), "assets/photos/666.jpg");
     assert.equal(photoSitePath("666/1-1"), "assets/photos/666-1-1.jpg");
+    assert.equal(photoSitePath("666", 2), "assets/photos/666-2.jpg", "второй снимок рядом с первым");
   });
 
   it("кириллица и пробелы в ключе не ломают путь", () => {

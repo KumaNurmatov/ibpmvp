@@ -88,7 +88,7 @@ function render(s) {
       ${tile("Вес брутто", `${qty(s.totals.weight)} кг`, `${qty(s.totals.places)} мест`)}
       ${tile("Сумма отгрузки", money(s.totals.sum), `${qty(s.totals.qty)} шт по цене пошива`)}
       ${tile("Доставка", s.cost === null ? "—" : money(s.cost),
-             `${qty(s.totals.weight)} кг × ${money(s.rate_per_kg)}`)}
+             `${qty(s.weight_billed)} кг${s.weight_accepted !== null ? " по приёмке" : ""} × ${money(s.rate_per_kg)}`)}
       ${tile("Остаток по доставке", s.due === null ? "—" : money(s.due),
              `оплачено ${money(s.paid)}`, (s.due || 0) > 0.5 ? "bad" : "ok")}
     </div>
@@ -132,10 +132,17 @@ function render(s) {
 
     <h2>Доставка и оплаты</h2>
     <div class="card">
+      <table style="margin-bottom:12px">
+        <tr><th>Вес брутто по документам</th><td class="num">${qty(s.totals.weight)} кг</td></tr>
+        <tr><th>Вес по приёмке</th><td class="num">${s.weight_accepted === null
+          ? '<span class="src">не указан — доставка считается по брутто</span>'
+          : `<b>${qty(s.weight_accepted)} кг</b>`}</td></tr>
+      </table>
       <table class="calc">
         ${calcRow("Доставка по весу", s.cost, s.cost === null
           ? "нет веса брутто ни у одного заказа"
-          : `${qty(s.totals.weight)} кг × ${money(s.rate_per_kg)}`)}
+          : `${qty(s.weight_billed)} кг${s.weight_accepted !== null ? " по приёмке" : " брутто"} × ${
+            money(s.rate_per_kg)}`)}
         ${calcRow("Оплачено карго", s.paid, s.payments.map((p) => money(p.amount)).join(" + ")
           || "оплат нет")}
         ${calcRow("Остаток по доставке", s.due, `${money(s.cost)} − ${money(s.paid)}`, true)}
@@ -193,6 +200,8 @@ function drawEditor(s) {
         ${row("act_date", "Дата акта", r.act_date, "date")}
         ${row("rate_per_kg", "Ставка доставки, ₽ за кг", r.rate_per_kg, "number")}
         ${calc("weight", "Общий вес брутто")}
+        ${row("weight_accepted", "Вес по приёмке, кг", r.weight_accepted, "number",
+              "после перевзвешивания")}
         ${calc("cost", "Доставка по весу")}
       </table>
     </div>
@@ -377,12 +386,13 @@ function recalc(r) {
   const weight = own.map((o) => o.get("weight_gross")).filter((v) => v !== null);
   const total = weight.length ? weight.reduce((a, b) => a + b, 0) : null;
   const rate = r.rate_per_kg ?? 0;
+  const billed = r.weight_accepted ?? total;
 
   show("weight", total === null ? "—" : `${qty(total)} кг`,
        `= сумма по ${own.length} ${plural(own.length, "заказу", "заказам", "заказам")}`);
-  show("cost", total === null ? "—" : money(total * rate),
-       total === null ? "нужен вес брутто хотя бы у одного заказа"
-         : `= ${qty(total)} кг × ${money(rate)}`);
+  show("cost", billed === null ? "—" : money(billed * rate),
+       billed === null ? "нужен вес брутто хотя бы у одного заказа или вес по приёмке"
+         : `= ${qty(billed)} кг${r.weight_accepted !== null ? " по приёмке" : " брутто"} × ${money(rate)}`);
 
   const key = String(r.date || "").slice(0, 10);
   const off = own.filter((o) => {

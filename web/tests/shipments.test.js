@@ -96,6 +96,21 @@ describe("цифры машины складываются из заказов",
     assert.equal(ship.due, 282 * 80 - 22560);
   });
 
+  it("вес по приёмке заменяет брутто в расчёте доставки", () => {
+    // На приёмке намерили 290 кг вместо 282 по документам, акт выставлен
+    // на 290 × 80. Оплата по акту не должна выглядеть переплатой.
+    const data = { shipments: [{
+      id: "a", date: "2026-06-05", orders: ["666"], rate_per_kg: 80, weight_accepted: 290,
+      payments: [{ date: "2026-06-18", amount: 290 * 80 }],
+    }] };
+    const [ship] = shipmentsOf(data, [order()]);
+    assert.equal(ship.totals.weight, 282, "брутто по документам остаётся как было");
+    assert.equal(ship.weight_billed, 290);
+    assert.equal(ship.cost, 290 * 80);
+    assert.equal(ship.due, 0);
+    assert.equal(ship.warnings.length, 0);
+  });
+
   it("без веса остаток по доставке неизвестен, а не ноль", () => {
     const data = { shipments: [{ id: "a", date: "2026-06-05", orders: ["666"] }] };
     const [ship] = shipmentsOf(data, [order({ shipment: { date: "2026-06-05", qty: 10 } })]);

@@ -6,7 +6,9 @@
  * изделия приложена своя объёмная иконка — она лежит в репозитории рядом со
  * страницей (assets/items), ничего не грузится со стороны.
  *
- * Если у заказа есть своя ссылка на фото (поле photo), берётся она.
+ * Если у заказа есть своя ссылка на фото (поле photo), берётся она. Снимков
+ * у изделия может быть два (photo и photo2): в списке заказов виден первый,
+ * в карточке заказа — оба, крупно.
  */
 
 // Ключевые слова → иконка. Порядок важен: «костюм с шортами» это костюм.
@@ -39,10 +41,18 @@ export function photoFor(order) {
  * пустой рамки на месте изделия не бывает.
  */
 export function photoImg(order, { className = "", alt = "", attrs = "" } = {}) {
-  const { url, fallback } = photoFor(order);
+  const { url, fallback, generated } = photoFor(order);
   const swap = url === fallback ? "" :
-    ` onerror="this.onerror=null;this.src='${fallback}'"`;
-  return `<img class="${className}" src="${url}" alt="${alt}" loading="lazy"${swap} ${attrs}>`;
+    // Если файл не загрузился, рисунок вписывается целиком, а не обрезается.
+    ` onerror="this.onerror=null;this.classList.remove('own');this.src='${fallback}'"`;
+  // Своё фото заполняет рамку 3:4 целиком; рисунок вписывается с полями.
+  const cls = [className, generated ? "" : "own"].filter(Boolean).join(" ");
+  return `<img class="${cls}" src="${url}" alt="${alt}" loading="lazy"${swap} ${attrs}>`;
+}
+
+/** Свои снимки изделия, без рисунков: для галереи в карточке заказа. */
+export function ownPhotos(order) {
+  return [order.photo, order.photo2].filter(Boolean);
 }
 
 export function kindOf(item) {

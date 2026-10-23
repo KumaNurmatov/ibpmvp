@@ -339,16 +339,19 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .ocard .top .pill::before {
   content: "●"; font-size: 9px; margin-right: 6px; vertical-align: 1px;
 }
-.ocard .face { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 10px; align-items: center; }
+.ocard .face { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 12px; align-items: center; }
 .ocard .no { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
 .ocard .sub2 { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .ocard .what { font-size: 13px; color: var(--faint); margin-top: 2px; }
+/* Снимки изделий вертикальные, поэтому и рамка вертикальная, 3:4. */
 .ocard .shot {
-  width: 124px; height: 82px; border-radius: var(--r-md); object-fit: contain; display: block;
+  width: 96px; aspect-ratio: 3 / 4; height: auto; border-radius: var(--r-md);
+  object-fit: contain; display: block;
   /* Фон плитки совпадает с фоном самой иконки — шва не видно, и в тёмной
      теме это читается как миниатюра товара, а не как дыра в карточке. */
   background: var(--shot); padding: 2px;
 }
+.ocard .shot.own { object-fit: cover; padding: 0; }
 .ocard .meta {
   display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--muted);
   border-top: 1px solid var(--line); padding-top: 10px;
@@ -489,6 +492,20 @@ button.chip.edit { color: var(--muted); border-color: var(--line); background: v
   border-color: var(--lime-deep); color: var(--on-accent); font-weight: 500;
 }
 
+/* ── фото изделия в карточке заказа ──────────────────────────────── */
+/* Два снимка рядом, крупно, 3:4; нажатие открывает снимок на весь экран. */
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 260px)); gap: 12px; margin: 0 0 18px; }
+.gallery button {
+  padding: 0; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden;
+  background: var(--shot); cursor: zoom-in; aspect-ratio: 3 / 4; box-shadow: var(--shadow);
+}
+.gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.viewer {
+  position: fixed; inset: 0; z-index: 50; background: rgba(10, 12, 14, .86);
+  display: flex; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out;
+}
+.viewer img { max-width: 100%; max-height: 100%; border-radius: var(--r-md); }
+
 /* ── бланк: лист на экране ─────────────────────────────────────────── */
 /* Лист рисуется в миллиметрах и целиком ужимается под ширину окна —
    пропорции остаются печатными. */
@@ -603,8 +620,8 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
   table.sheet, table.sheet tbody, table.sheet tr, table.sheet th, table.sheet td { display: block; }
   table.sheet th.key { padding-bottom: 2px; }
   table.sheet td.val { padding-bottom: 10px; }
-  .ocard .face { grid-template-columns: minmax(0, 1fr) 96px; }
-  .ocard .shot { width: 96px; height: 66px; }
+  .ocard .face { grid-template-columns: minmax(0, 1fr) 78px; }
+  .ocard .shot { width: 78px; }
   .card table { table-layout: fixed; }
   .card td, .card th { overflow-wrap: anywhere; }
   /* На телефоне в полосе остаётся главное: разделы и кнопка нового заказа. */

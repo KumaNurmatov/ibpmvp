@@ -210,10 +210,6 @@ function drawCards(rows) {
               `<span class="chip plain">${escapeHtml(c)}</span>`).join("") ||
               '<span class="src">заказов нет</span>'}</div>
           </div>
-          <div class="meta">
-            <span>${escapeHtml(s.driver || "водитель не указан")}</span>
-            <span>отгрузка ${money(s.totals.sum)}</span>
-          </div>
           <div class="prog"><span>Доставка ${s.cost === null ? "" : money(s.cost)}</span>
             <b>${money(s.paid)} · ${(done * 100).toFixed(0)}%</b></div>
           <div class="bar ${done >= 0.999 ? "" : done > 0 ? "part" : "none"}">
