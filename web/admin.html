@@ -22,8 +22,12 @@
   .list .src { display: block; }
   .saved { color: var(--ok); }
   .wide-btn { width: 100%; margin-bottom: 10px; }
-  .photo-preview { width: 92px; height: 62px; object-fit: contain; background: var(--shot);
-    border-radius: var(--r-sm); padding: 2px; }
+  .photo-slots { display: flex; flex-wrap: wrap; gap: 14px; }
+  .photo-slot { display: flex; flex-direction: column; gap: 6px; width: 132px; }
+  .photo-preview { width: 132px; aspect-ratio: 3 / 4; height: auto; object-fit: contain;
+    background: var(--shot); border-radius: var(--r-sm); padding: 2px; cursor: zoom-in; }
+  .photo-preview.own { object-fit: cover; padding: 0; }
+  .photo-slot .row-line { gap: 6px; }
   @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
 </style>
 </head>
@@ -338,65 +342,86 @@ function drawEditor(record) {
 // нему. Пока фото не выбрано, в карточках показывается рисованная иконка
 // по названию изделия — она же остаётся, если фото убрать.
 
-function drawPhoto(r, localUrl = "") {
+function drawPhoto(r, local = {}) {
   const box = document.querySelector("#photo-pick");
   if (!box) return;
-  // Пока выкладка не прошла, выложённого файла на сайте ещё нет — показываем
-  // то, что выбрали на этом компьютере.
-  const { url, generated } = localUrl
-    ? { url: localUrl, generated: false }
-    : photoFor(orderFromRecord(r));
+  const drawn = photoFor(orderFromRecord({ ...r, photo: "" })).url;
 
-  box.innerHTML = `
-    <div class="row-line">
-      <img class="photo-preview" src="${escapeHtml(url)}" alt="">
+  box.innerHTML = `<div class="photo-slots">${slots().map(({ slot, field, name }) => {
+    // Пока выкладка не прошла, выложенного файла на сайте ещё нет — показываем
+    // то, что выбрали на этом компьютере.
+    const url = local[slot] || r[field] || "";
+    return `<div class="photo-slot">
+      <img class="photo-preview ${url ? "own" : ""}" data-slot="${slot}"
+        src="${escapeHtml(url || drawn)}" alt="${name}"
+        ${url ? `onerror="this.onerror=null;this.classList.remove('own');this.src='${drawn}'"` : ""}>
       <div class="row-line">
-        <button type="button" id="photo-add">${r.photo ? "Заменить фото" : "Добавить фото"}</button>
-        ${r.photo ? '<button type="button" id="photo-drop">Убрать</button>' : ""}
-        <input type="file" id="photo-file" accept="image/*" class="hide">
+        <button type="button" data-add="${slot}">${r[field] ? "Заменить" : `+ ${name}`}</button>
+        ${r[field] ? `<button type="button" data-drop="${slot}">Убрать</button>` : ""}
+        <input type="file" data-file="${slot}" accept="image/*" class="hide">
       </div>
-      <span class="src" id="photo-state">${generated
-        ? "своего фото нет — показан рисунок по названию изделия" : ""}</span>
+      <span class="src" data-state="${slot}">${url ? "" : "своего фото нет"}</span>
     </div>`;
+  }).join("")}</div>
+  <p class="src" style="margin:8px 0 0">Снимки вертикальные, 3:4. В списке заказов виден
+    первый, в карточке заказа — оба, крупно.</p>`;
 
-  const file = document.querySelector("#photo-file");
-  const state = document.querySelector("#photo-state");
-  document.querySelector("#photo-add").onclick = () => file.click();
-  document.querySelector("#photo-drop")?.addEventListener("click", () => dropPhoto(r));
+  for (const img of box.querySelectorAll(".photo-preview.own")) {
+    img.onclick = () => window.open(img.src, "_blank", "noopener");
+  }
+  for (const { slot, field } of slots()) {
+    const file = box.querySelector(`[data-file="${slot}"]`);
+    const state = box.querySelector(`[data-state="${slot}"]`);
+    box.querySelector(`[data-add="${slot}"]`).onclick = () => file.click();
+    box.querySelector(`[data-drop="${slot}"]`)?.addEventListener("click", () => dropPhoto(r, slot));
 
-  file.onchange = async () => {
-    const chosen = file.files?.[0];
-    if (!chosen) return;
-    if (!canEdit()) { state.textContent = "нужен токен — загружать некуда"; return; }
-    if (!String(r.id || "").trim()) {
-      state.textContent = "сначала заполните договор: по нему называется файл фото";
-      return;
-    }
-    // Показываем выбранное сразу, не дожидаясь ответа GitHub.
-    const local = URL.createObjectURL(chosen);
-    document.querySelector(".photo-preview").src = local;
-    state.textContent = "загружаю…";
-    try {
-      r.photo = await savePhoto(r.id, chosen);
-      drawPhoto(r, local);
-      say("Фото загружено — нажмите «Сохранить», чтобы оно закрепилось за заказом", "saved");
-      document.querySelector("#photo-state").textContent = "на сайте появится после сохранения";
-      recalc(r);
-    } catch (err) {
-      state.textContent = err.message;
-    }
-  };
+    file.onchange = async () => {
+      const chosen = file.files?.[0];
+      if (!chosen) return;
+      if (!canEdit()) { state.textContent = "нужен токен — загружать некуда"; return; }
+      if (!String(r.id || "").trim()) {
+        state.textContent = "сначала заполните договор: по нему называется файл фото";
+        return;
+      }
+      // Показываем выбранное сразу, не дожидаясь ответа GitHub.
+      const url = URL.createObjectURL(chosen);
+      const preview = box.querySelector(`.photo-preview[data-slot="${slot}"]`);
+      preview.src = url;
+      preview.classList.add("own");
+      state.textContent = "загружаю…";
+      try {
+        r[field] = await savePhoto(r.id, chosen, slot);
+        drawPhoto(r, { ...local, [slot]: url });
+        say("Фото загружено — нажмите «Сохранить», чтобы оно закрепилось за заказом", "saved");
+        document.querySelector(`[data-state="${slot}"]`).textContent = "на сайте появится после сохранения";
+        recalc(r);
+      } catch (err) {
+        state.textContent = err.message;
+      }
+    };
+  }
 }
 
-async function dropPhoto(r) {
-  const state = document.querySelector("#photo-state");
+/**
+ * Два места под снимки: первое — то, что раньше было единственным.
+ * Функцией, а не константой: форма рисуется раньше, чем дойдёт до неё.
+ */
+function slots() {
+  return [
+    { slot: 1, field: "photo", name: "Фото 1" },
+    { slot: 2, field: "photo2", name: "Фото 2" },
+  ];
+}
+
+async function dropPhoto(r, slot) {
+  const { field } = slots().find((s) => s.slot === slot);
+  const state = document.querySelector(`[data-state="${slot}"]`);
   state.textContent = "убираю…";
   try {
-    await deletePhoto(r.id);
-    r.photo = "";
+    await deletePhoto(r.id, slot);
+    r[field] = "";
     drawPhoto(r);
     say("Фото убрано — нажмите «Сохранить», чтобы это закрепилось", "saved");
-    document.querySelector("#photo-state").textContent = "вернулся рисунок по названию изделия";
   } catch (err) {
     state.textContent = err.message;
   }

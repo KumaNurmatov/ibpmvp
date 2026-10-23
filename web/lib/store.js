@@ -122,39 +122,42 @@ const contentsUrl = (path = REPO_PATH) => `${API}/repos/${repo()}/contents/${pat
 
 const PHOTO_DIR = "assets/photos";
 
-export const photoSitePath = (id) => `${PHOTO_DIR}/${safeName(id)}.jpg`;
-const photoRepoPath = (id) => `web/${photoSitePath(id)}`;
+// У изделия два снимка. Первый лежит под прежним именем, второй — с «-2»:
+// так уже выложенные фото остаются на своих местах.
+export const photoSitePath = (id, slot = 1) =>
+  `${PHOTO_DIR}/${safeName(id)}${slot === 2 ? "-2" : ""}.jpg`;
+const photoRepoPath = (id, slot = 1) => `web/${photoSitePath(id, slot)}`;
 
 /**
  * Положить фото заказа в репозиторий. Принимает файл из поля выбора,
  * ужимает его и возвращает путь, который надо записать в заказ.
  */
-export async function savePhoto(id, file) {
+export async function savePhoto(id, file, slot = 1) {
   const auth = token();
   if (!auth) throw new Error("нет токена — сохранять некуда");
 
   const bytes = await shrink(file);
-  const path = photoRepoPath(id);
+  const path = photoRepoPath(id, slot);
   const current = await head(auth, path);
   const response = await fetch(contentsUrl(path), {
     method: "PUT",
     headers: headers(auth),
     body: JSON.stringify({
-      message: `Фото изделия: заказ ${id}`,
+      message: `Фото изделия${slot === 2 ? " (второе)" : ""}: заказ ${id}`,
       content: bytesToBase64(bytes),
       ...(current.sha ? { sha: current.sha } : {}),
     }),
   });
   if (!response.ok) throw new Error(await describe(response));
-  return photoSitePath(id);
+  return photoSitePath(id, slot);
 }
 
 /** Убрать фото из репозитория. Нет файла — считаем, что дело сделано. */
-export async function deletePhoto(id) {
+export async function deletePhoto(id, slot = 1) {
   const auth = token();
   if (!auth) throw new Error("нет токена — удалять нечем");
 
-  const path = photoRepoPath(id);
+  const path = photoRepoPath(id, slot);
   const current = await head(auth, path);
   if (!current.sha) return;
   const response = await fetch(contentsUrl(path), {
@@ -238,6 +241,7 @@ function normalize(data) {
       // Цехов у заказа бывает несколько: раньше это было одно текстовое поле.
       workshops: toList(o.workshops ?? o.workshop),
       photo: o.photo ?? "",
+      photo2: o.photo2 ?? "",
       shipment: {
         date: o.shipment?.date ?? "", qty: o.shipment?.qty ?? null,
         places: o.shipment?.places ?? null, weight_gross: o.shipment?.weight_gross ?? null,
@@ -298,6 +302,9 @@ function normalizeShipment(s, i = 0) {
     driver_phone: s?.driver_phone ?? "",
     // Доставка считается по весу: обычно 80 ₽ за килограмм.
     rate_per_kg: s?.rate_per_kg ?? DEFAULT_RATE_PER_KG,
+    // На приёмке груз перевзвешивают, и акт карго выставляют по этому весу.
+    // Он один на машину, поэтому хранится здесь, а не в заказах.
+    weight_accepted: s?.weight_accepted ?? null,
     orders: toList(s?.orders).map(String),
     act_no: s?.act_no ?? "",
     act_date: s?.act_date ?? "",

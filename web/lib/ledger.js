@@ -57,6 +57,7 @@ export class Order {
     this.links = [];
     this.workshops = [];
     this.photo = "";
+    this.photo2 = "";
     this.note = "";
     this.status = "";
   }
@@ -601,6 +602,7 @@ export function orderFromRecord(record) {
   order.workshops = Array.isArray(record.workshops) ? record.workshops
     : String(record.workshop || "").split(",").map((w) => w.trim()).filter(Boolean);
   order.photo = record.photo || "";
+  order.photo2 = record.photo2 || "";
   order.note = record.note || "";
   // Отменён или заморожен — это решение людей, а не следствие цифр.
   order.status = record.status || "";

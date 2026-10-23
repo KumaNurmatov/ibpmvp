@@ -18,7 +18,9 @@
   .acc { display: grid; gap: 16px; margin-bottom: 14px; }
   .acc-rings { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
   .acc-rings .src { margin-right: 18px; line-height: 1.3; }
-  .hero { width: 54px; height: 40px; border-radius: 9px; object-fit: contain; background: var(--shot); padding: 2px; }
+  .hero { width: 36px; aspect-ratio: 3 / 4; height: auto; border-radius: 8px; object-fit: contain;
+    background: var(--shot); padding: 2px; }
+  .hero.own { object-fit: cover; padding: 0; }
 </style>
 </head>
 <body>
@@ -41,7 +43,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
-import { photoImg } from "./lib/photo.js";
+import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
 import { tasks } from "./lib/stages.js";
 import { balanceScale, ring } from "./lib/ui.js";
@@ -90,6 +92,7 @@ function render(o, ride) {
       o.get("tnved") ? ` · ТН ВЭД ${escapeHtml(o.get("tnved"))}` : ""}${
       o.get("order_date") ? ` · заказ от ${dateRu(o.get("order_date"))}` : ""}</p>
     ${o.workshops.length ? `<div class="chips" style="margin:-10px 0 18px">${workshopChips(o)}</div>` : ""}
+    ${gallery(o)}
 
     ${todo(o)}
 
@@ -293,6 +296,29 @@ function acceptance(o) {
            Либо приёмка отмечена неверно, либо часть непринятого всё-таки оплатили.`}</td></tr>
   </table>`;
 }
+
+/**
+ * Снимки изделия крупно, по нажатию — на весь экран. Рисунки по названию
+ * здесь не показываются: они только заглушка для списка.
+ */
+function gallery(o) {
+  const photos = ownPhotos(o);
+  if (!photos.length) return "";
+  return `<div class="gallery">${photos.map((url, i) =>
+    `<button type="button" onclick="openPhoto('${escapeHtml(url)}')" title="Открыть крупно">
+      <img src="${escapeHtml(url)}" alt="Фото изделия ${i + 1}" loading="lazy"></button>`).join("")}</div>`;
+}
+
+window.openPhoto = (url) => {
+  const box = document.createElement("div");
+  box.className = "viewer";
+  box.innerHTML = `<img src="${escapeHtml(url)}" alt="">`;
+  const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = (e) => { if (e.key === "Escape") close(); };
+  box.onclick = close;
+  document.addEventListener("keydown", onKey);
+  document.body.append(box);
+};
 
 function tile(name, value, hint, cls = "") {
   return `<div class="tile ${cls}"><span>${escapeHtml(name)}</span><b>${escapeHtml(value)}</b>

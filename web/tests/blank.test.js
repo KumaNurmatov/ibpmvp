@@ -8,7 +8,7 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
 
-import { PAGE, ROWS, blankName, corners, fields, fitSize } from "../lib/blank.js";
+import { FOLD, PAGE, ROWS, blankName, corners, fields, fitSize } from "../lib/blank.js";
 import { orderFromRecord } from "../lib/ledger.js";
 
 const order = (over = {}) => orderFromRecord({
@@ -53,6 +53,14 @@ describe("раскладка листа", () => {
       assert.ok(x + 89.03 <= PAGE.width, `копия справа вылезает: ${x}`);
       assert.ok(y + 14.57 * ROWS.length <= PAGE.height, `копия снизу вылезает: ${y}`);
     }
+  });
+
+  it("линия реза поперёк листа — посередине между копиями", () => {
+    const ys = [...new Set(corners().map((c) => c.y))].sort((a, b) => a - b);
+    const above = FOLD - (ys[0] + 14.57 * ROWS.length);
+    const below = ys[1] - FOLD;
+    assert.ok(above > 1 && below > 1, "линия не должна липнуть к копиям");
+    assert.ok(Math.abs(above - below) < 0.01, `сверху ${above} мм, снизу ${below} мм`);
   });
 });
 

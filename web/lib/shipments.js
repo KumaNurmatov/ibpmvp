@@ -73,7 +73,11 @@ export function shipment(record, orders, stored = false) {
   const totals = totalsOf(orders);
   const payments = record.payments || [];
   const paid = round(payments.reduce((sum, p) => sum + (p.amount || 0), 0));
-  const cost = totals.weight === null ? null : round(totals.weight * rate);
+  // Карго берёт деньги за вес, который намерили на приёмке, а не за брутто
+  // из документов отгрузки. Пока его не вписали — считаем по брутто.
+  const accepted = record.weight_accepted ?? null;
+  const billed = accepted ?? totals.weight;
+  const cost = billed === null ? null : round(billed * rate);
 
   return {
     id: record.id || shipmentKey(record.date),
@@ -84,6 +88,8 @@ export function shipment(record, orders, stored = false) {
     driver: record.driver || common(orders, "driver"),
     driver_phone: record.driver_phone || common(orders, "driver_phone"),
     rate_per_kg: rate,
+    weight_accepted: accepted,
+    weight_billed: billed,
     act_no: record.act_no || "",
     act_date: record.act_date || "",
     links: record.links || [],
