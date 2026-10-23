@@ -599,6 +599,13 @@
           "amount": -2314.8,
           "doc_number": "",
           "purpose": ""
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-10-13",
+          "amount": 157174.92,
+          "doc_number": "580",
+          "purpose": "дог.554/1-1 от 13.03.26,по спец.1 от 13.03.26,за текст.изд.(блузка)"
         }
       ],
       "terms": {
@@ -3239,6 +3246,13 @@
           "amount": 653466,
           "doc_number": "13/3",
           "purpose": "дог.882/1-1 от 06.07.2026,по спец.1 от 06.07.26,за текст.изд. (костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-10-13",
+          "amount": 668201.71,
+          "doc_number": "747",
+          "purpose": "дог.882/1-1 от 06.07.2026,по спец.1 от 06.07.26,за текст.изд.(костюм)"
         }
       ],
       "terms": {
@@ -3471,6 +3485,13 @@
           "amount": 567961.88,
           "doc_number": "6",
           "purpose": "дог.880/1-1 от 02.07.2026,по спец.1 от 02.07.26,за текст.изд.(костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-10-13",
+          "amount": 467767.57,
+          "doc_number": "746",
+          "purpose": "дог.880/1-1 от 02.07.2026,по спец.1 от 02.07.26,за текст.изд.(костюм)"
         }
       ],
       "terms": {
@@ -3693,6 +3714,13 @@
           "amount": 330368.29,
           "doc_number": "533",
           "purpose": "дог.1004/1-1 от 29.08.2026,по спец.1 от 29.08.26,за текст.изд.(спортивный костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-10-21",
+          "amount": 405230.07,
+          "doc_number": "676",
+          "purpose": "дог.1004/1-1 от 29.08.2026,по спец.1 от 29.08.26,за текст.изд.(спортивный костюм)"
         }
       ],
       "terms": {
@@ -3781,7 +3809,7 @@
       "order_date": "2026-09-10",
       "item": "Спортивный костюм на молнии больших",
       "item_article": "СПОРКОСТ01",
-      "tnved": "",
+      "tnved": "6104130000",
       "ordered_qty": 1950,
       "unit_price": 990,
       "workshops": [
@@ -3790,10 +3818,10 @@
       ],
       "photo": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-10-22",
+        "qty": 1527,
+        "places": 43,
+        "weight_gross": 1524.5,
         "driver": "",
         "driver_phone": ""
       },
@@ -3828,7 +3856,7 @@
         }
       ],
       "status": "",
-      "note": ""
+      "note": "Отправка 22.10.2026: ТТН и инвойс № 22/10-1, 1527 шт, 43 мешков, брутто 1524.5 кг (отправка 1042.pdf, скан)."
     },
     {
       "id": "1003",
@@ -3862,6 +3890,13 @@
           "date": "2026-09-03",
           "amount": 89076.26,
           "doc_number": "534",
+          "purpose": "дог.1003/1-1 от 29.08.2026,по спец.1 от 29.08.26,за текст.изд.(спортивный костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-10-21",
+          "amount": 225203.24,
+          "doc_number": "675",
           "purpose": "дог.1003/1-1 от 29.08.2026,по спец.1 от 29.08.26,за текст.изд.(спортивный костюм)"
         }
       ],
@@ -3947,18 +3982,18 @@
       "order_no": "",
       "contract_no": "1064/1-1",
       "order_date": "2026-09-23",
-      "item": "Костюм",
+      "item": "Спортивный костюм кофта зип/брюки",
       "item_article": "",
-      "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
+      "tnved": "6104130000",
+      "ordered_qty": 400,
+      "unit_price": 990,
       "workshops": [],
       "photo": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-10-22",
+        "qty": 360,
+        "places": 11,
+        "weight_gross": 316.6,
         "driver": "",
         "driver_phone": ""
       },
@@ -3978,7 +4013,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -3989,18 +4024,18 @@
         }
       ],
       "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+      "note": "Карточка заведена по выписке банка: в реестре этого договора не было. По спецификации: 400 шт × 990 ₽ (коричневый 200, сливочный 200). Источник: спец 1064 (скан), архив 1064-1150 от 23.10.2026. Отправка 22.10.2026: ТТН и инвойс № 22/10-2, 360 шт, 11 мешков, брутто 316.6 кг (отправка 1064.pdf, скан)."
     },
     {
       "id": "1065",
       "order_no": "",
       "contract_no": "1065/1-1",
       "order_date": "2026-09-23",
-      "item": "Костюм",
+      "item": "Спортивный костюм Фобус кофта зип/брюки",
       "item_article": "",
       "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
+      "ordered_qty": 1800,
+      "unit_price": 1210,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -4027,7 +4062,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -4038,18 +4073,18 @@
         }
       ],
       "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+      "note": "Карточка заведена по выписке банка: в реестре этого договора не было. По спецификации: 1800 шт × 1210 ₽ (т. синий 600, графит 600, чёрный 600). Источник: спец 1065 (скан), архив 1064-1150 от 23.10.2026."
     },
     {
       "id": "1074",
       "order_no": "",
       "contract_no": "1074/1-1",
       "order_date": "2026-09-23",
-      "item": "Костюм",
+      "item": "Спортивный костюм Фобус кофта зип/брюки",
       "item_article": "",
       "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
+      "ordered_qty": 1740,
+      "unit_price": 1210,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -4076,7 +4111,7 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
@@ -4087,18 +4122,18 @@
         }
       ],
       "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+      "note": "Карточка заведена по выписке банка: в реестре этого договора не было. По спецификации: 1740 шт × 1210 ₽ (коричневый 1080, бежевый 660). Источник: спец 1074 (скан), архив 1064-1150 от 23.10.2026."
     },
     {
       "id": "1084",
-      "order_no": "",
+      "order_no": "1084",
       "contract_no": "1084/1-1",
       "order_date": "2026-10-02",
-      "item": "Костюм",
+      "item": "Спортивный костюм кофта зип/брюки",
       "item_article": "",
       "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
+      "ordered_qty": 2600,
+      "unit_price": 990,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -4125,24 +4160,24 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
       "links": [],
       "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+      "note": "Карточка заведена по выписке банка: в реестре этого договора не было. По спецификации: 2600 шт × 990 ₽ (белый, серый, чёрный, коричневый по 500; т.-синий, красный, сливочный по 200). Источник: спец 1084, заказ 1084, архив 1064-1150 от 23.10.2026."
     },
     {
       "id": "1092",
-      "order_no": "",
+      "order_no": "1092",
       "contract_no": "1092/1-1",
       "order_date": "2026-10-02",
-      "item": "Рубашка",
+      "item": "Рубашка оверсайз приталенная клеш",
       "item_article": "",
       "tnved": "",
-      "ordered_qty": null,
-      "unit_price": null,
+      "ordered_qty": 3380,
+      "unit_price": 500,
       "workshops": [],
       "photo": "",
       "shipment": {
@@ -4169,13 +4204,333 @@
         }
       ],
       "terms": {
-        "prepay_percent": 50,
+        "prepay_percent": 35,
         "lead_time_days": null,
         "postpay_days": null
       },
       "links": [],
       "status": "",
-      "note": "Карточка заведена по выписке банка: в реестре этого договора не было."
+      "note": "Карточка заведена по выписке банка: в реестре этого договора не было. По спецификации: 3380 шт × 500 ₽ (9 цветов по 390, серо-голубая 260). Источник: спец 1092, заказ 1092, архив 1064-1150 от 23.10.2026."
+    },
+    {
+      "id": "1126",
+      "order_no": "1126",
+      "contract_no": "1126/1-1",
+      "order_date": "2026-10-14",
+      "item": "Спортивный костюм кофта зип/брюки",
+      "item_article": "",
+      "tnved": "6104130000",
+      "ordered_qty": 1420,
+      "unit_price": 990,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-10-16",
+          "amount": 492030.0,
+          "doc_number": "708",
+          "purpose": "дог.1126/1-1 от 14.10.2026,по спец.1 от 14.10.26,за текст.изд.(спортивный костюм)"
+        }
+      ],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1420 шт × 990 ₽ (белый 300, серый 200, чёрный 400, …). Источник: спец 1126 (скан), заказ 1126, архив 1064-1150 от 23.10.2026. Предоплата — выписка Капитал Банка 23.09–23.10.2026."
+    },
+    {
+      "id": "1127",
+      "order_no": "1127",
+      "contract_no": "1127/1-1",
+      "order_date": "2026-10-14",
+      "item": "Костюм спорт женский без начеса, бомбер на молнии",
+      "item_article": "",
+      "tnved": "6112120000",
+      "ordered_qty": 1200,
+      "unit_price": 1100,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-10-16",
+          "amount": 462000.0,
+          "doc_number": "709",
+          "purpose": "дог.1127/1-1 от 14.10.2026,по спец.1 от 14.10.26,за текст.изд.(спортивный костюм)"
+        }
+      ],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1200 шт × 1100 ₽ (светло-серый 300, т.-коричневый 300, графит, …). Источник: спец 1127 (скан), заказ 1127, архив 1064-1150 от 23.10.2026. Предоплата — выписка Капитал Банка 23.09–23.10.2026."
+    },
+    {
+      "id": "1132",
+      "order_no": "",
+      "contract_no": "1132/1-1",
+      "order_date": "2026-10-16",
+      "item": "Блузка лапша с высоким горлом",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1760,
+      "unit_price": 230,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-10-22",
+          "amount": 141680.0,
+          "doc_number": "629",
+          "purpose": "дог.1132/1-1 от 16.10.2026,по спец.1 от 16.10.26,за текст.изд.(блузка)"
+        }
+      ],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1760 шт × 230 ₽ (8 цветов по 220). Источник: спец 1132 (скан), архив 1064-1150 от 23.10.2026. Предоплата — выписка Капитал Банка 23.09–23.10.2026."
+    },
+    {
+      "id": "1133",
+      "order_no": "1133",
+      "contract_no": "1133/1-1",
+      "order_date": "2026-10-16",
+      "item": "Спортивный костюм брючный ПУКРА",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1260,
+      "unit_price": 950,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-10-22",
+          "amount": 418950.0,
+          "doc_number": "630",
+          "purpose": "дог.1133/1-1 от 16.10.2026,по спец.1 от 16.10.26,за текст.изд.(костюм)"
+        }
+      ],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1260 шт × 950 ₽ (чёрный 280, коричневый 350, графит 210, …). Источник: спец 1133 (скан), заказ 1133, архив 1064-1150 от 23.10.2026. Предоплата — выписка Капитал Банка 23.09–23.10.2026."
+    },
+    {
+      "id": "1147",
+      "order_no": "",
+      "contract_no": "1147/1-1",
+      "order_date": "2026-10-22",
+      "item": "Спортивный костюм кофта зип/брюки",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 400,
+      "unit_price": 990,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 400 шт × 990 ₽ (бежевый 400). Источник: спец 1147, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+    },
+    {
+      "id": "1148",
+      "order_no": "",
+      "contract_no": "1148/1-1",
+      "order_date": "2026-10-22",
+      "item": "Спортивный костюм Фобус кофта зип/брюки",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1800,
+      "unit_price": 1280,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1800 шт × 1280 ₽ (т.-синий, графит, чёрный по 600). Источник: спец 1148, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+    },
+    {
+      "id": "1149",
+      "order_no": "",
+      "contract_no": "1149/1-1",
+      "order_date": "2026-10-22",
+      "item": "Спортивный костюм Фобус кофта зип/брюки",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 960,
+      "unit_price": 1280,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 960 шт × 1280 ₽ (коричневый 600, бежевый 360). Источник: спец 1149, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+    },
+    {
+      "id": "1150",
+      "order_no": "",
+      "contract_no": "1150/1-1",
+      "order_date": "2026-10-22",
+      "item": "Костюм спорт женский без начеса, бомбер на молнии",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 1200,
+      "unit_price": 1100,
+      "workshops": [],
+      "photo": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 1200 шт × 1100 ₽ (лимонный, розовый по 300; т.-синий, бежевый, голубой по 200). Источник: спец 1150, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
     }
   ],
   "shipments": [
@@ -4304,6 +4659,14 @@
       "act_date": "2026-09-30",
       "doc_number": "14481",
       "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 10 от 30.09.2026"
+    },
+    {
+      "date": "2026-10-22",
+      "amount": 85000,
+      "act_no": "12",
+      "act_date": "2026-10-09",
+      "doc_number": "711",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 12 от 09.10.2026"
     }
   ]
 }
