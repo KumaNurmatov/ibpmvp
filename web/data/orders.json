@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-13",
+  "updated": "2026-10-23",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -3892,7 +3892,7 @@
       "order_no": "",
       "contract_no": "1009/1-1",
       "order_date": "2026-08-31",
-      "item": "Спортивный костюм",
+      "item": "Спортивный костюм. ФОБУС",
       "item_article": "",
       "tnved": "6104192000",
       "ordered_qty": 720,
@@ -3900,7 +3900,7 @@
       "workshops": [
         "Нурлан"
       ],
-      "photo": "",
+      "photo": "assets/photos/1009.jpg",
       "shipment": {
         "date": "2026-10-07",
         "qty": 615,
