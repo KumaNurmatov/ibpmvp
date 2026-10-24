@@ -1,0 +1,437 @@
+/* Новый вид всех страниц.
+ *
+ * Палитра почти монохромная: оттенки одного тёплого серого, от фона к
+ * карточке и к «приподнятой» карточке. Иерархию держит заливка, а не цвет:
+ * главная плитка выворачивается наизнанку — светлая на тёмном, тёмная на
+ * светлом. Цвет остаётся только у сигналов (оплачено, ждёт, просрочено), и
+ * он приглушён: светлые оттенки на тёмном, глубокие на светлом.
+ *
+ * Тема по умолчанию тёмная. Светлая — не белая, а сероватая, как в
+ * референсе: так белые карточки отделяются от фона без теней, а тёмные
+ * элементы дают контраст.
+ *
+ * Подключается после styles.css и переопределяет только то, что меняет вид.
+ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d0e0f;
+  --card: #17191a;
+  --card-2: #1f2122;          /* приподнятая: табы, вторичные плитки */
+  --ink: #f1f0ec;
+  --muted: #a4a6a3;
+  --faint: #6e716f;
+  --line: #262829;
+  --axis: #3a3d3e;
+  --grid: #222425;
+  --hero: #ecebe6;            /* главная плитка — светлая на тёмном */
+  --on-hero: #141516;
+  --on-hero-muted: #5d605e;
+  --accent: #d9d7d0;
+  --ok: #7fbf9a;
+  --warn: #d8b26e;
+  --bad: #e08a80;
+  --drop: #1f2122;
+  --series-1: #8a8d8b;        /* отгружено: штриховка */
+  --series-2: #ecebe6;        /* оплачено: сплошная */
+  --hatch-bg: #1d1f20;
+  --ring-track: #2a2d2e;
+  --shadow: none;
+  --shot: #e8e7e2;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e6e5e1;
+  --card: #f6f5f2;
+  --card-2: #dcdbd6;
+  --ink: #121314;
+  --muted: #55585a;
+  --faint: #85888a;
+  --line: #d6d5d0;
+  --axis: #bab9b4;
+  --grid: #dfded9;
+  --hero: #151617;            /* главная плитка — тёмная на светлом */
+  --on-hero: #f1f0ec;
+  --on-hero-muted: #9a9c99;
+  --accent: #121314;
+  --ok: #2f7a55;
+  --warn: #9a6a1c;
+  --bad: #b04a40;
+  --drop: #dcdbd6;
+  --series-1: #6f7270;
+  --series-2: #151617;
+  --hatch-bg: #ecebe7;
+  --ring-track: #d9d8d3;
+  --shadow: none;
+  --shot: #f1f0ec;
+}
+
+:root { --r-lg: 22px; --r-md: 16px; --r-sm: 12px; --pill: 999px; }
+
+body { background: var(--bg); transition: background .25s; }
+a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 30%, transparent); }
+
+/* Появление: только непрозрачность, без сдвигов и отсчёта цифр. */
+@media (prefers-reduced-motion: no-preference) {
+  .top-layout .wrap > * { animation: appear .45s ease both; }
+  .top-layout .wrap > *:nth-child(n+4) { animation-delay: .06s; }
+  .top-layout .wrap > *:nth-child(n+8) { animation-delay: .12s; }
+}
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── шапка ─────────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 16px;
+  max-width: 1280px; margin: 0 auto; padding: 14px 24px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.topbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex: none; }
+.topbar .brand .logo {
+  width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center;
+  background: var(--ink); color: var(--bg); font-weight: 700; font-size: 14px; letter-spacing: -0.02em;
+}
+.topbar .brand b { font-size: 15px; font-weight: 600; }
+
+.tabs {
+  margin: 0 auto; display: flex; gap: 2px; padding: 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--pill);
+  overflow-x: auto; scrollbar-width: none; min-width: 0;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a {
+  position: relative; display: flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 8px 14px; border-radius: var(--pill); font-size: 13.5px;
+  color: var(--muted); text-decoration: none; transition: background .15s, color .15s;
+}
+.tabs a svg, .tools .icon svg {
+  width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
+  stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round;
+}
+.tabs a:hover { color: var(--ink); background: var(--card-2); }
+.tabs a[aria-current="page"] { background: var(--ink); color: var(--bg); font-weight: 500; }
+
+.tools { display: flex; align-items: center; gap: 8px; flex: none; }
+.tools .btn.new {
+  border-radius: var(--pill); padding: 8px 14px; font-size: 13.5px; font-weight: 500;
+  background: var(--ink); color: var(--bg); border-color: var(--ink);
+}
+.tools .btn.new:hover { opacity: .88; }
+.tools .role {
+  font-size: 12px; padding: 6px 11px; border-radius: var(--pill);
+  border: 1px solid var(--line); color: var(--muted); background: var(--card);
+}
+.tools .role.admin { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
+.tools .icon {
+  width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
+  border-radius: 50%; background: var(--card); border: 1px solid var(--line); color: var(--ink);
+}
+.tools .icon:hover { background: var(--card-2); }
+
+/* Подсказка с полным названием — у иконок без подписи. */
+[data-tip] { position: relative; }
+[data-tip]:hover::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap; pointer-events: none; z-index: 30;
+  font-size: 12px; font-weight: 500; padding: 5px 9px; border-radius: 8px;
+  background: var(--ink); color: var(--bg);
+}
+/* Подпись у вкладки видна — подсказка не нужна, пока она не сжалась в иконку. */
+.tabs a:hover::after, .tools .role:hover::after { display: none; }
+
+@media (max-width: 1020px) {
+  .tabs a span { display: none; }
+  /* Одни иконки помещаются и так, а прокрутка срезала бы подсказку снизу. */
+  .tabs { overflow: visible; }
+  .tabs a { padding: 9px 11px; }
+  .tabs a:hover::after { display: block; }
+  .tools .btn.new span { display: none; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 10px 16px; gap: 8px; }
+  .topbar .brand b, .tools .role { display: none; }
+}
+
+/* ── страница ──────────────────────────────────────────────────────── */
+.top-layout .wrap { max-width: 1280px; padding: 18px 24px 72px; }
+.page-head { align-items: center; margin-bottom: 22px; }
+/* Заголовок страницы один для всех разделов: крупный, без жирноты. */
+.top-layout h1, body:has(#drop) h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; }
+.page-head h1 { font-size: 34px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 4px; }
+.page-head .sub { font-size: 13px; color: var(--faint); }
+.page-head .sub a { color: var(--muted); }
+h2 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 30px 0 10px; color: var(--ink); }
+.section-note { color: var(--faint); }
+
+/* Кнопки — пилюли: тёмная для главного действия, обводка для второго. */
+.btn, button { border-radius: var(--pill); }
+.btn.dark { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 500; }
+.btn.dark:hover { opacity: .88; background: var(--ink); }
+.btn.ghost { background: var(--card); }
+.btn:hover, button:hover { background: var(--card-2); border-color: var(--line); }
+
+.card { background: var(--card); border-color: var(--line); box-shadow: none; border-radius: var(--r-lg); }
+
+/* ── воронка: шесть ступеней ───────────────────────────────────────── */
+.flow { gap: 10px; }
+.step {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: 14px 16px 15px; box-shadow: none; transition: background .15s;
+}
+.step:hover { background: var(--card-2); border-color: var(--line); }
+.step .n {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--card-2); color: var(--muted); font-size: 11px; margin-bottom: 10px;
+}
+/* Название — с точкой цвета стадии, как статус колонки на доске. */
+.step .name { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted); }
+.step .name::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--tone, var(--faint));
+}
+.step.ok .name { color: var(--muted); }
+.step b { font-size: 28px; font-weight: 600; margin: 2px 0; color: var(--ink); }
+.step.bad b, .step.warn b { color: var(--ink); }
+.step .sum { color: var(--faint); }
+.step.warn, .step.bad { border-color: var(--line); }
+/* Ступень, где больше всего заказов, — приподнята фоном, без цвета. */
+.step.hot { background: var(--card-2); }
+.step.empty { opacity: .45; }
+
+/* ── плитки ────────────────────────────────────────────────────────── */
+.tiles { gap: 10px; }
+.tile {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: 16px 18px; box-shadow: none;
+}
+.tile::before { display: none; }
+/* Чередование оттенков: соседние плитки различаются тоном, а не цветом. */
+.tiles.kpi .tile:nth-child(3), .tiles.kpi .tile:nth-child(5) { background: var(--card-2); }
+.tile span { color: var(--muted); font-size: 12.5px; }
+.tile b { font-size: 26px; font-weight: 600; letter-spacing: -0.03em; }
+.tile .hint { color: var(--faint); }
+.tile.warn b { color: var(--ink); }
+.tile.warn span::after {
+  content: "ждут"; margin-left: 6px; font-size: 11px; padding: 1px 7px; border-radius: var(--pill);
+  color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, transparent);
+}
+/* Главная плитка вывернута: единственная заливка на экране. */
+.tile.hero { background: var(--hero); border-color: var(--hero); color: var(--on-hero); }
+.tile.hero span, .tile.hero .hint { color: var(--on-hero-muted); }
+.tile.hero b { color: var(--on-hero); }
+.tile.wide b { font-size: 36px; }
+.ring-label { fill: var(--ink); font-weight: 600; }
+
+/* ── список дел и шторки ───────────────────────────────────────────── */
+details.shutter > summary {
+  background: var(--card); border-color: var(--line); box-shadow: none;
+  border-radius: var(--r-lg); padding: 15px 18px;
+}
+details.shutter > summary:hover { background: var(--card-2); border-color: var(--line); }
+details.shutter[open] > summary { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+details.shutter[open] > div { background: var(--card); border-color: var(--line); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.todo .item {
+  background: var(--card-2); border: 0; border-radius: var(--r-md);
+  padding: 12px 16px 12px 30px; position: relative;
+}
+.todo .item::before {
+  content: ""; position: absolute; left: 14px; top: 19px; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--faint);
+}
+.todo .item.error::before { background: var(--bad); }
+.todo .item.warn::before { background: var(--warn); }
+.todo .item.error .sum { color: var(--ink); }
+
+/* ── графики ───────────────────────────────────────────────────────── */
+.charts { gap: 10px; }
+figure.chart { padding: 18px 20px; }
+figure.chart figcaption { font-size: 14px; }
+figure.chart .lede { color: var(--faint); font-size: 12.5px; }
+.legend { color: var(--muted); font-size: 12.5px; }
+.legend i { border-radius: 4px; width: 12px; height: 12px; vertical-align: -1px; }
+.legend i.hatched {
+  background: repeating-linear-gradient(45deg, var(--c) 0 1.5px, var(--hatch-bg) 1.5px 4px);
+  border: 1px solid var(--c);
+}
+.chart .gridline { stroke: var(--grid); stroke-dasharray: 2 4; }
+.chart .axis { stroke: var(--axis); }
+.chart .tick { fill: var(--faint); }
+.chart .hatch-bg { fill: var(--hatch-bg); }
+.chart .hatch-line { stroke: var(--series-1); stroke-width: 1.4; }
+.chart .col.hatched { stroke-width: 1; }
+.chart .col { transition: opacity .15s; }
+.chart svg:hover .month .col { opacity: .35; }
+.chart svg:hover .month:hover .col { opacity: 1; }
+.chart .line { stroke-width: 2.2; }
+.chart circle { r: 3; }
+.chart .mark:hover { opacity: 1; }
+.tooltip {
+  background: var(--ink); color: var(--bg); border: 0; border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+}
+.tooltip .r span { color: color-mix(in srgb, var(--bg) 60%, var(--ink)); }
+
+/* ── таблица долгов ────────────────────────────────────────────────── */
+.card table th { color: var(--faint); font-size: 12px; font-weight: 500; }
+.card table th, .card table td { border-top-color: var(--line); }
+tr.row:hover td { background: var(--card-2); }
+.card table a { font-weight: 600; text-decoration: none; }
+.card table a:hover { text-decoration: underline; }
+
+/* Статус — пилюля с точкой, приглушённый тон вместо заливки. */
+.pill { background: var(--card-2); border-color: transparent; color: var(--muted); }
+.pill.ok, .pill.warn, .pill.bad {
+  background: color-mix(in srgb, var(--tone) 14%, transparent); border-color: transparent; color: var(--tone);
+}
+.pill.ok::before, .pill.warn::before, .pill.bad::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; margin-right: 6px; vertical-align: 1px;
+}
+
+.flag { background: var(--card-2); border-radius: var(--r-sm); }
+
+/* Ступени процесса на узком экране — сеткой, а не столбиком в шесть экранов. */
+@media (max-width: 1020px) { .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .step { padding: 12px 13px; }
+  .step .n { display: none; }
+  .step b { font-size: 24px; }
+  .step .sum { font-size: 11.5px; line-height: 1.35; }
+  .top-layout .wrap { padding: 12px 16px 56px; }
+  .page-head h1 { font-size: 28px; }
+  .tile.wide b { font-size: 30px; }
+}
+
+/* ══ общие элементы всех страниц ═════════════════════════════════════ */
+
+/* Главное действие — тёмная пилюля вместо лаймовой. */
+button.primary, .btn.primary {
+  background: var(--ink); border-color: var(--ink); color: var(--bg); font-weight: 500; filter: none;
+}
+button.primary:hover, .btn.primary:hover { background: var(--ink); border-color: var(--ink); opacity: .88; filter: none; }
+button.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+
+/* Поля: та же поверхность, что у карточки, фокус — тонкой рамкой цвета текста. */
+input, select, textarea {
+  background: var(--card-2); border-color: transparent; border-radius: var(--r-sm); color: var(--ink);
+}
+input:hover, select:hover, textarea:hover { border-color: var(--axis); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+input[type="checkbox"], input[type="radio"] { accent-color: var(--ink); width: auto; }
+label { color: var(--muted); }
+
+/* Переключатель вида (карточки/таблица) — пилюля с тёмным выбранным. */
+.seg { border-radius: var(--pill); border-color: var(--line); background: var(--card); padding: 3px; gap: 2px; }
+.seg button { border-radius: var(--pill); padding: 7px 14px; color: var(--muted); }
+.seg button:hover { background: var(--card-2); color: var(--ink); }
+.seg button[aria-pressed="true"], .seg button[aria-pressed="true"]:hover {
+  background: var(--ink); color: var(--bg);
+}
+
+/* Табы стадий: счётчик в кружке, у выбранного — тёмная заливка. */
+.pilltab { background: var(--card); border-color: var(--line); color: var(--muted); font-size: 13.5px; }
+.pilltab:hover { background: var(--card-2); border-color: var(--line); color: var(--ink); }
+.pilltab i { background: var(--card-2); color: var(--muted); }
+.pilltab.bad i, .pilltab.warn i, .pilltab.ok i {
+  background: color-mix(in srgb, var(--tone) 16%, transparent); color: var(--tone);
+}
+.pilltab.ok { --tone: var(--ok); } .pilltab.warn { --tone: var(--warn); } .pilltab.bad { --tone: var(--bad); }
+.pilltab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.pilltab[aria-pressed="true"] i,
+.pilltab[aria-pressed="true"].bad i, .pilltab[aria-pressed="true"].warn i, .pilltab[aria-pressed="true"].ok i {
+  background: color-mix(in srgb, var(--bg) 18%, transparent); color: var(--bg);
+}
+
+/* Цеха: точка своего цвета и нейтральная подложка — цвет остаётся меткой,
+   но не спорит со статусом заказа. */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+  border: 0; background: var(--card-2); padding: 4px 10px;
+}
+.chip::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: color-mix(in srgb, var(--chip, var(--faint)) 75%, var(--card));
+}
+.chip.plain::before { display: none; }
+button.chip { border: 1px solid transparent; }
+button.chip[aria-pressed="true"] { border-color: var(--axis); color: var(--ink); }
+button.chip.edit { background: var(--card); border-color: var(--line); }
+button.chip.edit::before { display: none; }
+
+/* Полоса оплаты: монохромная, цвет — только когда денег нет вовсе. */
+.bar { background: var(--card-2); height: 5px; }
+.bar i { background: var(--ink); }
+.bar.part i { background: color-mix(in srgb, var(--ink) 70%, var(--card)); }
+.bar.none i { background: var(--bad); }
+
+.flag { background: var(--card-2); border-left-width: 3px; }
+.flag.info { border-left-color: var(--axis); }
+
+/* Шкала «недоплата — переплата» без сине-красной заливки. */
+.scale .track {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warn) 45%, var(--card-2)), var(--card-2) 48%,
+    var(--card-2) 52%, color-mix(in srgb, var(--bad) 45%, var(--card-2)));
+}
+.scale .mark { background: var(--bg); border-color: var(--ink); box-shadow: none; }
+
+/* Расчёт с формулами и ссылки на документы. */
+.calc tr.total td { border-top-color: var(--axis); }
+.links a {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--pill);
+  background: var(--card-2); text-decoration: none; font-size: 13px;
+}
+.links a:hover { background: var(--axis); }
+
+.tile.bad b { color: var(--bad); }
+
+/* ══ заказы: карточки ════════════════════════════════════════════════ */
+.ocard {
+  background: var(--card); border-color: var(--line); box-shadow: none; border-radius: var(--r-lg);
+  padding: 15px 16px 16px;
+}
+.ocard:hover { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+.ocard .top .pill::before { content: none; }
+.ocard .top .pill.ok::before, .ocard .top .pill.warn::before, .ocard .top .pill.bad::before {
+  content: ""; display: inline-block;
+}
+.ocard .no { font-size: 20px; }
+.ocard .meta { border-top-color: var(--line); }
+.ocard .shot { background: var(--shot); border-radius: var(--r-md); }
+/* Остаток в карточке — цветом статуса, но приглушённым. */
+.ocard .meta span[style] { color: var(--bad) !important; }
+
+/* ══ отправки: папки ═════════════════════════════════════════════════ */
+.folder { background: var(--card); border-color: var(--line); box-shadow: none; border-radius: var(--r-lg); }
+.folder:hover { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+.folder .tab { background: var(--card-2); border-bottom-color: var(--line); }
+.folder:hover .tab { background: color-mix(in srgb, var(--ink) 6%, var(--card-2)); }
+.folder .nums b { font-size: 19px; font-weight: 600; }
+.chip.plain { background: var(--card-2); color: var(--muted); }
+
+/* ══ окно бланка и просмотр фото ═════════════════════════════════════ */
+.overlay { background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(6px); }
+.sheet-view { background: var(--card); border: 1px solid var(--line); box-shadow: 0 24px 70px rgba(0, 0, 0, .35); }
+.bl-frame { background: var(--card-2); }
+.gallery button { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+
+/* ══ правка: лист карточки ═══════════════════════════════════════════ */
+table.sheet tr.block th { color: var(--faint); }
+table.sheet th.key { color: var(--muted); }
+table.sheet tr.calc td.val { background: transparent; }
+.sheet-rows th { color: var(--faint); }
+
+/* ══ разбор документов (своя разметка) ═══════════════════════════════ */
+body:has(#drop) { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+#drop {
+  background: var(--card); border: 1.5px dashed var(--axis); border-radius: var(--r-lg);
+}
+#drop.over { border-color: var(--ink); background: var(--card-2); }
+body:has(#drop) .card { border-radius: var(--r-lg); }
+body:has(#drop) button { border-radius: var(--pill); }
+body:has(#drop) .bar i { background: var(--ink); }
+body:has(#drop) footer { color: var(--faint); font-size: 12.5px; margin-top: 32px; }

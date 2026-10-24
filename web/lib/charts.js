@@ -13,6 +13,7 @@ const MONTHS = ["янв", "фев", "мар", "апр", "май", "июн",
                 "июл", "авг", "сен", "окт", "ноя", "дек"];
 
 let tooltip = null;
+let chartSeq = 0;
 
 /** Сгруппированные столбцы: по две величины на месяц. */
 export function groupedBars(host, { rows, series, caption, lede }) {
@@ -20,25 +21,46 @@ export function groupedBars(host, { rows, series, caption, lede }) {
   const pad = { top: 12, right: 12, bottom: 28, left: 64 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
-  const max = niceMax(Math.max(0, ...rows.flatMap((r) => series.map((s) => r[s.key] || 0))));
+  const peak = Math.max(0, ...rows.flatMap((r) => series.map((s) => r[s.key] || 0)));
+  // Круглый шаг, а не круглый верх: иначе подписи шли «3,8 млн, 7,5 млн».
+  const step = niceMax(peak / 4);
+  const max = peak ? Math.ceil(peak / step) * step : 1;
 
   const svg = el("svg", { viewBox: `0 0 ${width} ${height}`, role: "img",
                           "aria-label": caption });
-  gridAndTicks(svg, pad, plotW, plotH, max);
+  gridAndTicks(svg, pad, plotW, plotH, max, 0, Math.max(1, Math.round(max / step)));
 
   const slot = plotW / Math.max(rows.length, 1);
   const barW = Math.max(6, Math.min(26, (slot - 10) / series.length - 1));
 
+  // Штриховка — для величины «сколько должно прийти» (отгружено), сплошная
+  // заливка — для того, что уже пришло. Так пара читается без легенды.
+  const hatchId = `hatch${(chartSeq += 1)}`;
+  if (series.some((s) => s.hatch)) {
+    const defs = el("defs", {});
+    const pattern = el("pattern", { id: hatchId, width: 6, height: 6,
+                                    patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+    pattern.appendChild(el("rect", { width: 6, height: 6, class: "hatch-bg" }));
+    pattern.appendChild(el("line", { x1: 0, y1: 0, x2: 0, y2: 6, class: "hatch-line" }));
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+  }
+
   rows.forEach((row, i) => {
     const groupX = pad.left + slot * i + slot / 2;
+    // Месяц — группа: при наведении подсвечивается весь месяц, остальные гаснут.
+    const group = el("g", { class: `month${i === rows.length - 1 ? " now" : ""}` });
     series.forEach((s, j) => {
       const value = row[s.key] || 0;
       const h = max ? (value / max) * plotH : 0;
-      // Зазор в 2 px между соседними столбцами: иначе две заливки слипаются.
-      const x = groupX - (series.length * (barW + 2)) / 2 + j * (barW + 2);
-      svg.appendChild(el("rect", {
-        class: "mark", x, y: pad.top + plotH - h, width: barW, height: Math.max(h, value ? 2 : 0),
-        rx: 4, fill: `var(${s.color})`,
+      // Зазор в 3 px между соседними столбцами: иначе две заливки слипаются.
+      const x = groupX - (series.length * (barW + 3)) / 2 + j * (barW + 3);
+      // Столбец — пилюля: скругление в полширины, как у кнопок и табов.
+      group.appendChild(el("rect", {
+        class: `col${s.hatch ? " hatched" : ""}`, x, y: pad.top + plotH - h, width: barW,
+        height: Math.max(h, value ? 2 : 0), rx: Math.min(barW / 2, h / 2),
+        fill: s.hatch ? `url(#${hatchId})` : `var(${s.color})`,
+        ...(s.hatch ? { stroke: `var(${s.color})` } : {}),
       }));
     });
     // Наводиться нужно на месяц, а не на столбец: в месяце без отгрузок
@@ -46,9 +68,10 @@ export function groupedBars(host, { rows, series, caption, lede }) {
     const band = el("rect", { class: "mark", x: pad.left + slot * i, y: pad.top,
                               width: slot, height: plotH, fill: "transparent" });
     bind(band, () => tipHtml(row.label, series.map((t) => [t.name, money(row[t.key] || 0)])));
-    svg.appendChild(band);
-    svg.appendChild(el("text", { class: "tick", x: groupX, y: height - 8,
-                                 "text-anchor": "middle" }, row.label));
+    group.appendChild(band);
+    group.appendChild(el("text", { class: "tick", x: groupX, y: height - 8,
+                                   "text-anchor": "middle" }, row.label));
+    svg.appendChild(group);
   });
 
   host.replaceChildren(figure(caption, lede, legend(series), svg));
@@ -68,19 +91,37 @@ export function lineChart(host, { rows, key, caption, lede, color = "--series-1"
   const lowest = Math.max(0, ...values.map((v) => -v));
   // Если положительных значений нет вовсе, верх шкалы — ровно ноль, иначе
   // над графиком висит бессмысленная подпись «1».
-  const top = highest ? niceMax(highest) : 0;
-  const bottom = lowest ? -niceMax(lowest) : 0;
+  // Шаг шкалы круглый и общий для обеих сторон: тогда ноль всегда стоит на
+  // линии сетки, а подписи идут ровно (1 млн, 0, −1 млн), а не «−875 тыс.».
+  const step = niceMax((highest + lowest) / 4 || highest || 1);
+  const top = highest ? Math.ceil(highest / step) * step : 0;
+  const bottom = lowest ? -Math.ceil(lowest / step) * step : 0;
   const span = top - bottom || 1;
   const stepX = rows.length > 1 ? plotW / (rows.length - 1) : 0;
   const at = (i, v) => [pad.left + stepX * i, pad.top + plotH - ((v - bottom) / span) * plotH];
 
   const svg = el("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": caption });
-  gridAndTicks(svg, pad, plotW, plotH, top, bottom);
+  gridAndTicks(svg, pad, plotW, plotH, top, bottom, Math.max(1, Math.round(span / step)));
 
   const points = rows.map((r, i) => at(i, r[key] || 0));
+  const line = smooth(points);
+  // Под линией — мягкая заливка до низа графика: так линия читается как
+  // рельеф, а нулевая линия сетки остаётся видна поверх заливки.
+  const base = pad.top + plotH;
+  const fadeId = `fade${(chartSeq += 1)}`;
+  const defs = el("defs", {});
+  const grad = el("linearGradient", { id: fadeId, x1: 0, y1: 0, x2: 0, y2: 1 });
+  grad.appendChild(el("stop", { offset: "0%", "stop-color": `var(${color})`, "stop-opacity": 0.22 }));
+  grad.appendChild(el("stop", { offset: "100%", "stop-color": `var(${color})`, "stop-opacity": 0 }));
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+  if (points.length > 1) {
+    const [first, last] = [points[0], points[points.length - 1]];
+    svg.appendChild(el("path", { class: "area", fill: `url(#${fadeId})`,
+      d: `${line} L${last[0].toFixed(1)},${base.toFixed(1)} L${first[0].toFixed(1)},${base.toFixed(1)} Z` }));
+  }
   svg.appendChild(el("path", {
-    d: points.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" "),
-    fill: "none", stroke: `var(${color})`, "stroke-width": 2,
+    class: "line", d: line, fill: "none", stroke: `var(${color})`, "stroke-width": 2,
     "stroke-linejoin": "round", "stroke-linecap": "round",
   }));
 
@@ -145,8 +186,28 @@ export function byMonth(orders) {
 
 // ────────────────────────────────────────────────────────────── внутреннее
 
-function gridAndTicks(svg, pad, plotW, plotH, top, bottom = 0) {
-  const steps = 4;
+/**
+ * Плавная линия через все точки (кривая Катмулла — Рома в кубических
+ * Безье). Проходит ровно через значения месяцев, только без изломов.
+ */
+function smooth(points) {
+  if (points.length < 3) {
+    return points.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+  }
+  const f = (v) => v.toFixed(1);
+  let d = `M${f(points[0][0])},${f(points[0][1])}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i - 1] || points[i];
+    const [p1, p2] = [points[i], points[i + 1]];
+    const p3 = points[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${f(c1[0])},${f(c1[1])} ${f(c2[0])},${f(c2[1])} ${f(p2[0])},${f(p2[1])}`;
+  }
+  return d;
+}
+
+function gridAndTicks(svg, pad, plotW, plotH, top, bottom = 0, steps = 4) {
   const span = top - bottom || 1;
   for (let i = 0; i <= steps; i++) {
     const y = pad.top + (plotH / steps) * i;
@@ -182,7 +243,8 @@ function legend(series) {
   box.className = "legend";
   for (const s of series) {
     const item = document.createElement("span");
-    item.innerHTML = `<i style="background: var(${s.color})"></i>${escapeHtml(s.name)}`;
+    item.innerHTML = `<i class="${s.hatch ? "hatched" : ""}" style="--c: var(${s.color})"></i>${
+      escapeHtml(s.name)}`;
     box.append(item);
   }
   return box;
