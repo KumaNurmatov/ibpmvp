@@ -30,7 +30,7 @@ const PAGES = [
  * страницы (.wrap) переезжает внутрь каркаса — сами страницы об этом не
  * знают и остаются обычной разметкой.
  */
-export function mountShell(current, { layout = "side" } = {}) {
+export function mountShell(current, { layout = "top" } = {}) {
   if (layout === "top") return mountTop(current);
   const admin = canEdit();
   const app = document.createElement("div");
@@ -60,7 +60,7 @@ export function mountShell(current, { layout = "side" } = {}) {
 }
 
 /**
- * Шапка вместо левого меню (прототип нового вида, пока только на главной).
+ * Шапка вместо левого меню — основной вид всех страниц.
  *
  * Всё, что жило в боковой колонке, переехало в одну строку сверху: знак,
  * разделы пилюлей, справа — роль, новый заказ и тема. Колонка в 240 px

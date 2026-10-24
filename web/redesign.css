@@ -1,4 +1,4 @@
-/* Новый вид (прототип, пока только главная).
+/* Новый вид всех страниц.
  *
  * Палитра почти монохромная: оттенки одного тёплого серого, от фона к
  * карточке и к «приподнятой» карточке. Иерархию держит заливка, а не цвет:
@@ -157,6 +157,8 @@ a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 30%,
 /* ── страница ──────────────────────────────────────────────────────── */
 .top-layout .wrap { max-width: 1280px; padding: 18px 24px 72px; }
 .page-head { align-items: center; margin-bottom: 22px; }
+/* Заголовок страницы один для всех разделов: крупный, без жирноты. */
+.top-layout h1, body:has(#drop) h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; }
 .page-head h1 { font-size: 34px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 4px; }
 .page-head .sub { font-size: 13px; color: var(--faint); }
 .page-head .sub a { color: var(--muted); }
@@ -302,3 +304,134 @@ tr.row:hover td { background: var(--card-2); }
   .page-head h1 { font-size: 28px; }
   .tile.wide b { font-size: 30px; }
 }
+
+/* ══ общие элементы всех страниц ═════════════════════════════════════ */
+
+/* Главное действие — тёмная пилюля вместо лаймовой. */
+button.primary, .btn.primary {
+  background: var(--ink); border-color: var(--ink); color: var(--bg); font-weight: 500; filter: none;
+}
+button.primary:hover, .btn.primary:hover { background: var(--ink); border-color: var(--ink); opacity: .88; filter: none; }
+button.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+
+/* Поля: та же поверхность, что у карточки, фокус — тонкой рамкой цвета текста. */
+input, select, textarea {
+  background: var(--card-2); border-color: transparent; border-radius: var(--r-sm); color: var(--ink);
+}
+input:hover, select:hover, textarea:hover { border-color: var(--axis); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+input[type="checkbox"], input[type="radio"] { accent-color: var(--ink); width: auto; }
+label { color: var(--muted); }
+
+/* Переключатель вида (карточки/таблица) — пилюля с тёмным выбранным. */
+.seg { border-radius: var(--pill); border-color: var(--line); background: var(--card); padding: 3px; gap: 2px; }
+.seg button { border-radius: var(--pill); padding: 7px 14px; color: var(--muted); }
+.seg button:hover { background: var(--card-2); color: var(--ink); }
+.seg button[aria-pressed="true"], .seg button[aria-pressed="true"]:hover {
+  background: var(--ink); color: var(--bg);
+}
+
+/* Табы стадий: счётчик в кружке, у выбранного — тёмная заливка. */
+.pilltab { background: var(--card); border-color: var(--line); color: var(--muted); font-size: 13.5px; }
+.pilltab:hover { background: var(--card-2); border-color: var(--line); color: var(--ink); }
+.pilltab i { background: var(--card-2); color: var(--muted); }
+.pilltab.bad i, .pilltab.warn i, .pilltab.ok i {
+  background: color-mix(in srgb, var(--tone) 16%, transparent); color: var(--tone);
+}
+.pilltab.ok { --tone: var(--ok); } .pilltab.warn { --tone: var(--warn); } .pilltab.bad { --tone: var(--bad); }
+.pilltab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.pilltab[aria-pressed="true"] i,
+.pilltab[aria-pressed="true"].bad i, .pilltab[aria-pressed="true"].warn i, .pilltab[aria-pressed="true"].ok i {
+  background: color-mix(in srgb, var(--bg) 18%, transparent); color: var(--bg);
+}
+
+/* Цеха: точка своего цвета и нейтральная подложка — цвет остаётся меткой,
+   но не спорит со статусом заказа. */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+  border: 0; background: var(--card-2); padding: 4px 10px;
+}
+.chip::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: color-mix(in srgb, var(--chip, var(--faint)) 75%, var(--card));
+}
+.chip.plain::before { display: none; }
+button.chip { border: 1px solid transparent; }
+button.chip[aria-pressed="true"] { border-color: var(--axis); color: var(--ink); }
+button.chip.edit { background: var(--card); border-color: var(--line); }
+button.chip.edit::before { display: none; }
+
+/* Полоса оплаты: монохромная, цвет — только когда денег нет вовсе. */
+.bar { background: var(--card-2); height: 5px; }
+.bar i { background: var(--ink); }
+.bar.part i { background: color-mix(in srgb, var(--ink) 70%, var(--card)); }
+.bar.none i { background: var(--bad); }
+
+.flag { background: var(--card-2); border-left-width: 3px; }
+.flag.info { border-left-color: var(--axis); }
+
+/* Шкала «недоплата — переплата» без сине-красной заливки. */
+.scale .track {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warn) 45%, var(--card-2)), var(--card-2) 48%,
+    var(--card-2) 52%, color-mix(in srgb, var(--bad) 45%, var(--card-2)));
+}
+.scale .mark { background: var(--bg); border-color: var(--ink); box-shadow: none; }
+
+/* Расчёт с формулами и ссылки на документы. */
+.calc tr.total td { border-top-color: var(--axis); }
+.links a {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--pill);
+  background: var(--card-2); text-decoration: none; font-size: 13px;
+}
+.links a:hover { background: var(--axis); }
+
+.tile.bad b { color: var(--bad); }
+
+/* ══ заказы: карточки ════════════════════════════════════════════════ */
+.ocard {
+  background: var(--card); border-color: var(--line); box-shadow: none; border-radius: var(--r-lg);
+  padding: 15px 16px 16px;
+}
+.ocard:hover { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+.ocard .top .pill::before { content: none; }
+.ocard .top .pill.ok::before, .ocard .top .pill.warn::before, .ocard .top .pill.bad::before {
+  content: ""; display: inline-block;
+}
+.ocard .no { font-size: 20px; }
+.ocard .meta { border-top-color: var(--line); }
+.ocard .shot { background: var(--shot); border-radius: var(--r-md); }
+/* Остаток в карточке — цветом статуса, но приглушённым. */
+.ocard .meta span[style] { color: var(--bad) !important; }
+
+/* ══ отправки: папки ═════════════════════════════════════════════════ */
+.folder { background: var(--card); border-color: var(--line); box-shadow: none; border-radius: var(--r-lg); }
+.folder:hover { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+.folder .tab { background: var(--card-2); border-bottom-color: var(--line); }
+.folder:hover .tab { background: color-mix(in srgb, var(--ink) 6%, var(--card-2)); }
+.folder .nums b { font-size: 19px; font-weight: 600; }
+.chip.plain { background: var(--card-2); color: var(--muted); }
+
+/* ══ окно бланка и просмотр фото ═════════════════════════════════════ */
+.overlay { background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(6px); }
+.sheet-view { background: var(--card); border: 1px solid var(--line); box-shadow: 0 24px 70px rgba(0, 0, 0, .35); }
+.bl-frame { background: var(--card-2); }
+.gallery button { background: var(--card-2); border-color: var(--line); box-shadow: none; }
+
+/* ══ правка: лист карточки ═══════════════════════════════════════════ */
+table.sheet tr.block th { color: var(--faint); }
+table.sheet th.key { color: var(--muted); }
+table.sheet tr.calc td.val { background: transparent; }
+.sheet-rows th { color: var(--faint); }
+
+/* ══ разбор документов (своя разметка) ═══════════════════════════════ */
+body:has(#drop) { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+#drop {
+  background: var(--card); border: 1.5px dashed var(--axis); border-radius: var(--r-lg);
+}
+#drop.over { border-color: var(--ink); background: var(--card-2); }
+body:has(#drop) .card { border-radius: var(--r-lg); }
+body:has(#drop) button { border-radius: var(--pill); }
+body:has(#drop) .bar i { background: var(--ink); }
+body:has(#drop) footer { color: var(--faint); font-size: 12.5px; margin-top: 32px; }
