@@ -9,15 +9,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./redesign.css">
+<!-- Тема до отрисовки: по умолчанию тёмная, выбор помнится в браузере;
+     ?theme=light в адресе открывает нужную сразу. -->
+<script>(function(){var t=new URLSearchParams(location.search).get("theme");try{t=t||localStorage.getItem("theme")}catch(e){}document.documentElement.dataset.theme=t==="light"?"light":"dark"})()</script>
 </head>
 <body>
 <div class="wrap">
   <div class="page-head">
     <div class="grow">
-      <h1>Заказы Айзада (Az)</h1>
-      <p class="sub" id="updated">Загружаю…</p>
+      <h1>Дашборд</h1>
+      <p class="sub"><span class="stamp" id="updated">Загружаю…</span></p>
     </div>
-    <a class="btn" href="./orders.html">Все заказы →</a>
+    <a class="btn ghost" href="./shipments.html">Отправки</a>
+    <a class="btn dark" href="./orders.html">Все заказы →</a>
   </div>
 
   <h2>Процесс</h2>
@@ -58,7 +63,7 @@ import { funnel, stage, stageOf, tasks } from "./lib/stages.js";
 import { balanceScale, ring, sparkline } from "./lib/ui.js";
 import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated } from "./lib/shell.js";
 
-mountShell("index.html");
+mountShell("index.html", { layout: "top" });
 
 
 try {
@@ -125,24 +130,24 @@ function drawTiles(orders) {
     { name: "Остаток к перечислению", value: `${shortMoney(debt)} ₽`,
       hint: `${money(debt)} · ${qty(Math.round(units))} шт по текущим ценам`,
       cls: "hero", wide: true,
-      art: sparkline(trail, { tone: "var(--ok)", width: 210, height: 40 }) },
+      art: sparkline(trail, { tone: "var(--on-hero)", width: 210, height: 40 }) },
     // В узких плитках знак рубля не ставим: он единственный толкает цифру
     // на кольцо, а валюта и так названа в подписи.
     { name: "Отгружено за всё время", value: shortMoney(shipped),
       hint: `пришло ${money(paid)}`,
-      art: ring({ value: shipped ? paid / shipped : 0, size: 46, stroke: 6,
-                  tone: "var(--ok)", tone2: "var(--lime-deep)",
+      art: ring({ value: shipped ? paid / shipped : 0, size: 46, stroke: 5,
+                  tone: "var(--ink)",
                   title: "доля оплаченного от отгруженного" }) },
     { name: "Заказов в работе", value: qty(open.length),
       hint: `закрыто ${orders.length - open.length} из ${orders.length}`,
       art: ring({ value: orders.length ? (orders.length - open.length) / orders.length : 0,
-                  size: 46, stroke: 6, tone: "var(--accent)", tone2: "#7cc0ff",
+                  size: 46, stroke: 5, tone: "var(--ink)",
                   title: "доля закрытых заказов" }) },
     { name: "Приёмка отмечена", value: `${checked.length} из ${orders.length}`,
       hint: checked.length ? `непринятого на ${money(rejected)}` : `${waiting.length} заказов ждут отметки`,
       cls: waiting.length ? "warn" : "",
       art: ring({ value: orders.length ? checked.length / orders.length : 0,
-                  size: 46, stroke: 6, tone: "var(--warn)", tone2: "#ffd089",
+                  size: 46, stroke: 5, tone: waiting.length ? "var(--warn)" : "var(--ink)",
                   title: "доля заказов с отмеченной приёмкой" }) },
   ]);
 }
@@ -205,7 +210,7 @@ function drawCharts(orders) {
   }
   groupedBars(document.querySelector("#chart-flow"), {
     rows: months,
-    series: [{ key: "shipped", name: "Отгружено", color: "--series-1" },
+    series: [{ key: "shipped", name: "Отгружено", color: "--series-1", hatch: true },
              { key: "paid", name: "Оплачено", color: "--series-2" }],
     caption: "Отгружено и оплачено по месяцам",
     lede: "Разрыв между столбцами одного месяца — то, что в этом месяце не доплатили.",
