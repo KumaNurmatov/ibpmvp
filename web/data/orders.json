@@ -4099,10 +4099,13 @@
       "order_date": "2026-09-23",
       "item": "Спортивный костюм Фобус кофта зип/брюки",
       "item_article": "",
-      "tnved": "",
+      "tnved": "6104192000",
       "ordered_qty": 1800,
       "unit_price": 1210,
-      "workshops": [],
+      "workshops": [
+        "Майрам",
+        "Сулайман"
+      ],
       "photo": "assets/photos/1065.jpg",
       "photo2": "",
       "shipment": {
