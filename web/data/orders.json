@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-23",
+  "updated": "2026-10-25",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -37,6 +37,7 @@
       "unit_price": 400,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 812,
@@ -101,6 +102,7 @@
       "unit_price": 373.33,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-02-27",
         "qty": 842,
@@ -164,6 +166,7 @@
       "unit_price": 471.11,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-02-28",
         "qty": 710,
@@ -231,6 +234,7 @@
       "unit_price": 473.68,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-02-28",
         "qty": 688,
@@ -294,6 +298,7 @@
       "unit_price": 222.22,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-03-06",
         "qty": 2699,
@@ -364,6 +369,7 @@
       "unit_price": 318.39,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-03-09",
         "qty": 1904,
@@ -420,6 +426,7 @@
       "unit_price": 844.44,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-03-12",
         "qty": 982,
@@ -476,6 +483,7 @@
       "unit_price": 222.22,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-03-16",
         "qty": 4602,
@@ -557,6 +565,7 @@
       "unit_price": 231.48,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 5812,
@@ -638,6 +647,7 @@
       "unit_price": 879.63,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 1191,
@@ -712,6 +722,7 @@
       "unit_price": 328.7,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-03",
         "qty": 1044,
@@ -772,6 +783,7 @@
       "unit_price": 234.74,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-14",
         "qty": 4954,
@@ -832,6 +844,7 @@
       "unit_price": 232.56,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-14",
         "qty": 990,
@@ -892,6 +905,7 @@
       "unit_price": 416.67,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-22",
         "qty": 2960,
@@ -959,6 +973,7 @@
       "unit_price": 227.27,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-30",
         "qty": 6987,
@@ -1026,6 +1041,7 @@
       "unit_price": 227.27,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-06",
         "qty": 8080,
@@ -1093,6 +1109,7 @@
       "unit_price": 222.22,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-06",
         "qty": 6126,
@@ -1153,6 +1170,7 @@
       "unit_price": 480,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-07",
         "qty": 2419,
@@ -1213,6 +1231,7 @@
       "unit_price": 440.53,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-15",
         "qty": 590,
@@ -1273,6 +1292,7 @@
       "unit_price": 218.34,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-19",
         "qty": 4806,
@@ -1340,6 +1360,7 @@
       "unit_price": 473.68,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-22",
         "qty": 3410,
@@ -1414,6 +1435,7 @@
       "unit_price": 473.68,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-22",
         "qty": 3520,
@@ -1481,6 +1503,7 @@
       "unit_price": 221.24,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-28",
         "qty": 8315,
@@ -1548,6 +1571,7 @@
       "unit_price": 221.24,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-28",
         "qty": 5263,
@@ -1615,6 +1639,7 @@
       "unit_price": 475.77,
       "workshops": [],
       "photo": "assets/photos/737.jpg",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 2327,
@@ -1675,6 +1700,7 @@
       "unit_price": 398.23,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 6693,
@@ -1749,6 +1775,7 @@
       "unit_price": 398.23,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 1196,
@@ -1816,6 +1843,7 @@
       "unit_price": 506.55,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-02",
         "qty": 3000,
@@ -1876,6 +1904,7 @@
       "unit_price": 221.24,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-02",
         "qty": 4569,
@@ -1943,6 +1972,7 @@
       "unit_price": 480,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 812,
@@ -2010,6 +2040,7 @@
       "unit_price": 442.48,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-05",
         "qty": 4771,
@@ -2070,6 +2101,7 @@
       "unit_price": 190.08,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-24",
         "qty": 2255,
@@ -2130,6 +2162,7 @@
       "unit_price": 418.41,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-01",
         "qty": 693,
@@ -2190,6 +2223,7 @@
       "unit_price": 808.51,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-01",
         "qty": 1065,
@@ -2250,6 +2284,7 @@
       "unit_price": 232.37,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-02",
         "qty": 5594,
@@ -2310,6 +2345,7 @@
       "unit_price": 835.44,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-13",
         "qty": 995,
@@ -2370,6 +2406,7 @@
       "unit_price": 467.29,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-30",
         "qty": 1984,
@@ -2430,6 +2467,7 @@
       "unit_price": 410.04,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-13",
         "qty": 1090,
@@ -2490,6 +2528,7 @@
       "unit_price": 1162.16,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-07-21",
         "qty": 1018,
@@ -2543,6 +2582,7 @@
       "unit_price": 346.53,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-08-12",
         "qty": 657,
@@ -2596,6 +2636,7 @@
       "unit_price": 1171.17,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 916,
@@ -2649,6 +2690,7 @@
       "unit_price": 1165.05,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 777,
@@ -2702,6 +2744,7 @@
       "unit_price": 223.3,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 330,
@@ -2755,6 +2798,7 @@
       "unit_price": 271.84,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-08-13",
         "qty": 1697,
@@ -2808,6 +2852,7 @@
       "unit_price": 227.27,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-22",
         "qty": 1640,
@@ -2859,6 +2904,7 @@
       "unit_price": 232.56,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-04-23",
         "qty": 5768,
@@ -2917,6 +2963,7 @@
       "unit_price": 473.68,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-05-19",
         "qty": 1209,
@@ -2961,6 +3008,7 @@
       "unit_price": 477.88,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-01",
         "qty": 2069,
@@ -3019,6 +3067,7 @@
       "unit_price": 471.62,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -3070,6 +3119,7 @@
       "unit_price": 371.68,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -3114,6 +3164,7 @@
       "unit_price": 506.55,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-06-16",
         "qty": 3332,
@@ -3179,6 +3230,7 @@
       "unit_price": 941.75,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -3225,6 +3277,7 @@
         "Майрам"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-07",
         "qty": 1293,
@@ -3283,6 +3336,7 @@
         "Сулайман"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-04",
         "qty": 1316,
@@ -3341,6 +3395,7 @@
         "Майрам"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-07",
         "qty": 1244,
@@ -3406,6 +3461,7 @@
         "Нурлан"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-04",
         "qty": 1244,
@@ -3464,6 +3520,7 @@
         "Венера"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-14",
         "qty": 890,
@@ -3522,6 +3579,7 @@
         "Дача-суу"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-04",
         "qty": 1986,
@@ -3580,6 +3638,7 @@
         "Дача-суу"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-07",
         "qty": 931,
@@ -3636,6 +3695,7 @@
       "unit_price": 440,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-10-09",
         "qty": 2462,
@@ -3693,6 +3753,7 @@
       "unit_price": 929.96,
       "workshops": [],
       "photo": "assets/photos/1004.jpg",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-24",
         "qty": 794,
@@ -3757,6 +3818,7 @@
       "unit_price": 990,
       "workshops": [],
       "photo": "assets/photos/1005.jpg",
+      "photo2": "",
       "shipment": {
         "date": "2026-10-07",
         "qty": 1156,
@@ -3817,6 +3879,7 @@
         "Майрам"
       ],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-10-22",
         "qty": 1527,
@@ -3870,6 +3933,7 @@
       "unit_price": 489.43,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-09-26",
         "qty": 664,
@@ -3936,6 +4000,7 @@
         "Нурлан"
       ],
       "photo": "assets/photos/1009.jpg",
+      "photo2": "",
       "shipment": {
         "date": "2026-10-07",
         "qty": 615,
@@ -3989,6 +4054,7 @@
       "unit_price": 990,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "2026-10-22",
         "qty": 360,
@@ -4038,6 +4104,7 @@
       "unit_price": 1210,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4087,6 +4154,7 @@
       "unit_price": 1210,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4136,6 +4204,7 @@
       "unit_price": 990,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4180,6 +4249,7 @@
       "unit_price": 500,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4224,6 +4294,7 @@
       "unit_price": 990,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4242,7 +4313,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-16",
-          "amount": 492030.0,
+          "amount": 492030,
           "doc_number": "708",
           "purpose": "дог.1126/1-1 от 14.10.2026,по спец.1 от 14.10.26,за текст.изд.(спортивный костюм)"
         }
@@ -4268,6 +4339,7 @@
       "unit_price": 1100,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4286,7 +4358,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-16",
-          "amount": 462000.0,
+          "amount": 462000,
           "doc_number": "709",
           "purpose": "дог.1127/1-1 от 14.10.2026,по спец.1 от 14.10.26,за текст.изд.(спортивный костюм)"
         }
@@ -4312,6 +4384,7 @@
       "unit_price": 230,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4330,7 +4403,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-22",
-          "amount": 141680.0,
+          "amount": 141680,
           "doc_number": "629",
           "purpose": "дог.1132/1-1 от 16.10.2026,по спец.1 от 16.10.26,за текст.изд.(блузка)"
         }
@@ -4356,6 +4429,7 @@
       "unit_price": 950,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4374,7 +4448,7 @@
         {
           "kind": "предоплата",
           "date": "2026-10-22",
-          "amount": 418950.0,
+          "amount": 418950,
           "doc_number": "630",
           "purpose": "дог.1133/1-1 от 16.10.2026,по спец.1 от 16.10.26,за текст.изд.(костюм)"
         }
@@ -4400,6 +4474,7 @@
       "unit_price": 990,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4436,6 +4511,7 @@
       "unit_price": 1280,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4472,6 +4548,7 @@
       "unit_price": 1280,
       "workshops": [],
       "photo": "",
+      "photo2": "",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4507,7 +4584,8 @@
       "ordered_qty": 1200,
       "unit_price": 1100,
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/1150.jpg",
+      "photo2": "assets/photos/1150-2.jpg",
       "shipment": {
         "date": "",
         "qty": null,
@@ -4540,6 +4618,7 @@
       "driver": "",
       "driver_phone": "",
       "rate_per_kg": 80,
+      "weight_accepted": null,
       "orders": [
         "1003",
         "1004"
