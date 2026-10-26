@@ -30,6 +30,10 @@
   .photo-slot .row-line { gap: 6px; }
   @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
 </style>
+<link rel="stylesheet" href="./redesign.css">
+<!-- Тема до отрисовки: по умолчанию тёмная, выбор помнится в браузере;
+     ?theme=light в адресе открывает нужную сразу. -->
+<script>(function(){var t=new URLSearchParams(location.search).get("theme");try{t=t||localStorage.getItem("theme")}catch(e){}document.documentElement.dataset.theme=t==="light"?"light":"dark"})()</script>
 </head>
 <body>
 <div class="wrap">
