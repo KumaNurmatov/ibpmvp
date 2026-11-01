@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-25",
+  "updated": "2026-11-01",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -4109,11 +4109,11 @@
       "photo": "assets/photos/1065.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
-        "driver": "",
+        "date": "2026-10-30",
+        "qty": 1621,
+        "places": 26,
+        "weight_gross": 1060.7,
+        "driver": "Уланбек уулу Айтбек",
         "driver_phone": ""
       },
       "acceptance": {
