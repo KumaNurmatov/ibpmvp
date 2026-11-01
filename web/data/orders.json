@@ -4159,11 +4159,11 @@
       "photo": "assets/photos/1074.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
-        "driver": "",
+        "date": "2026-10-30",
+        "qty": 1623,
+        "places": 45,
+        "weight_gross": 1716.8,
+        "driver": "Уланбек уулу Айтбек",
         "driver_phone": ""
       },
       "acceptance": {
