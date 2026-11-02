@@ -573,7 +573,7 @@ figure.chart { margin: 0; }
 figure.chart figcaption { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
 figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
 .legend { display: flex; gap: 14px; font-size: 13px; color: var(--muted); margin-bottom: 8px; flex-wrap: wrap; }
-.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; background: var(--c); }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .chart .gridline { stroke: var(--grid); stroke-width: 1; }
 .chart .axis { stroke: var(--axis); stroke-width: 1; }

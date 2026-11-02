@@ -11,6 +11,7 @@ const ICONS = {
   cards: "M4 5h16v14H4zM4 10h16M10 10v9",
   ship: "M3 8l3-3h7l3 3v8H3zM16 10h3l2 3v3h-5M6 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3M18 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3",
   parse: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4",
+  theme: "M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z",
 };
 
 const PAGES = [
@@ -29,7 +30,8 @@ const PAGES = [
  * страницы (.wrap) переезжает внутрь каркаса — сами страницы об этом не
  * знают и остаются обычной разметкой.
  */
-export function mountShell(current) {
+export function mountShell(current, { layout = "top" } = {}) {
+  if (layout === "top") return mountTop(current);
   const admin = canEdit();
   const app = document.createElement("div");
   app.className = "app";
@@ -55,6 +57,50 @@ export function mountShell(current) {
   const wrap = document.querySelector(".wrap");
   document.body.prepend(app);
   app.querySelector(".main").append(wrap);
+}
+
+/**
+ * Шапка вместо левого меню — основной вид всех страниц.
+ *
+ * Всё, что жило в боковой колонке, переехало в одну строку сверху: знак,
+ * разделы пилюлей, справа — роль, новый заказ и тема. Колонка в 240 px
+ * отдана под цифры. На узком экране у разделов остаются иконки, а полное
+ * название всплывает подсказкой.
+ */
+function mountTop(current) {
+  const admin = canEdit();
+  const bar = document.createElement("header");
+  bar.className = "topbar";
+  bar.innerHTML = `
+    <a class="brand" href="./index.html" title="Айзада · заказы и расчёты">
+      <span class="logo">Az</span><b>Айзада</b>
+    </a>
+    <nav class="tabs" aria-label="Разделы">
+      ${PAGES.map(([href, name, icon]) => `
+        <a href="./${href}" data-tip="${name}"${href === current ? ' aria-current="page"' : ""}>
+          ${svgIcon(icon)}<span>${name}</span></a>`).join("")}
+    </nav>
+    <div class="tools">
+      ${admin ? '<a class="btn new" href="./admin.html?new=1" data-tip="Новый заказ">+<span> Новый заказ</span></a>' : ""}
+      <span class="role ${admin ? "admin" : ""}" data-tip="${admin
+        ? "Токен сохранён — правки уходят в репозиторий" : "Чтобы править, вставьте токен на странице «Карточки»"}"
+        >${admin ? "правка" : "просмотр"}</span>
+      <button type="button" class="icon" id="theme" data-tip="Тема">${svgIcon("theme")}</button>
+    </div>`;
+
+  document.body.prepend(bar);
+  document.body.classList.add("top-layout");
+  bar.querySelector("#theme").onclick = () =>
+    setTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
+}
+
+/**
+ * Тема: по умолчанию тёмная, выбор помнится в этом браузере. Ставится ещё до
+ * отрисовки строчкой в <head>, иначе страница мигает светлым.
+ */
+export function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem("theme", theme); } catch { /* приватный режим — не помним */ }
 }
 
 const svgIcon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[name]}"/></svg>`;

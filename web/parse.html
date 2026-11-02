@@ -64,10 +64,15 @@
   footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
   @media (max-width: 600px) { .wrap { padding: 20px 16px 60px; } h1 { font-size: 20px; } }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./redesign.css">
+<!-- Тема до отрисовки: по умолчанию тёмная, выбор помнится в браузере;
+     ?theme=light в адресе открывает нужную сразу. -->
+<script>(function(){var t=new URLSearchParams(location.search).get("theme");try{t=t||localStorage.getItem("theme")}catch(e){}document.documentElement.dataset.theme=t==="light"?"light":"dark"})()</script>
 </head>
 <body>
 <div class="wrap">
-  <p class="sub" style="margin-bottom:14px"><a href="./index.html">← к дашборду</a></p>
   <h1>Разбор документов по заказам</h1>
   <p class="sub">Киньте всё разом — договоры, спецификации, накладные, платёжки, выписку, фото.
      Страница сама определит, что есть что, разнесёт по заказам и посчитает остатки.</p>
@@ -120,6 +125,10 @@
     <br><span class="src" id="version">версия: из исходников</span></footer>
 </div>
 
+<script type="module">
+import { mountShell } from "./lib/shell.js";
+mountShell("parse.html");
+</script>
 <script type="module" src="./app.js"></script>
 </body>
 </html>
