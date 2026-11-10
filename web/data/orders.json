@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-02",
+  "updated": "2026-11-10",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -4125,6 +4125,13 @@
           "amount": 138600,
           "doc_number": "620",
           "purpose": "дог.1064/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-11-06",
+          "amount": 217800,
+          "doc_number": "868",
+          "purpose": "дог.1064/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд.(костюм)"
         }
       ],
       "terms": {
@@ -4693,6 +4700,154 @@
       "links": [],
       "status": "",
       "note": "По спецификации: 1200 шт × 1100 ₽ (лимонный, розовый по 300; т.-синий, бежевый, голубой по 200). Источник: спец 1150, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+    },
+    {
+      "id": "1166",
+      "order_no": "1166",
+      "contract_no": "1166/1-1",
+      "order_date": "2026-10-27",
+      "item": "Спортивный костюм брючный ПУКРА",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 140,
+      "unit_price": 900,
+      "workshops": [],
+      "photo": "",
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 140 шт × 900 ₽ (экрю, 40-52), итого 126 000 ₽. Источник: спец 1166 подписанная (скан, группа ЦЕХ АЙЗАДА, 03.11.2026), заказ 1166 (итог 140). Предоплаты в выписке по 09.11.2026 нет."
+    },
+    {
+      "id": "1196",
+      "order_no": "1196",
+      "contract_no": "1196/1-1",
+      "order_date": "2026-11-06",
+      "item": "Блузка женская с коротким рукавом",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 4160,
+      "unit_price": 250,
+      "workshops": [],
+      "photo": "",
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 4160 шт × 250 ₽ (17 цветов, 40-64), итого 1 040 000 ₽. Источник: спец 1196 (группа ЦЕХ АЙЗАДА, 06.11.2026), заказ 1196 (итог 4160). Предоплаты в выписке по 09.11.2026 нет."
+    },
+    {
+      "id": "1199",
+      "order_no": "1199",
+      "contract_no": "1199/1-1",
+      "order_date": "2026-11-06",
+      "item": "Костюм спорт женский без начеса, бомбер на молнии",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 800,
+      "unit_price": 1100,
+      "workshops": [],
+      "photo": "",
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 800 шт × 1100 ₽ (светло-серый, т.-коричневый, графит, чёрный по 200; 38-56), итого 880 000 ₽. Источник: спец 1199 (группа ЦЕХ АЙЗАДА, 06.11.2026), заказ 1199 (итог 800). Предоплаты в выписке по 09.11.2026 нет."
+    },
+    {
+      "id": "1200",
+      "order_no": "1200",
+      "contract_no": "1200/1-1",
+      "order_date": "2026-11-06",
+      "item": "Брюки палаццо женские ЛАПША",
+      "item_article": "",
+      "tnved": "",
+      "ordered_qty": 2000,
+      "unit_price": 280,
+      "workshops": [],
+      "photo": "",
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [],
+      "status": "",
+      "note": "По спецификации: 2000 шт × 280 ₽ (серые, чёрные по 300; ещё 7 цветов по 200; 42-60), итого 560 000 ₽. Источник: спец 1200 (группа ЦЕХ АЙЗАДА, 06.11.2026), заказ 1200 (итог 2000). Предоплаты в выписке по 09.11.2026 нет."
     }
   ],
   "shipments": [
