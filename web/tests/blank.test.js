@@ -8,7 +8,9 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
 
-import { FOLD, PAGE, ROWS, blankName, corners, fields, fitSize } from "../lib/blank.js";
+import { readFileSync } from "node:fs";
+
+import { FOLD, PAGE, ROWS, blankHtml, blankName, blankPdf, corners, fields, fitSize, rowValues } from "../lib/blank.js";
 import { orderFromRecord } from "../lib/ledger.js";
 
 const order = (over = {}) => orderFromRecord({
@@ -37,6 +39,41 @@ describe("что печатается в бланке", () => {
     assert.equal(ROWS.length, 9);
     assert.deepEqual(ROWS.filter(([, key]) => key).map(([, key]) => key),
       ["contract_no", "order_no", "order_date", "item_article"]);
+  });
+});
+
+describe("правка перед скачиванием", () => {
+  const dir = new URL("../assets/blank/", import.meta.url);
+  const fonts = Object.fromEntries(Object.entries(JSON.parse(readFileSync(new URL("metrics.json", dir))))
+    .map(([style, info]) => [style, { ...info, bytes: new Uint8Array(readFileSync(new URL(info.file, dir))) }]));
+  const texts = (bytes) => Buffer.from(bytes).toString("latin1").match(/ Tj ET/g).length;
+
+  it("значения строк идут по порядку бланка", () => {
+    assert.deepEqual(rowValues(order()),
+      ["666/1-1", "Аи 13.04.26/4", "13.04.2026", "", "КОСТЛЕТШ01", "", "", "", ""]);
+  });
+
+  it("без правок в PDF только четыре поля в четырёх копиях", () => {
+    assert.equal(texts(blankPdf(order(), fonts)), (ROWS.length + 4) * 4);
+  });
+
+  it("вписанная строка печатается во всех четырёх копиях", () => {
+    const values = rowValues(order());
+    values[3] = "12.11.2026";
+    assert.equal(texts(blankPdf(order(), fonts, values)), (ROWS.length + 5) * 4);
+  });
+
+  it("предпросмотр показывает правку в каждой копии", () => {
+    const values = rowValues(order());
+    values[4] = "АРТ \"1\"";
+    const html = blankHtml(order(), values);
+    assert.equal(html.split('value="АРТ &quot;1&quot;"').length - 1, 4);
+  });
+
+  it("запись заказа правки не трогают", () => {
+    const o = order();
+    rowValues(o)[4] = "другой";
+    assert.equal(fields(o).item_article, "КОСТЛЕТШ01");
   });
 });
 
