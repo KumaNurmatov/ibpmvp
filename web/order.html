@@ -196,6 +196,8 @@ function render(o, ride) {
  * HTML, — что на экране, то и напечатается. Шрифты и сборщик грузятся
  * только по нажатию: это 80 КБ, которые незачем тянуть всем.
  */
+let blankRows = null;
+
 async function showBlank(o) {
   const box = document.querySelector("#blank-box");
   const frame = document.querySelector("#blank-frame");
@@ -205,23 +207,30 @@ async function showBlank(o) {
   box.classList.remove("hide");
   state.textContent = "Готовлю бланк…";
   try {
-    const [{ loadFonts }, { blankHtml, blankName, blankPdf, fitPreview, PAGE }] =
+    const [{ loadFonts }, { bindCopies, blankHtml, blankName, blankPdf, fitPreview, rowValues, PAGE }] =
       await Promise.all([import("./lib/pdf.js"), import("./lib/blank.js")]);
 
     const sheet = document.querySelector("#blank-sheet");
-    sheet.innerHTML = blankHtml(o);
+    // Живут, пока открыта страница: закрыл лист и открыл снова — вписанное на месте.
+    blankRows ??= rowValues(o);
+    sheet.innerHTML = blankHtml(o, blankRows);
     fitPreview(sheet);
     fit(frame, sheet, PAGE.width);
     window.addEventListener("resize", () => fit(frame, sheet, PAGE.width));
 
-    const bytes = blankPdf(o, await loadFonts());
-    const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-    if (save.dataset.url) URL.revokeObjectURL(save.dataset.url);
-    save.dataset.url = url;
-    save.href = url;
+    const fonts = await loadFonts();
+    const rebuild = () => {
+      const bytes = blankPdf(o, fonts, blankRows);
+      const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+      if (save.dataset.url) URL.revokeObjectURL(save.dataset.url);
+      save.dataset.url = url;
+      save.href = url;
+    };
+    rebuild();
+    bindCopies(sheet, blankRows, rebuild);
     save.download = blankName(o);
     save.classList.remove("hide");
-    state.textContent = "Договор, номер заказа, дата и артикул проставлены во все четыре копии.";
+    state.textContent = "Впишите прямо на листе: одна копия заполняет остальные три. В карточку не сохраняется.";
   } catch (err) {
     state.textContent = `Не получилось собрать бланк: ${err.message}`;
   }

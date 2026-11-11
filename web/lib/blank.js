@@ -7,7 +7,9 @@
  * распечатка ложится в те же клетки, что и привычный бланк.
  *
  * Подставляются только четыре поля: договор, номер заказа, дата заказа и
- * артикул. Остальные строки остаются пустыми — их заполняют на месте.
+ * артикул. Остальные строки остаются пустыми — их заполняют на месте: либо
+ * ручкой, либо в предпросмотре перед скачиванием. Правки из предпросмотра
+ * идут только в этот PDF, в карточку заказа они не записываются.
  */
 import { mm, pdf } from "./pdf.js";
 
@@ -53,6 +55,12 @@ export function fields(order) {
   };
 }
 
+/** Значения строк бланка по порядку ROWS — то, что можно поправить перед скачиванием. */
+export function rowValues(order) {
+  const data = fields(order);
+  return ROWS.map(([, key]) => (key ? data[key] : ""));
+}
+
 /**
  * Линия реза поперёк листа — посередине зазора между верхними и нижними
  * копиями. Раньше она стояла у самого верха нижних копий (поле + половина
@@ -81,9 +89,8 @@ export function fitSize(doc, value, width, { from = LAYOUT.valueSize, min = LAYO
 }
 
 /** Собрать PDF бланка. Возвращает байты файла. */
-export function blankPdf(order, fonts) {
+export function blankPdf(order, fonts, values = rowValues(order)) {
   const doc = pdf({ width: mm(PAGE.width), height: mm(PAGE.height), fonts });
-  const data = fields(order);
   const { rowHeight, labelWidth, copyWidth, padLeft, labelSize, border, borderWidth } = LAYOUT;
   const valueRoom = copyWidth - labelWidth - padLeft * 2;
 
@@ -93,7 +100,7 @@ export function blankPdf(order, fonts) {
     doc.line(mm(x + labelWidth), mm(y), mm(x + labelWidth), mm(y + height),
              { color: border, width: borderWidth });
 
-    ROWS.forEach(([label, key], i) => {
+    ROWS.forEach(([label], i) => {
       const top = y + rowHeight * i;
       if (i) doc.line(mm(x), mm(top), mm(x + copyWidth), mm(top), { color: border, width: borderWidth });
 
@@ -103,7 +110,7 @@ export function blankPdf(order, fonts) {
       doc.text(label, mm(x + padLeft), mm(baseline) + labelSize / 3,
                { size: labelSize, style: "bold" });
 
-      const value = key ? data[key] : "";
+      const value = values[i];
       if (!value) return;
       const size = fitSize(doc, value, mm(valueRoom));
       doc.text(value, mm(x + labelWidth + padLeft), mm(baseline) + size / 3, { size });
@@ -126,17 +133,17 @@ export function blankPdf(order, fonts) {
  * вместо листа человек видит пустой прямоугольник. Разметка рисуется из тех
  * же констант, что и PDF, поэтому показывает ровно то, что напечатается.
  */
-export function blankHtml(order) {
-  const data = fields(order);
+export function blankHtml(order, values = rowValues(order)) {
   const { rowHeight, labelWidth, copyWidth, padLeft, labelSize, valueSize } = LAYOUT;
 
   const copy = ({ x, y }) => `<div class="bl-copy" style="
       left:${x}mm; top:${y}mm; width:${copyWidth}mm; height:${rowHeight * ROWS.length}mm">
-    ${ROWS.map(([label, key]) => `<div class="bl-row" style="height:${rowHeight}mm">
+    ${ROWS.map(([label], i) => `<div class="bl-row" style="height:${rowHeight}mm">
         <div class="bl-label" style="width:${labelWidth}mm; padding-left:${padLeft}mm;
              font-size:${labelSize}pt">${escape(label)}</div>
-        <div class="bl-value" style="padding-left:${padLeft}mm; font-size:${valueSize}pt"
-             >${escape(key ? data[key] : "")}</div>
+        <input class="bl-value" data-row="${i}" aria-label="${escape(label)}" autocomplete="off"
+             spellcheck="false" style="padding-left:${padLeft}mm; font-size:${valueSize}pt"
+             value="${escape(values[i])}">
       </div>`).join("")}
   </div>`;
 
@@ -161,6 +168,21 @@ export function fitPreview(root) {
       cell.style.fontSize = `${size}pt`;
     }
   }
+}
+
+/**
+ * Правка в предпросмотре: что вписано в одну копию, появляется в остальных
+ * трёх. values меняется на месте, onChange пересобирает PDF.
+ */
+export function bindCopies(root, values, onChange) {
+  root.oninput = ({ target }) => {
+    values[target.dataset.row] = target.value;
+    for (const cell of root.querySelectorAll(`[data-row="${target.dataset.row}"]`)) {
+      if (cell !== target) cell.value = target.value;
+    }
+    fitPreview(root);
+    onChange();
+  };
 }
 
 const escape = (v) => String(v ?? "").replace(/[&<>"]/g, (ch) =>
