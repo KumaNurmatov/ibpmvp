@@ -4310,7 +4310,7 @@
       "photo": "assets/photos/1092.jpg",
       "photo2": "",
       "shipment": {
-        "date": "2026-11-11",
+        "date": "",
         "qty": null,
         "places": null,
         "weight_gross": null,
