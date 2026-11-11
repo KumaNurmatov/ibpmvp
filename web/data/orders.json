@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-10",
+  "updated": "2026-11-11",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -4437,7 +4437,7 @@
       "contract_no": "1132/1-1",
       "order_date": "2026-10-16",
       "item": "Блузка лапша с высоким горлом",
-      "item_article": "",
+      "item_article": "БЛВЫСГОРЛО01лапша",
       "tnved": "",
       "ordered_qty": 1760,
       "unit_price": 230,
