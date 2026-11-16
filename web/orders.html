@@ -21,7 +21,7 @@
       <button id="view-cards" aria-pressed="true">Карточки</button>
       <button id="view-table" aria-pressed="false">Таблица</button>
     </div>
-    <button id="csv">Выгрузить CSV</button>
+    <button id="xlsx">Выгрузить в Excel</button>
   </div>
 
   <div id="stages"></div>
@@ -45,6 +45,7 @@
 <script type="module">
 import { money } from "./lib/ledger.js";
 import { colorList } from "./lib/colors.js";
+import { load as loadExcelJS } from "./lib/vendor-exceljs.js";
 import { photoImg } from "./lib/photo.js";
 import { STAGES, stage, stageOf } from "./lib/stages.js";
 import { pills } from "./lib/ui.js";
@@ -100,7 +101,7 @@ try {
   for (const id of ["q", "ws", "mo", "only"]) {
     document.querySelector(`#${id}`).addEventListener("input", draw);
   }
-  document.querySelector("#csv").addEventListener("click", exportCsv);
+  document.querySelector("#xlsx").addEventListener("click", exportXlsx);
   document.querySelector("#view-cards").onclick = () => setView("cards");
   document.querySelector("#view-table").onclick = () => setView("table");
   draw();
@@ -181,10 +182,10 @@ function draw() {
 }
 
 /**
- * Карточка заказа. Сверху стадия, под ней номер договора и отгрузка в
- * деньгах, справа силуэт изделия, внизу — чем закончилась оплата: полоса и
- * доля. Порядок такой же, как смотрят глазами: что за заказ → на сколько →
- * сколько пришло.
+ * Карточка заказа. Сверху стадия, под ней номер договора и сколько заказано
+ * (штуки и сумма), справа силуэт изделия, под ним цвета, внизу — чем
+ * закончилась оплата: полоса и доля. Отгруженное здесь не показывается: оно
+ * есть в таблице и в «Отправках», а в карточке чаще ищут, сколько заказали.
  */
 function drawCards(rows) {
   document.querySelector("#cards").innerHTML = rows.length
@@ -201,7 +202,7 @@ function drawCards(rows) {
           <div class="face">
             <div>
               <div class="no">${escapeHtml(o.contract_no || o.key)}</div>
-              <div class="sub2">${money(c.shipment_sum)} · ${qty(o.get("shipped_qty"))} шт</div>
+              <div class="sub2">заказано ${qty(o.get("ordered_qty"))} шт · ${money(c.order_sum)}</div>
               <div class="what">${escapeHtml(o.get("order_no") || "")} ·
                 ${escapeHtml(o.get("item") || "изделие не указано")}</div>
             </div>
@@ -265,33 +266,74 @@ function readView() {
   try { return localStorage.getItem(VIEW_KEY) === "table" ? "table" : "cards"; } catch { return "cards"; }
 }
 
-function exportCsv() {
-  const rows = filtered();
-  const header = ["Договор", "Заказ", "Дата заказа", "Изделие", "ТН ВЭД", "Заказано", "Цена",
-                  "Отгружено", "Принято", "Не принято", "Причина", "Отправка",
-                  "Сумма отгрузки", "Оплачено", "Остаток", "Стадия", "Цеха"];
-  const lines = [header, ...rows.map((o) => [
-    o.contract_no || o.key, o.get("order_no") || "", o.get("order_date") || "",
-    o.get("item") || "", o.get("tnved") || "",
-    o.get("ordered_qty") ?? "", o.get("unit_price") ?? "", o.get("shipped_qty") ?? "",
-    o.computed.accepted_qty ?? "", o.computed.rejected_qty ?? "", o.get("reject_reason") || "",
-    o.get("shipment_date") || "", o.computed.shipment_sum ?? "", o.computed.paid ?? "",
-    o.computed.remainder ?? "", status(o).name, o.workshops.join(", "),
-  ])];
-  // Точка с запятой и BOM: иначе Excel в русской локали сложит всё в один столбец.
-  const csv = "﻿" + lines.map((r) => r.map(cell).join(";")).join("\r\n");
-  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Заказы.csv";
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
+/**
+ * Выгрузка таблицы в Excel: те же строки, что сейчас на экране, с теми же
+ * фильтрами. Числа и даты пишутся числами и датами, а не текстом, — по ним
+ * можно сразу считать и сортировать.
+ */
+async function exportXlsx() {
+  const button = document.querySelector("#xlsx");
+  const label = button.textContent;
+  button.disabled = true;
+  button.textContent = "Готовлю файл…";
+  try {
+    const ExcelJS = await loadExcelJS();
+    const book = new ExcelJS.Workbook();
+    const sheet = book.addWorksheet("Заказы", { views: [{ state: "frozen", ySplit: 1 }] });
+    sheet.columns = EXPORT.map(([header, , kind]) => ({
+      header, width: WIDTH[kind] ?? 14,
+      style: kind === "money" ? { numFmt: "#,##0.00" } : kind === "date" ? { numFmt: "dd.mm.yyyy" }
+        : kind === "qty" ? { numFmt: "#,##0" } : {},
+    }));
+    for (const o of filtered()) {
+      sheet.addRow(EXPORT.map(([, value, kind]) => {
+        const v = value(o);
+        if (v === null || v === undefined || v === "") return null;
+        return kind === "date" ? new Date(`${v}T00:00:00Z`) : v;
+      }));
+    }
+    sheet.getRow(1).font = { bold: true };
+    sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: EXPORT.length } };
+
+    const bytes = await book.xlsx.writeBuffer();
+    const url = URL.createObjectURL(new Blob([bytes],
+      { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Заказы.xlsx";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  } catch (err) {
+    alert(`Не получилось выгрузить: ${err.message}`);
+  } finally {
+    button.disabled = false;
+    button.textContent = label;
+  }
 }
 
-const cell = (v) => {
-  const s = String(v ?? "");
-  return /[";\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
+// Колонки выгрузки: заголовок, значение, вид ячейки.
+const EXPORT = [
+  ["Договор", (o) => o.contract_no || o.key, "text"],
+  ["Заказ", (o) => o.get("order_no"), "text"],
+  ["Дата заказа", (o) => o.get("order_date"), "date"],
+  ["Изделие", (o) => o.get("item"), "wide"],
+  ["Цвета", (o) => o.colors.map((c) => c.name).filter(Boolean).join(", "), "wide"],
+  ["ТН ВЭД", (o) => o.get("tnved"), "text"],
+  ["Заказано", (o) => o.get("ordered_qty"), "qty"],
+  ["Цена", (o) => o.get("unit_price"), "money"],
+  ["Сумма заказа", (o) => o.computed.order_sum, "money"],
+  ["Отгружено", (o) => o.get("shipped_qty"), "qty"],
+  ["Принято", (o) => o.computed.accepted_qty, "qty"],
+  ["Не принято", (o) => o.computed.rejected_qty, "qty"],
+  ["Причина", (o) => o.get("reject_reason"), "wide"],
+  ["Отправка", (o) => o.get("shipment_date"), "date"],
+  ["Сумма отгрузки", (o) => o.computed.shipment_sum, "money"],
+  ["Оплачено", (o) => o.computed.paid, "money"],
+  ["Остаток", (o) => o.computed.remainder, "money"],
+  ["Стадия", (o) => status(o).name, "text"],
+  ["Цеха", (o) => o.workshops.join(", "), "text"],
+];
+const WIDTH = { text: 14, wide: 30, date: 12, qty: 11, money: 15 };
 </script>
 </body>
 </html>
