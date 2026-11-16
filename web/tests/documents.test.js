@@ -22,6 +22,8 @@ describe("вид документа", () => {
     assert.equal(guessKind("Заказы Айзада - 1092.pdf"), "заказ");
     assert.equal(guessKind("Папка заказа", FOLDER), "папка");
     assert.equal(guessKind("скан"), "прочее");
+    assert.equal(guessKind("ТЗ дог 818 подписанный айзада.pdf"), "прочее");
+    assert.equal(guessKind("ТЗ_КОСТЮМ_ФУКРА_Айзада_942_1.pdf"), "прочее");
   });
 
   it("указанный в карточке вид важнее догадки", () => {
