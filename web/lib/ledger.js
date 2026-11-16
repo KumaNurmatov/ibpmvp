@@ -56,6 +56,7 @@ export class Order {
     this.raw = [];
     this.links = [];
     this.workshops = [];
+    this.colors = [];
     this.photo = "";
     this.photo2 = "";
     this.note = "";
@@ -601,6 +602,7 @@ export function orderFromRecord(record) {
   // держим их рядом с заказом, а не в общей таблице полей.
   order.workshops = Array.isArray(record.workshops) ? record.workshops
     : String(record.workshop || "").split(",").map((w) => w.trim()).filter(Boolean);
+  order.colors = Array.isArray(record.colors) ? record.colors : [];
   order.photo = record.photo || "";
   order.photo2 = record.photo2 || "";
   order.note = record.note || "";

@@ -44,6 +44,7 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { colorList } from "./lib/colors.js";
 import { photoImg } from "./lib/photo.js";
 import { STAGES, stage, stageOf } from "./lib/stages.js";
 import { pills } from "./lib/ui.js";
@@ -155,7 +156,8 @@ function filtered() {
     if (only && !severity(o)) return false;
     if (!q) return true;
     const hay = [o.contract_no, o.get("order_no"), o.get("item"), o.get("driver"),
-                 o.workshops.join(" "), o.get("item_article"), o.get("tnved")].join(" ").toLowerCase();
+                 o.workshops.join(" "), o.get("item_article"), o.get("tnved"),
+                 o.colors.map((c) => c.name).join(" ")].join(" ").toLowerCase();
     return hay.includes(q);
   }).sort((a, b) => {
     const x = VALUE[sort.key](a), y = VALUE[sort.key](b);
@@ -205,6 +207,7 @@ function drawCards(rows) {
             </div>
             ${photoImg(o, { className: "shot" })}
           </div>
+          ${colorList(o.colors)}
           <div class="meta">
             <span>отправка ${dateRu(o.get("shipment_date"))}</span>
             <span>${acceptedShort(o)}</span>

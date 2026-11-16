@@ -73,11 +73,16 @@
 import { money, normalizeContract, orderFromRecord } from "./lib/ledger.js";
 import { WORKSHOP_COLORS, blankOrder, canEdit, deletePhoto, repo, save, savePhoto,
          setRepo, setToken, token } from "./lib/store.js";
+import { guessHex } from "./lib/colors.js";
+import { DOC_KINDS, guessKind } from "./lib/documents.js";
 import { photoFor } from "./lib/photo.js";
 import { stage, stageOf } from "./lib/stages.js";
 import { escapeHtml, fatal, loadOrders, mountShell, qty, showUpdated, workshops } from "./lib/shell.js";
 
 mountShell("admin.html");
+
+// Цветовое поле не бывает пустым: пока оттенок не подобран, в нём светло-серый.
+const NO_HEX = "#d9d9d9";
 
 const KINDS = ["предоплата", "постоплата", "доп. постоплата", "перенос", "неизвестно"];
 
@@ -129,6 +134,7 @@ function startNew() {
   const blank = blankOrder();
   blank.payments = [{ kind: "предоплата", date: "", amount: null, doc_number: "", purpose: "" }];
   blank.links = [{ title: "", url: "" }];
+  blank.colors = [];
   drawEditor(blank);
   drawList();
   document.querySelector("#editor input")?.focus();
@@ -170,6 +176,8 @@ function drawList() {
 
 function drawEditor(record) {
   const r = structuredClone(record);
+  // Оттенок, не совпадающий с подобранным по названию, ставили руками — его не трогаем.
+  r.colors = (r.colors || []).map((c) => ({ ...c, manual: Boolean(c.hex) && c.hex !== guessHex(c.name) }));
   const fresh = !record.id;
 
   // Содержимое целиком пересобирается, поэтому слушатели вешаются на свежий
@@ -190,6 +198,12 @@ function drawEditor(record) {
         ${calc("order_sum", "Сумма заказа")}
         ${row("tnved", "ТН ВЭД", r.tnved, "text", "например, 6203 42")}
         ${row("item_article", "Артикул", r.item_article)}
+        <tr>
+          <th class="key">Цвета</th>
+          <td class="val"><table class="sheet-rows colors-edit" id="colors"></table>
+            <button type="button" id="add-color" style="margin-top:8px">+ Цвет</button>
+            <span class="src colors-hint">Оттенок подбирается по названию. Список из чата можно вставить целиком — строка станет цветом.</span></td>
+        </tr>
         <tr>
           <th class="key">Цех</th>
           <td class="val"><div id="ws-pick"></div></td>
@@ -300,6 +314,32 @@ function drawEditor(record) {
     drawRows(r);
     document.querySelector("#pays tr:last-child input")?.focus();
   };
+  document.querySelector("#add-color").onclick = () => {
+    r.colors.push({ name: "", hex: "" });
+    drawRows(r);
+    document.querySelector("#colors tr:last-child input[data-k='name']")?.focus();
+  };
+  // Подбор оттенка по названию — пока оттенок не выбран руками.
+  document.querySelector("#colors").addEventListener("input", ({ target }) => {
+    const c = r.colors[+target.dataset.color];
+    if (!c) return;
+    if (target.dataset.k === "hex") { c.hex = target.value; c.manual = true; return; }
+    c.name = target.value;
+    if (c.manual) return;
+    c.hex = guessHex(c.name);
+    const swatch = target.closest("tr").querySelector("[data-k='hex']");
+    swatch.value = c.hex || NO_HEX;
+  });
+  // Оттенки приходят в чате столбиком: вставленный список — по цвету на строку.
+  document.querySelector("#colors").addEventListener("paste", (e) => {
+    const i = +e.target.dataset.color;
+    const lines = e.clipboardData.getData("text").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    if (e.target.dataset.k !== "name" || lines.length < 2 || !r.colors[i]) return;
+    e.preventDefault();
+    const rows = lines.map((name) => ({ name, hex: guessHex(name) }));
+    r.colors.splice(i, r.colors[i].name ? 0 : 1, ...rows);
+    drawRows(r);
+  });
   document.querySelector("#add-link").onclick = () => {
     r.links.push({ title: "", url: "" });
     drawRows(r);
@@ -321,12 +361,26 @@ function drawEditor(record) {
       </tr>`).join("") || '<tr><td colspan="5" class="src">Оплат пока нет.</td></tr>');
 
     document.querySelector("#links").innerHTML =
-      `<tr><th>Название</th><th>Адрес файла или папки</th><th></th></tr>` +
+      `<tr><th>Вид</th><th>Название</th><th>Адрес файла или папки</th><th></th></tr>` +
       (rec.links.map((l, i) => `<tr>
+        <td><select data-link="${i}" data-k="kind">
+          <option value="">сам: ${escapeHtml(guessKind(l.title, l.url))}</option>
+          ${DOC_KINDS.map(([key, name]) => `<option value="${key}"${key === l.kind ? " selected" : ""}>${name}</option>`).join("")}
+        </select></td>
         <td><input data-link="${i}" data-k="title" value="${escapeHtml(l.title)}" placeholder="например, Отправка 666.pdf"></td>
         <td><input data-link="${i}" data-k="url" value="${escapeHtml(l.url)}" placeholder="https://drive.google.com/…"></td>
         <td class="drop"><button data-drop-link="${i}" title="Убрать строку">✕</button></td>
-      </tr>`).join("") || '<tr><td colspan="3" class="src">Ссылок пока нет.</td></tr>');
+      </tr>`).join("") || '<tr><td colspan="4" class="src">Ссылок пока нет.</td></tr>');
+
+    document.querySelector("#colors").innerHTML = rec.colors.map((c, i) => `<tr>
+        <td class="swatch"><input type="color" data-color="${i}" data-k="hex" value="${escapeHtml(c.hex || NO_HEX)}"
+              title="Оттенок метки"></td>
+        <td><input data-color="${i}" data-k="name" value="${escapeHtml(c.name)}" placeholder="например, чёрно-белая клетка"></td>
+        <td class="drop"><button type="button" data-drop-color="${i}" title="Убрать цвет">✕</button></td>
+      </tr>`).join("");
+    for (const b of document.querySelectorAll("[data-drop-color]")) {
+      b.onclick = () => { rec.colors.splice(+b.dataset.dropColor, 1); drawRows(rec); };
+    }
 
     for (const b of document.querySelectorAll("[data-drop-pay]")) {
       b.onclick = () => { rec.payments.splice(+b.dataset.dropPay, 1); drawRows(rec); recalc(rec); };
@@ -624,7 +678,10 @@ async function persist(r) {
   }
   // Пустые строки, добавленные «на всякий случай», в данные не попадают.
   r.payments = r.payments.filter((p) => p.amount !== null || p.date);
-  r.links = r.links.filter((l) => String(l.url || "").trim());
+  r.links = r.links.filter((l) => String(l.url || "").trim())
+    .map(({ kind, ...l }) => (kind ? { ...l, kind } : l));
+  r.colors = r.colors.filter((c) => String(c.name || "").trim() || c.hex)
+    .map((c) => ({ name: String(c.name || "").trim(), hex: c.hex || "" }));
 
   const i = data.orders.findIndex((o) => o.id === (current ?? r.id));
   if (i >= 0) data.orders[i] = r; else data.orders.push(r);
