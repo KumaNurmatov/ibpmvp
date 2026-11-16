@@ -27,6 +27,8 @@ export const kindName = (kind) => DOC_KINDS.find(([key]) => key === kind)?.[1] |
 export function guessKind(title, url = "") {
   if (/\/folders\//.test(url)) return "папка";
   const t = String(title || "").toLowerCase().replace(/ё/g, "е");
+  // ТЗ подписывают вместе с договором («ТЗ дог 818 подписанный»), но это не договор.
+  if (/(^|[\s_.-])тз([\s_.-]|$)/.test(t)) return "прочее";
   if (/спец/.test(t)) return "спецификация";
   if (/учет/.test(t)) return "учёт";
   if (/отправ|cmr|смр|ттн|инвойс|упаков|накладн/.test(t)) return "отправка";
