@@ -5876,7 +5876,9 @@
       "tnved": "",
       "ordered_qty": 960,
       "unit_price": 1280,
-      "workshops": [],
+      "workshops": [
+        "Нурлан"
+      ],
       "photo": "assets/photos/1149.jpg",
       "photo2": "",
       "shipment": {
