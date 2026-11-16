@@ -44,14 +44,18 @@ export const ROWS = [
   ["ВЕС:", null],
 ];
 
-/** Что печатается в четырёх копиях. Пустое поле — пустая строка в бланке. */
+/**
+ * Что печатается в четырёх копиях. Пустое поле — пустая строка в бланке,
+ * кроме артикула: его заказчик давно не присылает, и пустая клетка выглядела
+ * бы недозаполненной — без артикула ставится прочерк.
+ */
 export function fields(order) {
   const date = order.get("order_date");
   return {
     contract_no: order.contract_no || "",
     order_no: order.get("order_no") || "",
     order_date: date ? date.split("-").reverse().join(".") : "",
-    item_article: order.get("item_article") || "",
+    item_article: order.get("item_article") || "—",
   };
 }
 

@@ -30,9 +30,11 @@ describe("что печатается в бланке", () => {
   });
 
   it("пустые поля остаются пустыми, а не «—»", () => {
-    const bare = fields(order({ order_date: "", item_article: "" }));
-    assert.equal(bare.order_date, "");
-    assert.equal(bare.item_article, "");
+    assert.equal(fields(order({ order_date: "" })).order_date, "");
+  });
+
+  it("без артикула в бланке прочерк", () => {
+    assert.equal(fields(order({ item_article: "" })).item_article, "—");
   });
 
   it("в бланке девять строк, и заполняются только четыре", () => {
