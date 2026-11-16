@@ -183,9 +183,11 @@ function draw() {
 
 /**
  * Карточка заказа. Сверху стадия, под ней номер договора и сколько заказано
- * (штуки и сумма), справа силуэт изделия, под ним цвета, внизу — чем
+ * (штуки и сумма), справа фото изделия, под ним цвета, внизу — чем
  * закончилась оплата: полоса и доля. Отгруженное здесь не показывается: оно
  * есть в таблице и в «Отправках», а в карточке чаще ищут, сколько заказали.
+ * Номер заказа и название изделия тоже убраны: они есть в таблице и карточке
+ * заказа, а здесь только теснили главное. Поиск по ним работает.
  */
 function drawCards(rows) {
   document.querySelector("#cards").innerHTML = rows.length
@@ -207,8 +209,6 @@ function drawCards(rows) {
             <div>
               <div class="no">${escapeHtml(o.contract_no || o.key)}</div>
               <div class="sub2">${qty(o.get("ordered_qty"))} шт · ${money(c.order_sum)}</div>
-              <div class="what">${escapeHtml(o.get("order_no") || "")} ·
-                ${escapeHtml(o.get("item") || "изделие не указано")}</div>
             </div>
             ${photoImg(o, { className: "shot" })}
           </div>
