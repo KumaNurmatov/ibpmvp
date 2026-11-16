@@ -630,3 +630,48 @@ figure.chart .lede { font-size: 13px; color: var(--muted); margin-bottom: 12px; 
   /* На телефоне в полосе остаётся главное: разделы и кнопка нового заказа. */
   .side-foot .role { display: none; }
 }
+
+/* ── цвета изделия ─────────────────────────────────────────────────── */
+/* Без плашек: кружок своего цвета и название, столбиком. */
+.colors { list-style: none; margin: -4px 0 0; padding: 0; font-size: 12px; line-height: 17px; color: var(--muted); }
+.colors.many { columns: 2; column-gap: 14px; }
+.colors li { display: flex; align-items: center; gap: 6px; min-width: 0; break-inside: avoid; }
+.colors li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.colors i { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(127, 127, 127, .45); }
+.colors i.none { background: transparent; box-shadow: none; border: 1px dashed var(--faint); width: 7px; height: 7px; }
+.colors-edit { width: 100%; }
+.colors-edit td.swatch { width: 56px; }
+.colors-edit td:nth-child(2) { width: 100%; }
+.colors-hint { display: block; margin-top: 6px; }
+.colors-edit input[type="color"] { width: 48px; padding: 2px; }
+
+/* ── документы ─────────────────────────────────────────────────────── */
+.dcard {
+  display: flex; flex-direction: column; gap: 12px; padding: 16px 18px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow);
+}
+.dcard .no { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
+.dcard .no:hover { text-decoration: underline; }
+.dcard .what { font-size: 13px; color: var(--faint); margin-top: 2px; }
+.dlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.dlist li { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 8px; align-items: center;
+  padding: 4px 0; border-top: 1px solid var(--line); }
+.dlist li:first-child { border-top: 0; }
+.dlist .kind { font-size: 12px; color: var(--faint); }
+.dlist .name { all: unset; cursor: pointer; font-size: 13.5px; color: var(--ink); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.dlist .name:hover { text-decoration: underline; }
+.dlist .acts { display: flex; gap: 4px; }
+.icon { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; }
+.icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round; }
+.dl-all { margin-top: auto; }
+.dl-all > summary { list-style: none; display: inline-block; }
+.dl-all > summary::-webkit-details-marker { display: none; }
+.dl-all .menu { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 8px; }
+.sheet-view iframe { min-height: 0; }
+@media (max-width: 560px) {
+  .dlist li { grid-template-columns: minmax(0, 1fr) auto; }
+  .dlist .kind { grid-column: 1 / -1; margin-bottom: -4px; }
+}

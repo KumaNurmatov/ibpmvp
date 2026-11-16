@@ -11,12 +11,14 @@ const ICONS = {
   cards: "M4 5h16v14H4zM4 10h16M10 10v9",
   ship: "M3 8l3-3h7l3 3v8H3zM16 10h3l2 3v3h-5M6 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3M18 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3",
   parse: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4",
+  docs: "M3 6h6l2 2h10v11H3zM3 11h18",
 };
 
 const PAGES = [
   ["index.html", "Дашборд", "dash"],
   ["orders.html", "Заказы", "orders"],
   ["shipments.html", "Отправки", "ship"],
+  ["documents.html", "Документы", "docs"],
   ["admin.html", "Карточки", "cards"],
   ["parse.html", "Разбор документов", "parse"],
 ];

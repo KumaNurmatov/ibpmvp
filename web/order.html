@@ -43,6 +43,8 @@
 
 <script type="module">
 import { money } from "./lib/ledger.js";
+import { colorList } from "./lib/colors.js";
+import { docsOf, kindName } from "./lib/documents.js";
 import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
 import { tasks } from "./lib/stages.js";
@@ -113,6 +115,7 @@ function render(o, ride) {
           <th>Артикул</th><td>${escapeHtml(o.get("item_article") || "—")}</td></tr>
       <tr><th>Цех</th><td colspan="3">${o.workshops.length
             ? `<span class="chips">${workshopChips(o)}</span>` : "—"}</td></tr>
+      <tr><th>Цвета</th><td colspan="3">${colorList(o.colors) || "—"}</td></tr>
       <tr><th>Сумма заказа</th><td colspan="3"><b>${money(c.order_sum)}</b>
           <span class="src">${qty(o.get("ordered_qty"))} шт × ${money(price)}</span></td></tr>
     </table></div>
@@ -172,8 +175,10 @@ function render(o, ride) {
     </table></div>
 
     ${o.links.length ? `<h2>Документы</h2><div class="card links">
-      ${o.links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
-        ${escapeHtml(l.title)} ↗</a>`).join("")}</div>` : ""}
+      ${docsOf(o).map((d) => `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">
+        <span class="src">${kindName(d.kind)}:</span> ${escapeHtml(d.title)} ↗</a>`).join("")}
+      <a href="./documents.html?q=${encodeURIComponent(o.contract_no || o.key)}">смотреть и скачать в разделе «Документы» →</a>
+      </div>` : ""}
 
     ${o.flags.length ? `<h2>Проверки</h2><div class="card">
       ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}

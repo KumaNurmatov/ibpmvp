@@ -12,6 +12,8 @@
 // знает только путь в репозитории — web/data/orders.json. Пока здесь было
 // одно значение на оба случая, запись уходила в корень репозитория, в файл,
 // которого сайт не видит: правки «сохранялись» и пропадали.
+import { normalizeColors } from "./colors.js";
+
 export const SITE_PATH = "data/orders.json";       // рядом со страницей
 export const REPO_PATH = "web/data/orders.json";   // в дереве репозитория
 const TOKEN_KEY = "ibp.githubToken";
@@ -235,6 +237,8 @@ function normalize(data) {
       order_date: o.order_date ?? "",
       item: o.item ?? "",
       item_article: o.item_article ?? "",
+      // Оттенков у изделия бывает несколько: название как у заказчика и цвет метки.
+      colors: normalizeColors(o.colors),
       tnved: o.tnved ?? "",
       ordered_qty: o.ordered_qty ?? null,
       unit_price: o.unit_price ?? null,
@@ -268,6 +272,8 @@ function normalize(data) {
       },
       links: (o.links || []).filter((l) => l?.url).map((l) => ({
         title: l.title || "Ссылка", url: l.url,
+        // Вид документа: договор, спецификация… Пусто — угадывается по названию.
+        ...(l.kind ? { kind: l.kind } : {}),
       })),
       // «отменён» и «заморожен» нельзя вывести из цифр: у такого заказа есть
       // предоплата и нет отгрузки — по деньгам он не отличим от того, что
