@@ -22,6 +22,10 @@
     {
       "name": "Дача-суу",
       "color": "#c9a800"
+    },
+    {
+      "name": "Новый цех",
+      "color": "#0f8fa8"
     }
   ],
   "orders": [
@@ -5400,7 +5404,9 @@
       "tnved": "6104130000",
       "ordered_qty": 2600,
       "unit_price": 990,
-      "workshops": [],
+      "workshops": [
+        "Майрам"
+      ],
       "photo": "assets/photos/1084.jpg",
       "photo2": "",
       "shipment": {
@@ -5557,11 +5563,34 @@
       "order_date": "2026-10-14",
       "item": "Спортивный костюм кофта зип/брюки",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "серый",
+          "hex": "#9a9a9a"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "сливочный",
+          "hex": "#f1e6cc"
+        }
+      ],
       "tnved": "6104130000",
       "ordered_qty": 1420,
       "unit_price": 990,
-      "workshops": [],
+      "workshops": [
+        "Майрам"
+      ],
       "photo": "assets/photos/1126.jpg",
       "photo2": "",
       "shipment": {
@@ -5623,7 +5652,9 @@
       "tnved": "6112120000",
       "ordered_qty": 1200,
       "unit_price": 1100,
-      "workshops": [],
+      "workshops": [
+        "Сулайман"
+      ],
       "photo": "assets/photos/1127.jpg",
       "photo2": "assets/photos/1127-2.jpg",
       "shipment": {
@@ -5718,7 +5749,10 @@
       "tnved": "6106200000",
       "ordered_qty": 1760,
       "unit_price": 230,
-      "workshops": [],
+      "workshops": [
+        "Майрам",
+        "Новый цех"
+      ],
       "photo": "assets/photos/1132.jpg",
       "photo2": "",
       "shipment": {
@@ -5780,7 +5814,9 @@
       "tnved": "",
       "ordered_qty": 1260,
       "unit_price": 950,
-      "workshops": [],
+      "workshops": [
+        "Сулайман"
+      ],
       "photo": "assets/photos/1133.jpg",
       "photo2": "",
       "shipment": {
@@ -5847,7 +5883,9 @@
       "tnved": "6104130000",
       "ordered_qty": 400,
       "unit_price": 990,
-      "workshops": [],
+      "workshops": [
+        "Майрам"
+      ],
       "photo": "assets/photos/1147.jpg",
       "photo2": "",
       "shipment": {
@@ -5909,7 +5947,9 @@
       "tnved": "",
       "ordered_qty": 1800,
       "unit_price": 1280,
-      "workshops": [],
+      "workshops": [
+        "Новый цех"
+      ],
       "photo": "assets/photos/1148.jpg",
       "photo2": "",
       "shipment": {
@@ -6040,11 +6080,34 @@
       "order_date": "2026-10-22",
       "item": "Костюм спорт женский без начеса, бомбер на молнии",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "лимонный",
+          "hex": "#f2e35a"
+        },
+        {
+          "name": "розовый",
+          "hex": "#ef9cbc"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0"
+        },
+        {
+          "name": "голубой",
+          "hex": "#8ec5ea"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 1200,
       "unit_price": 1100,
-      "workshops": [],
+      "workshops": [
+        "Сулайман"
+      ],
       "photo": "assets/photos/1150.jpg",
       "photo2": "assets/photos/1150-2.jpg",
       "shipment": {
@@ -6093,7 +6156,7 @@
         }
       ],
       "status": "",
-      "note": "По спецификации: 1200 шт × 1100 ₽ (лимонный, розовый по 300; т.-синий, бежевый, голубой по 200). Источник: спец 1150, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+      "note": "Бежевый и голубой пока не шьются: нет ткани (на 19.11.2026). По спецификации: 1200 шт × 1100 ₽ (лимонный, розовый по 300; т.-синий, бежевый, голубой по 200). Источник: спец 1150, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
     },
     {
       "id": "1166",
@@ -6102,12 +6165,17 @@
       "order_date": "2026-10-27",
       "item": "Спортивный костюм брючный ПУКРА",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "экрю",
+          "hex": "#efe6d2"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 140,
       "unit_price": 900,
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/1166.jpg",
       "photo2": "",
       "shipment": {
         "date": "",
@@ -6156,12 +6224,81 @@
       "order_date": "2026-11-06",
       "item": "Блузка женская с коротким рукавом",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "фисташковый",
+          "hex": "#a9d39e"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0"
+        },
+        {
+          "name": "зеленый леопард",
+          "hex": "#3f9b4f"
+        },
+        {
+          "name": "черно-белая зебра",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "розовая фуксия",
+          "hex": "#ef9cbc"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "леопардовый",
+          "hex": "#b08a5a"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "васильковый",
+          "hex": "#4a6fe3"
+        },
+        {
+          "name": "оранжевый",
+          "hex": "#ef7d2d"
+        },
+        {
+          "name": "красный",
+          "hex": "#d33a3a"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "изумрудный",
+          "hex": "#1f8a5a"
+        },
+        {
+          "name": "бордовый",
+          "hex": "#7b1f33"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63"
+        },
+        {
+          "name": "светло-розовый",
+          "hex": "#ef9cbc"
+        },
+        {
+          "name": "пурпурный",
+          "hex": "#8e2a7a"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 4160,
       "unit_price": 250,
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/1196.jpg",
       "photo2": "",
       "shipment": {
         "date": "",
@@ -6210,12 +6347,29 @@
       "order_date": "2026-11-06",
       "item": "Костюм спорт женский без начеса, бомбер на молнии",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "светло-серый",
+          "hex": "#9a9a9a"
+        },
+        {
+          "name": "темно-коричневый",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "графит",
+          "hex": "#3d4045"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 800,
       "unit_price": 1100,
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/1199.jpg",
       "photo2": "",
       "shipment": {
         "date": "",
@@ -6264,12 +6418,49 @@
       "order_date": "2026-11-06",
       "item": "Брюки палаццо женские ЛАПША",
       "item_article": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "серый",
+          "hex": "#9a9a9a"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "светло-серый",
+          "hex": "#9a9a9a"
+        },
+        {
+          "name": "молочный",
+          "hex": "#f4eedf"
+        },
+        {
+          "name": "изумрудный",
+          "hex": "#1f8a5a"
+        },
+        {
+          "name": "индиго",
+          "hex": "#3b3f8f"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "кофе",
+          "hex": "#6f4e37"
+        },
+        {
+          "name": "бело-коричневый леопард",
+          "hex": "#f7f7f7"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 2000,
       "unit_price": 280,
       "workshops": [],
-      "photo": "",
+      "photo": "assets/photos/1200.jpg",
       "photo2": "",
       "shipment": {
         "date": "",
