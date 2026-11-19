@@ -22,6 +22,29 @@
   .top .gallery { margin: 0; }
   .top-docs h3 { margin: 0; font-size: 15px; }
   @media (max-width: 900px) { .top { grid-template-columns: minmax(0, 1fr); } }
+  /* Закупка ткани: таблица расцветок с расходом и метражом. */
+  .fab-wrap { overflow: auto; min-height: 0; }
+  .fab-head { margin: 4px 0 12px; }
+  .fab-head b { font-size: 17px; }
+  table.fab { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.fab th, table.fab td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: middle; }
+  table.fab th { background: color-mix(in srgb, var(--ink) 7%, transparent); font-size: 12px; }
+  table.fab td.ph { width: 52px; padding: 3px; }
+  table.fab td.ph img { width: 46px; height: 60px; object-fit: contain; display: block; }
+  table.fab input { width: 72px; padding: 4px 6px; }
+  table.fab .m { font-weight: 600; white-space: nowrap; }
+  table.fab td.x, table.fab th.x { width: 34px; padding: 2px; text-align: center; }
+  table.fab td.x .icon { width: 26px; height: 26px; font-size: 12px; }
+  table.fab tfoot td { background: color-mix(in srgb, var(--ink) 7%, transparent); font-weight: 600; }
+  @media (max-width: 640px) {
+    table.fab .mat, table.fab .sz { display: none; }
+    table.fab { font-size: 12.5px; }
+    table.fab th, table.fab td { padding: 4px 5px; }
+    table.fab td.ph { width: 36px; padding: 2px; }
+    table.fab td.ph img { width: 32px; height: 42px; }
+    table.fab input { width: 34px; padding: 3px; }
+    table.fab .m { white-space: normal; }
+  }
   .hero.own { object-fit: cover; padding: 0; }
 </style>
 </head>
@@ -41,12 +64,25 @@
       <div class="bl-frame" id="blank-frame"><div class="bl-scale" id="blank-sheet"></div></div>
     </div>
   </div>
+
+  <div class="overlay hide" id="fabric-box">
+    <div class="sheet-view">
+      <div class="row-line">
+        <b>Закупка ткани</b>
+        <span class="src" id="fabric-state"></span>
+        <a class="btn primary" id="fabric-save" style="margin-left:auto">Скачать PDF</a>
+        <button id="fabric-close">Закрыть</button>
+      </div>
+      <div class="fab-wrap" id="fabric-sheet"></div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { money } from "./lib/ledger.js";
 import { colorList } from "./lib/colors.js";
 import { docsOf } from "./lib/documents.js";
+import { hasFabric } from "./lib/fabric.js";
 import { bindDocs, docsHtml } from "./lib/docview.js";
 import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
@@ -70,6 +106,10 @@ try {
     document.title = `${order.get("order_no") || order.key} — карточка заказа`;
     render(order, ride);
     document.querySelector("#blank").onclick = () => showBlank(order);
+    const fb = document.querySelector("#fabric");
+    if (fb) fb.onclick = () => showFabric(order);
+    document.querySelector("#fabric-close").onclick = () =>
+      document.querySelector("#fabric-box").classList.add("hide");
     document.querySelector("#blank-close").onclick = () =>
       document.querySelector("#blank-box").classList.add("hide");
   }
@@ -84,7 +124,8 @@ function render(o, ride) {
   const docs = all.filter((d) => !d.folder), folder = all.find((d) => d.folder);
   const st = status(o);
   const price = o.get("unit_price");
-  const edit = `<button id="blank">Скачать бланк</button>
+  const edit = `${hasFabric(o) ? '<button id="fabric">Закупка ткани</button>' : ""}
+    <button id="blank">Скачать бланк</button>
     <a class="btn" href="./admin.html?id=${encodeURIComponent(o.key)}">Править</a>`;
 
   document.querySelector("#body").innerHTML = `
@@ -228,6 +269,102 @@ async function showBlank(o) {
   } catch (err) {
     state.textContent = `Не получилось собрать бланк: ${err.message}`;
   }
+}
+
+/**
+ * Закупка ткани: расход вписывают в любую строку — он встаёт во все, метраж
+ * по цветам и итог пересчитываются сразу, PDF собирается с тем же расходом.
+ * Фото грузятся только здесь, при открытии окна: на скорость карточки и
+ * списка заказов они не влияют.
+ */
+let fabricRate = null;
+const fabricSkip = new Map();   // ключ заказа → убранные цвета
+const cap = (v) => String(v || "").charAt(0).toUpperCase() + String(v || "").slice(1);
+async function showFabric(o) {
+  const box = document.querySelector("#fabric-box");
+  const state = document.querySelector("#fabric-state");
+  const save = document.querySelector("#fabric-save");
+  const sheet = document.querySelector("#fabric-sheet");
+  box.classList.remove("hide");
+  const { fabricRows, fabricPdf, fabricName, fmtMeters, meters, parseRate, totals } = await import("./lib/fabric.js");
+  const rows = fabricRows(o);
+  const date = o.get("order_date");
+  sheet.innerHTML = `<div class="fab-head"><b>Договор № ${escapeHtml(o.contract_no || o.key)}${
+      date ? ` от ${dateRu(date)}` : ""}</b><div class="src">${escapeHtml(o.get("item") || "")}</div></div>
+    <table class="fab"><thead><tr><th>Фото</th><th>Цвет</th><th class="mat">Материал</th><th class="sz">Размеры</th>
+      <th>Кол-во</th><th>Расход,<br>м</th><th>Метраж<br>к закупке</th><th class="x"></th></tr></thead>
+    <tbody>${rows.map((r, i) => `<tr>
+      <td class="ph">${r.photo ? `<img src="./${escapeHtml(r.photo)}" alt="" loading="lazy">` : ""}</td>
+      <td><b>${escapeHtml(cap(r.name))}</b></td>
+      <td class="mat">${escapeHtml(r.material || "—")}</td>
+      <td class="sz">${escapeHtml(r.sizes || "—")}</td>
+      <td>${qty(r.qty)} шт</td>
+      <td><input inputmode="decimal" data-rate="${i}" aria-label="Расход на 1 шт, м"></td>
+      <td class="m" data-m="${i}">0 м</td>
+      <td class="x"><button type="button" class="icon" data-skip="${i}" title="Убрать цвет из закупки"
+        aria-label="Убрать ${escapeHtml(r.name)} из закупки">✕</button></td></tr>`).join("")}</tbody>
+    <tfoot><tr><td colspan="2">Итого</td><td class="mat"></td><td class="sz"></td><td id="fab-qty"></td><td></td><td class="m" id="fab-total">0 м</td><td class="x"></td></tr></tfoot>
+    </table>
+    <p class="src" id="fab-skipped" style="margin:10px 0 0"></p>`;
+  const inputs = [...sheet.querySelectorAll("[data-rate]")];
+  // Убранные цвета: ткань на них уже куплена или их не шьют. Только для
+  // этой закупки и этого PDF — в карточке цвет остаётся.
+  const skip = fabricSkip.get(o.key) || new Set();
+  fabricSkip.set(o.key, skip);
+  const draw = () => {
+    const left = rows.filter((r) => !skip.has(r.name));
+    rows.forEach((r, i) => sheet.querySelectorAll("tbody tr")[i].classList.toggle("hide", skip.has(r.name)));
+    for (const el of sheet.querySelectorAll("[data-m]")) {
+      el.textContent = `${fmtMeters(meters(rows[+el.dataset.m].qty, fabricRate))} м`;
+    }
+    sheet.querySelector("#fab-qty").textContent = `${qty(totals(left, null).qty)} шт`;
+    sheet.querySelector("#fab-total").textContent = `${fmtMeters(totals(left, fabricRate).meters)} м`;
+    const gone = rows.filter((r) => skip.has(r.name));
+    const note = sheet.querySelector("#fab-skipped");
+    note.innerHTML = gone.length ? `Убраны из закупки: ${gone.map((r) => escapeHtml(cap(r.name))).join(", ")}.
+      <a href="#" id="fab-restore">Вернуть все</a>` : "";
+    const back = sheet.querySelector("#fab-restore");
+    if (back) back.onclick = (e) => { e.preventDefault(); skip.clear(); delete save.dataset.ready; draw(); };
+  };
+  for (const b of sheet.querySelectorAll("[data-skip]")) {
+    b.onclick = () => { skip.add(rows[+b.dataset.skip].name); delete save.dataset.ready; draw(); };
+  }
+  const shown = fabricRate === null ? "" : fmtMeters(fabricRate);
+  for (const el of inputs) {
+    el.value = shown;
+    el.addEventListener("input", () => {
+      fabricRate = parseRate(el.value);
+      for (const other of inputs) if (other !== el) other.value = el.value;
+      draw();
+    });
+  }
+  draw();
+
+  save.download = fabricName(o);
+  save.onclick = async (e) => {
+    if (save.dataset.ready === String(fabricRate)) return;   // уже собран с этим расходом и цветами
+    e.preventDefault();
+    state.textContent = "Собираю PDF…";
+    try {
+      const { loadFonts } = await import("./lib/pdf.js");
+      const fonts = await loadFonts();
+      const photos = new Map();
+      await Promise.all(rows.filter((r) => r.photo).map(async (r) => {
+        try { photos.set(r.photo, new Uint8Array(await (await fetch(`./${r.photo}`)).arrayBuffer())); } catch {}
+      }));
+      const url = URL.createObjectURL(new Blob([fabricPdf(o, fonts, fabricRate, photos, skip)], { type: "application/pdf" }));
+      if (save.dataset.url) URL.revokeObjectURL(save.dataset.url);
+      save.dataset.url = url;
+      save.href = url;
+      save.dataset.ready = String(fabricRate);
+      state.textContent = "";
+      save.click();
+    } catch (err) {
+      state.textContent = `Не получилось собрать PDF: ${err.message}`;
+    }
+  };
+  for (const el of inputs) el.addEventListener("input", () => { delete save.dataset.ready; });
+  state.textContent = "Впишите расход на 1 шт — он встанет во все цвета. ✕ убирает цвет из закупки. В карточку не сохраняется.";
 }
 
 /** Ужать лист под ширину окна, сохранив печатные пропорции. */
