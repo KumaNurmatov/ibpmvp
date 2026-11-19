@@ -39,11 +39,22 @@ export function guessHex(name) {
   return best ? best.hex : "";
 }
 
-/** Цвета из записи заказа: пустые строки, добавленные «на всякий случай», выпадают. */
+/**
+ * Цвета из записи заказа: пустые строки, добавленные «на всякий случай»,
+ * выпадают. Сколько штук этого цвета, какие размеры и фото расцветки —
+ * по желанию: они нужны таблице закупки ткани и есть не у всех заказов.
+ */
 export function normalizeColors(list) {
   return (Array.isArray(list) ? list : [])
     .filter((c) => String(c?.name || "").trim() || c?.hex)
-    .map((c) => ({ name: String(c.name || "").trim(), hex: /^#[0-9a-f]{6}$/i.test(c.hex || "") ? c.hex : "" }));
+    .map((c) => {
+      const out = { name: String(c.name || "").trim(), hex: /^#[0-9a-f]{6}$/i.test(c.hex || "") ? c.hex : "" };
+      const qty = Number(c.qty);
+      if (c.qty !== null && c.qty !== undefined && c.qty !== "" && Number.isFinite(qty) && qty >= 0) out.qty = qty;
+      if (String(c.sizes || "").trim()) out.sizes = String(c.sizes).trim();
+      if (String(c.photo || "").trim()) out.photo = String(c.photo).trim();
+      return out;
+    });
 }
 
 /**

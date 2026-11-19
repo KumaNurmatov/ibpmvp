@@ -73,7 +73,7 @@
 import { money, normalizeContract, orderFromRecord } from "./lib/ledger.js";
 import { WORKSHOP_COLORS, blankOrder, canEdit, deletePhoto, repo, save, savePhoto,
          setRepo, setToken, token } from "./lib/store.js";
-import { guessHex } from "./lib/colors.js";
+import { guessHex, normalizeColors } from "./lib/colors.js";
 import { DOC_KINDS, guessKind } from "./lib/documents.js";
 import { photoFor } from "./lib/photo.js";
 import { stage, stageOf } from "./lib/stages.js";
@@ -198,6 +198,7 @@ function drawEditor(record) {
         ${calc("order_sum", "Сумма заказа")}
         ${row("tnved", "ТН ВЭД", r.tnved, "text", "например, 6203 42")}
         ${row("item_article", "Артикул", r.item_article)}
+        ${row("material", "Материал", r.material)}
         <tr>
           <th class="key">Цвета</th>
           <td class="val"><table class="sheet-rows colors-edit" id="colors"></table>
@@ -680,8 +681,8 @@ async function persist(r) {
   r.payments = r.payments.filter((p) => p.amount !== null || p.date);
   r.links = r.links.filter((l) => String(l.url || "").trim())
     .map(({ kind, ...l }) => (kind ? { ...l, kind } : l));
-  r.colors = r.colors.filter((c) => String(c.name || "").trim() || c.hex)
-    .map((c) => ({ name: String(c.name || "").trim(), hex: c.hex || "" }));
+  // Штуки, размеры и фото расцветки правкой цвета не теряются.
+  r.colors = normalizeColors(r.colors.map(({ manual, ...c }) => c));
 
   const i = data.orders.findIndex((o) => o.id === (current ?? r.id));
   if (i >= 0) data.orders[i] = r; else data.orders.push(r);

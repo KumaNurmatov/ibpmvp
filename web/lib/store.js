@@ -237,6 +237,7 @@ function normalize(data) {
       order_date: o.order_date ?? "",
       item: o.item ?? "",
       item_article: o.item_article ?? "",
+      material: o.material ?? "",
       // Оттенков у изделия бывает несколько: название как у заказчика и цвет метки.
       colors: normalizeColors(o.colors),
       tnved: o.tnved ?? "",
