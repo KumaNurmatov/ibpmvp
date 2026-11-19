@@ -5814,7 +5814,9 @@
       "tnved": "",
       "ordered_qty": 1260,
       "unit_price": 950,
-      "workshops": [],
+      "workshops": [
+        "Сулайман"
+      ],
       "photo": "assets/photos/1133.jpg",
       "photo2": "",
       "shipment": {
