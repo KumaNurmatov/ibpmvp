@@ -10,16 +10,18 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 <style>
-  /* Расчёт показываем с формулой: видно, откуда взялась цифра, как в таблице. */
-  .calc td:first-child { color: var(--muted); }
-  .calc .formula { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
-  .calc tr.total td { border-top: 2px solid var(--axis); font-size: 16px; }
   .links a { display: inline-block; margin: 0 10px 8px 0; }
   .acc { display: grid; gap: 16px; margin-bottom: 14px; }
   .acc-rings { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
   .acc-rings .src { margin-right: 18px; line-height: 1.3; }
   .hero { width: 36px; aspect-ratio: 3 / 4; height: auto; border-radius: 8px; object-fit: contain;
     background: var(--shot); padding: 2px; }
+  /* Документы справа от фото: под рукой, не надо листать вниз. */
+  .top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; margin: 0 0 18px; }
+  .top.solo { grid-template-columns: minmax(0, 1fr); }
+  .top .gallery { margin: 0; }
+  .top-docs h3 { margin: 0; font-size: 15px; }
+  @media (max-width: 900px) { .top { grid-template-columns: minmax(0, 1fr); } }
   .hero.own { object-fit: cover; padding: 0; }
 </style>
 </head>
@@ -44,7 +46,8 @@
 <script type="module">
 import { money } from "./lib/ledger.js";
 import { colorList } from "./lib/colors.js";
-import { docsOf, kindName } from "./lib/documents.js";
+import { docsOf } from "./lib/documents.js";
+import { bindDocs, docsHtml } from "./lib/docview.js";
 import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
 import { tasks } from "./lib/stages.js";
@@ -76,6 +79,9 @@ try {
 
 function render(o, ride) {
   const c = o.computed;
+  // Документы — как в разделе «Документы»: по видам, с просмотром здесь же.
+  const all = docsOf(o);
+  const docs = all.filter((d) => !d.folder), folder = all.find((d) => d.folder);
   const st = status(o);
   const price = o.get("unit_price");
   const edit = `<button id="blank">Скачать бланк</button>
@@ -94,18 +100,15 @@ function render(o, ride) {
       o.get("tnved") ? ` · ТН ВЭД ${escapeHtml(o.get("tnved"))}` : ""}${
       o.get("order_date") ? ` · заказ от ${dateRu(o.get("order_date"))}` : ""}</p>
     ${o.workshops.length ? `<div class="chips" style="margin:-10px 0 18px">${workshopChips(o)}</div>` : ""}
-    ${gallery(o)}
+    <div class="top${ownPhotos(o).length ? "" : " solo"}">
+      ${gallery(o)}
+      ${docs.length || folder ? `<section class="dcard top-docs">
+        <h3>Документы</h3>
+        ${docsHtml(docs, folder)}
+      </section>` : ""}
+    </div>
 
     ${todo(o)}
-
-    <div class="tiles">
-      ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
-      ${tile("Сумма отгрузки", money(c.shipment_sum), `${qty(o.get("shipped_qty"))} × ${money(price)}`)}
-      ${tile("Оплачено", money(c.paid), `${o.payments.length} ${plural(o.payments.length)}`)}
-      ${tile("Остаток", money(c.remainder),
-             c.remainder_units != null ? `≈ ${qty(c.remainder_units)} шт` : "нет данных об отгрузке",
-             (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
-    </div>
 
     <h2>Заказ</h2>
     <div class="card"><table>
@@ -145,6 +148,15 @@ function render(o, ride) {
     <div class="card">${acceptance(o)}</div>
 
     <h2>Платежи</h2>
+    <div class="tiles" style="margin-bottom:12px">
+      ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
+      ${tile("Сумма отгрузки", money(c.shipment_sum), `${qty(o.get("shipped_qty"))} × ${money(price)}`)}
+      ${tile("Оплачено", money(c.paid), `${o.payments.length} ${plural(o.payments.length)}`)}
+      ${tile("Остаток", money(c.remainder),
+             c.remainder_units != null ? `≈ ${qty(c.remainder_units)} шт` : "нет данных об отгрузке",
+             (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
+    </div>
+
     <div class="card">${o.payments.length ? `<table>
       <tr><th>Вид</th><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
       ${o.payments.map((p) => `<tr>
@@ -155,30 +167,6 @@ function render(o, ride) {
         <td>${escapeHtml(p.doc_number || "—")}${p.purpose
             ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
       </table>` : '<span class="src">Платежей нет.</span>'}</div>
-
-    <h2>Расчёт</h2>
-    <div class="card"><table class="calc">
-      ${calcRow("Сумма заказа", c.order_sum, `${qty(o.get("ordered_qty"))} шт × ${money(price)}`)}
-      ${calcRow("Сумма отгрузки", c.shipment_sum, `${qty(o.get("shipped_qty"))} шт × ${money(price)}`)}
-      ${calcRow("Оплачено", c.paid, o.payments.map((p) => money(p.amount)).join(" + ") || "платежей нет")}
-      ${c.transfers ? calcRow("Подтверждённые переносы", c.transfers, "со знаком + в заказ, − из него") : ""}
-      ${calcRow("Остаток", c.remainder,
-                `${money(c.shipment_sum)} − ${money(c.paid)}`, true)}
-      ${c.remainder_units != null
-        ? calcRow("В штуках по цене пошива", c.remainder_units,
-                  `${money(c.remainder)} ÷ ${money(price)}`, false, "шт") : ""}
-      ${c.rejected_sum !== null ? calcRow("Непринятое по приёмке", c.rejected_sum,
-          `${qty(c.rejected_qty)} шт × ${money(price)}`) : ""}
-      ${c.unexplained !== null ? calcRow(
-          c.settled ? "Сверх непринятого — ничего" : "Сверх непринятого", c.unexplained,
-          `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
-    </table></div>
-
-    ${o.links.length ? `<h2>Документы</h2><div class="card links">
-      ${docsOf(o).map((d) => `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">
-        <span class="src">${kindName(d.kind)}:</span> ${escapeHtml(d.title)} ↗</a>`).join("")}
-      <a href="./documents.html?q=${encodeURIComponent(o.contract_no || o.key)}">смотреть и скачать в разделе «Документы» →</a>
-      </div>` : ""}
 
     ${o.flags.length ? `<h2>Проверки</h2><div class="card">
       ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}
@@ -192,6 +180,7 @@ function render(o, ride) {
         : "срок исполнения не задан"}.${
       c.due_date ? ` Срок сдачи ${dateRu(c.due_date)}.` : ""}</p>
   `;
+  bindDocs(document.querySelector("#body"), [{ docs, folder }]);
 }
 
 // Объявлениями функций, а не const: render() вызывается выше по файлу, и
@@ -339,11 +328,6 @@ function tile(name, value, hint, cls = "") {
    <div class="hint">${escapeHtml(hint)}</div></div>`;
 }
 
-function calcRow(name, value, formula, total = false, unit = "") {
-  return `<tr class="${total ? "total" : ""}"><td>${escapeHtml(name)}
-     <div class="formula">${escapeHtml(formula)}</div></td>
-   <td class="num">${unit ? `${qty(value)} ${unit}` : money(value)}</td></tr>`;
-}
 
 function plural(n) {
   const t = n % 10, h = n % 100;
