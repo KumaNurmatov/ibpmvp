@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-16",
+  "updated": "2026-11-19",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -5367,18 +5367,47 @@
       "order_date": "2026-10-02",
       "item": "Спортивный костюм кофта зип/брюки",
       "item_article": "",
-      "colors": [],
-      "tnved": "",
+      "colors": [
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "синий",
+          "hex": "#2f5fcf"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "сливочный",
+          "hex": "#f1e6cc"
+        },
+        {
+          "name": "красный",
+          "hex": "#d33a3a"
+        },
+        {
+          "name": "серый",
+          "hex": "#9a9a9a"
+        }
+      ],
+      "tnved": "6104130000",
       "ordered_qty": 2600,
       "unit_price": 990,
       "workshops": [],
       "photo": "assets/photos/1084.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-11-20",
+        "qty": 1481,
+        "places": 32,
+        "weight_gross": 1312.65,
         "driver": "",
         "driver_phone": ""
       },
@@ -5429,18 +5458,55 @@
       "order_date": "2026-10-02",
       "item": "Рубашка оверсайз приталенная клеш",
       "item_article": "",
-      "colors": [],
-      "tnved": "",
+      "colors": [
+        {
+          "name": "коричневый в полоску",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "серый в полоску",
+          "hex": "#9a9a9a"
+        },
+        {
+          "name": "белый в полоску",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "розовый",
+          "hex": "#ef9cbc"
+        },
+        {
+          "name": "розовый в полоску",
+          "hex": "#ef9cbc"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "голубой в полоску",
+          "hex": "#8ec5ea"
+        },
+        {
+          "name": "голубой",
+          "hex": "#8ec5ea"
+        }
+      ],
+      "tnved": "6106100000",
       "ordered_qty": 3380,
       "unit_price": 500,
       "workshops": [],
       "photo": "assets/photos/1092.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-11-20",
+        "qty": 3285,
+        "places": 17,
+        "weight_gross": 716.8,
         "driver": "",
         "driver_phone": ""
       },
@@ -5615,18 +5681,51 @@
       "order_date": "2026-10-16",
       "item": "Блузка лапша с высоким горлом",
       "item_article": "БЛВЫСГОРЛО01лапша",
-      "colors": [],
-      "tnved": "",
+      "colors": [
+        {
+          "name": "белый",
+          "hex": "#f7f7f7"
+        },
+        {
+          "name": "бордо",
+          "hex": "#7b1f33"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63"
+        },
+        {
+          "name": "лимон",
+          "hex": "#f2e35a"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0"
+        },
+        {
+          "name": "хаки",
+          "hex": "#8b8656"
+        }
+      ],
+      "tnved": "6106200000",
       "ordered_qty": 1760,
       "unit_price": 230,
       "workshops": [],
       "photo": "assets/photos/1132.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-11-20",
+        "qty": 1823,
+        "places": 8,
+        "weight_gross": 326.15,
         "driver": "",
         "driver_phone": ""
       },
@@ -5739,18 +5838,23 @@
       "order_date": "2026-10-22",
       "item": "Спортивный костюм кофта зип/брюки",
       "item_article": "",
-      "colors": [],
-      "tnved": "",
+      "colors": [
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0"
+        }
+      ],
+      "tnved": "6104130000",
       "ordered_qty": 400,
       "unit_price": 990,
       "workshops": [],
       "photo": "assets/photos/1147.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-11-20",
+        "qty": 143,
+        "places": 4,
+        "weight_gross": 141.1,
         "driver": "",
         "driver_phone": ""
       },
@@ -5865,15 +5969,15 @@
       "item_article": "",
       "colors": [
         {
-          "name": "коричневый",
-          "hex": "#7b4b2a"
-        },
-        {
           "name": "бежевый",
           "hex": "#d8c3a0"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a"
         }
       ],
-      "tnved": "",
+      "tnved": "6104192000",
       "ordered_qty": 960,
       "unit_price": 1280,
       "workshops": [
@@ -5882,10 +5986,10 @@
       "photo": "assets/photos/1149.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
-        "places": null,
-        "weight_gross": null,
+        "date": "2026-11-20",
+        "qty": 942,
+        "places": 19,
+        "weight_gross": 915.15,
         "driver": "",
         "driver_phone": ""
       },
@@ -6236,6 +6340,26 @@
           "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 11 от 09.10.2026"
         }
       ],
+      "note": ""
+    },
+    {
+      "id": "2026-11-20",
+      "date": "2026-11-20",
+      "driver": "",
+      "driver_phone": "",
+      "rate_per_kg": 80,
+      "weight_accepted": null,
+      "orders": [
+        "1132",
+        "1147",
+        "1084",
+        "1092",
+        "1149"
+      ],
+      "act_no": "",
+      "act_date": "",
+      "links": [],
+      "payments": [],
       "note": ""
     }
   ],
