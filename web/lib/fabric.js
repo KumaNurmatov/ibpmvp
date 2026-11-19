@@ -17,6 +17,19 @@ export function fabricRows(order) {
     .map((c) => ({ name: c.name, qty: c.qty, sizes: c.sizes || "", photo: c.photo || "", material }));
 }
 
+/**
+ * Сколько штук на каждый размер: размеры идут через 2 («40–64» — 13 штук),
+ * и если количество делится поровну — «по 25 на размер». Не делится или
+ * ряд записан иначе — null, строку не пишем.
+ */
+export function perSize(qty, sizes) {
+  const m = String(sizes || "").match(/^\s*(\d{2})\s*[–-]\s*(\d{2})\s*$/);
+  if (!m) return null;
+  const n = (Number(m[2]) - Number(m[1])) / 2 + 1;
+  if (!Number.isInteger(n) || n < 1 || qty % n) return null;
+  return qty / n;
+}
+
 /** Есть ли что показывать: хотя бы у одного цвета известны штуки. */
 export const hasFabric = (order) => fabricRows(order).length > 0;
 
@@ -100,7 +113,10 @@ export function fabricPdf(order, fonts, rate, photos = new Map(), skip = new Set
     lines.forEach((l, k) => doc.text(l, x + 5, mid + (k - (lines.length - 1) / 2) * 11, { size: 9 }));
     x += cols[2][1];
     doc.text(r.sizes || "—", x + 5, mid, { size: 10 }); x += cols[3][1];
-    doc.text(`${r.qty} шт`, x + 5, mid, { size: 10.5, style: "bold" }); x += cols[4][1];
+    const each = perSize(r.qty, r.sizes);
+    doc.text(`${r.qty} шт`, x + 5, each ? mid - 5 : mid, { size: 10.5, style: "bold" });
+    if (each) doc.text(`по ${each} на размер`, x + 5, mid + 8, { size: 7.5, color: [0.4, 0.4, 0.4] });
+    x += cols[4][1];
     doc.text(rateText, x + 5, mid, { size: 10 }); x += cols[5][1];
     doc.text(`${fmtMeters(meters(r.qty, rate))} м`, x + 5, mid, { size: 10.5, style: "bold" });
     y += RH;

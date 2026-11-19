@@ -286,7 +286,7 @@ async function showFabric(o) {
   const save = document.querySelector("#fabric-save");
   const sheet = document.querySelector("#fabric-sheet");
   box.classList.remove("hide");
-  const { fabricRows, fabricPdf, fabricName, fmtMeters, meters, parseRate, totals } = await import("./lib/fabric.js");
+  const { fabricRows, fabricPdf, fabricName, fmtMeters, meters, parseRate, perSize, totals } = await import("./lib/fabric.js");
   const rows = fabricRows(o);
   const date = o.get("order_date");
   sheet.innerHTML = `<div class="fab-head"><b>Договор № ${escapeHtml(o.contract_no || o.key)}${
@@ -298,7 +298,7 @@ async function showFabric(o) {
       <td><b>${escapeHtml(cap(r.name))}</b></td>
       <td class="mat">${escapeHtml(r.material || "—")}</td>
       <td class="sz">${escapeHtml(r.sizes || "—")}</td>
-      <td>${qty(r.qty)} шт</td>
+      <td>${qty(r.qty)} шт${perSize(r.qty, r.sizes) ? `<div class="src">по ${perSize(r.qty, r.sizes)} на размер</div>` : ""}</td>
       <td><input inputmode="decimal" data-rate="${i}" aria-label="Расход на 1 шт, м"></td>
       <td class="m" data-m="${i}">0 м</td>
       <td class="x"><button type="button" class="icon" data-skip="${i}" title="Убрать цвет из закупки"

@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import { normalizeColors } from "../lib/colors.js";
-import { fabricPdf, fabricRows, fmtMeters, hasFabric, meters, parseRate, totals } from "../lib/fabric.js";
+import { fabricPdf, fabricRows, fmtMeters, hasFabric, meters, parseRate, perSize, totals } from "../lib/fabric.js";
 import { orderFromRecord } from "../lib/ledger.js";
 import { jpegSize } from "../lib/pdf.js";
 
@@ -67,5 +67,12 @@ describe("закупка ткани", () => {
     const all = new TextDecoder("latin1").decode(fabricPdf(order(colors), fonts, 1));
     const one = new TextDecoder("latin1").decode(fabricPdf(order(colors), fonts, 1, new Map(), new Set(["черный"])));
     assert.ok(one.length < all.length);
+  });
+
+  it("штук на размер — когда делится поровну", () => {
+    assert.equal(perSize(325, "40–64"), 25);
+    assert.equal(perSize(300, "42-60"), 30);
+    assert.equal(perSize(301, "42–60"), null);
+    assert.equal(perSize(100, "S–XL"), null);
   });
 });
