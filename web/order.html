@@ -10,10 +10,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./styles.css">
 <style>
-  /* Расчёт показываем с формулой: видно, откуда взялась цифра, как в таблице. */
-  .calc td:first-child { color: var(--muted); }
-  .calc .formula { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
-  .calc tr.total td { border-top: 2px solid var(--axis); font-size: 16px; }
   .links a { display: inline-block; margin: 0 10px 8px 0; }
   .acc { display: grid; gap: 16px; margin-bottom: 14px; }
   .acc-rings { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -171,24 +167,6 @@ function render(o, ride) {
         <td>${escapeHtml(p.doc_number || "—")}${p.purpose
             ? `<div class="src">${escapeHtml(p.purpose)}</div>` : ""}</td></tr>`).join("")}
       </table>` : '<span class="src">Платежей нет.</span>'}</div>
-
-    <h2>Расчёт</h2>
-    <div class="card"><table class="calc">
-      ${calcRow("Сумма заказа", c.order_sum, `${qty(o.get("ordered_qty"))} шт × ${money(price)}`)}
-      ${calcRow("Сумма отгрузки", c.shipment_sum, `${qty(o.get("shipped_qty"))} шт × ${money(price)}`)}
-      ${calcRow("Оплачено", c.paid, o.payments.map((p) => money(p.amount)).join(" + ") || "платежей нет")}
-      ${c.transfers ? calcRow("Подтверждённые переносы", c.transfers, "со знаком + в заказ, − из него") : ""}
-      ${calcRow("Остаток", c.remainder,
-                `${money(c.shipment_sum)} − ${money(c.paid)}`, true)}
-      ${c.remainder_units != null
-        ? calcRow("В штуках по цене пошива", c.remainder_units,
-                  `${money(c.remainder)} ÷ ${money(price)}`, false, "шт") : ""}
-      ${c.rejected_sum !== null ? calcRow("Непринятое по приёмке", c.rejected_sum,
-          `${qty(c.rejected_qty)} шт × ${money(price)}`) : ""}
-      ${c.unexplained !== null ? calcRow(
-          c.settled ? "Сверх непринятого — ничего" : "Сверх непринятого", c.unexplained,
-          `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
-    </table></div>
 
     ${o.flags.length ? `<h2>Проверки</h2><div class="card">
       ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}
@@ -350,11 +328,6 @@ function tile(name, value, hint, cls = "") {
    <div class="hint">${escapeHtml(hint)}</div></div>`;
 }
 
-function calcRow(name, value, formula, total = false, unit = "") {
-  return `<tr class="${total ? "total" : ""}"><td>${escapeHtml(name)}
-     <div class="formula">${escapeHtml(formula)}</div></td>
-   <td class="num">${unit ? `${qty(value)} ${unit}` : money(value)}</td></tr>`;
-}
 
 function plural(n) {
   const t = n % 10, h = n % 100;
