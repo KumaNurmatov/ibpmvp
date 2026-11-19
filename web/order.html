@@ -20,6 +20,12 @@
   .acc-rings .src { margin-right: 18px; line-height: 1.3; }
   .hero { width: 36px; aspect-ratio: 3 / 4; height: auto; border-radius: 8px; object-fit: contain;
     background: var(--shot); padding: 2px; }
+  /* Документы справа от фото: под рукой, не надо листать вниз. */
+  .top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; margin: 0 0 18px; }
+  .top.solo { grid-template-columns: minmax(0, 1fr); }
+  .top .gallery { margin: 0; }
+  .top-docs h3 { margin: 0; font-size: 15px; }
+  @media (max-width: 900px) { .top { grid-template-columns: minmax(0, 1fr); } }
   .hero.own { object-fit: cover; padding: 0; }
 </style>
 </head>
@@ -98,18 +104,15 @@ function render(o, ride) {
       o.get("tnved") ? ` · ТН ВЭД ${escapeHtml(o.get("tnved"))}` : ""}${
       o.get("order_date") ? ` · заказ от ${dateRu(o.get("order_date"))}` : ""}</p>
     ${o.workshops.length ? `<div class="chips" style="margin:-10px 0 18px">${workshopChips(o)}</div>` : ""}
-    ${gallery(o)}
+    <div class="top${ownPhotos(o).length ? "" : " solo"}">
+      ${gallery(o)}
+      ${docs.length || folder ? `<section class="dcard top-docs">
+        <h3>Документы</h3>
+        ${docsHtml(docs, folder)}
+      </section>` : ""}
+    </div>
 
     ${todo(o)}
-
-    <div class="tiles">
-      ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
-      ${tile("Сумма отгрузки", money(c.shipment_sum), `${qty(o.get("shipped_qty"))} × ${money(price)}`)}
-      ${tile("Оплачено", money(c.paid), `${o.payments.length} ${plural(o.payments.length)}`)}
-      ${tile("Остаток", money(c.remainder),
-             c.remainder_units != null ? `≈ ${qty(c.remainder_units)} шт` : "нет данных об отгрузке",
-             (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
-    </div>
 
     <h2>Заказ</h2>
     <div class="card"><table>
@@ -149,6 +152,15 @@ function render(o, ride) {
     <div class="card">${acceptance(o)}</div>
 
     <h2>Платежи</h2>
+    <div class="tiles" style="margin-bottom:12px">
+      ${tile("Сумма заказа", money(c.order_sum), `${qty(o.get("ordered_qty"))} × ${money(price)}`)}
+      ${tile("Сумма отгрузки", money(c.shipment_sum), `${qty(o.get("shipped_qty"))} × ${money(price)}`)}
+      ${tile("Оплачено", money(c.paid), `${o.payments.length} ${plural(o.payments.length)}`)}
+      ${tile("Остаток", money(c.remainder),
+             c.remainder_units != null ? `≈ ${qty(c.remainder_units)} шт` : "нет данных об отгрузке",
+             (c.remainder || 0) > 0.5 ? "bad" : (c.remainder === 0 ? "ok" : ""))}
+    </div>
+
     <div class="card">${o.payments.length ? `<table>
       <tr><th>Вид</th><th>Дата</th><th class="num">Сумма</th><th>Документ</th></tr>
       ${o.payments.map((p) => `<tr>
@@ -177,10 +189,6 @@ function render(o, ride) {
           c.settled ? "Сверх непринятого — ничего" : "Сверх непринятого", c.unexplained,
           `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
     </table></div>
-
-    ${docs.length || folder ? `<h2>Документы</h2><div class="dcard">
-      ${docsHtml(docs, folder)}
-      </div>` : ""}
 
     ${o.flags.length ? `<h2>Проверки</h2><div class="card">
       ${o.flags.map((f) => `<div class="flag ${f.level}">${escapeHtml(f.message)}</div>`).join("")}
