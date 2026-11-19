@@ -44,7 +44,8 @@
 <script type="module">
 import { money } from "./lib/ledger.js";
 import { colorList } from "./lib/colors.js";
-import { docsOf, kindName } from "./lib/documents.js";
+import { docsOf } from "./lib/documents.js";
+import { bindDocs, docsHtml } from "./lib/docview.js";
 import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
 import { tasks } from "./lib/stages.js";
@@ -76,6 +77,9 @@ try {
 
 function render(o, ride) {
   const c = o.computed;
+  // Документы — как в разделе «Документы»: по видам, с просмотром здесь же.
+  const all = docsOf(o);
+  const docs = all.filter((d) => !d.folder), folder = all.find((d) => d.folder);
   const st = status(o);
   const price = o.get("unit_price");
   const edit = `<button id="blank">Скачать бланк</button>
@@ -174,10 +178,8 @@ function render(o, ride) {
           `${money(c.remainder)} − ${money(c.rejected_sum)}`, true) : ""}
     </table></div>
 
-    ${o.links.length ? `<h2>Документы</h2><div class="card links">
-      ${docsOf(o).map((d) => `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">
-        <span class="src">${kindName(d.kind)}:</span> ${escapeHtml(d.title)} ↗</a>`).join("")}
-      <a href="./documents.html?q=${encodeURIComponent(o.contract_no || o.key)}">смотреть и скачать в разделе «Документы» →</a>
+    ${docs.length || folder ? `<h2>Документы</h2><div class="dcard">
+      ${docsHtml(docs, folder)}
       </div>` : ""}
 
     ${o.flags.length ? `<h2>Проверки</h2><div class="card">
@@ -192,6 +194,7 @@ function render(o, ride) {
         : "срок исполнения не задан"}.${
       c.due_date ? ` Срок сдачи ${dateRu(c.due_date)}.` : ""}</p>
   `;
+  bindDocs(document.querySelector("#body"), [{ docs, folder }]);
 }
 
 // Объявлениями функций, а не const: render() вызывается выше по файлу, и

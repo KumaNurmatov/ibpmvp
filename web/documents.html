@@ -32,29 +32,14 @@
 
   <div class="cards" id="cards"></div>
 
-  <div class="overlay hide" id="view-box">
-    <div class="sheet-view">
-      <div class="row-line">
-        <b id="view-title"></b>
-        <a class="btn primary" id="view-save" style="margin-left:auto">Скачать</a>
-        <a class="btn" id="view-open" target="_blank" rel="noopener">Открыть в Drive ↗</a>
-        <button id="view-close">Закрыть</button>
-      </div>
-      <iframe id="view-frame" title="Просмотр документа" allow="autoplay"></iframe>
-    </div>
-  </div>
 </div>
 
 <script type="module">
-import { DOC_KINDS, docsOf, haystack, kindName } from "./lib/documents.js";
+import { DOC_KINDS, docsOf, haystack } from "./lib/documents.js";
+import { bindDocs, docsHtml } from "./lib/docview.js";
 import { escapeHtml, fatal, loadOrders, mountShell } from "./lib/shell.js";
 
 mountShell("documents.html");
-
-// Объявлены до первой отрисовки: страница рисуется сразу после загрузки данных.
-const EYE = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6"/></svg>`;
-const FOLDER = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3zM3 11h18"/></svg>`;
-const DOWN = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>`;
 
 /** «1 договор», «3 договора», «5 договоров» — формы слова по числу. */
 const plural = (n, [one, few, many]) =>
@@ -79,9 +64,6 @@ try {
   drawKinds();
   document.querySelector("#q").addEventListener("input", draw);
   document.querySelector("#empty").addEventListener("input", draw);
-  document.querySelector("#view-close").onclick = closeView;
-  document.querySelector("#view-box").addEventListener("click", (e) => { if (e.target.id === "view-box") closeView(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeView(); });
   draw();
 } catch (err) {
   fatal(`Не удалось загрузить данные: ${err.message}`);
@@ -112,13 +94,7 @@ function draw() {
     ? shown.map(card).join("")
     : '<div class="card src">Ничего не нашлось.</div>';
 
-  for (const b of document.querySelectorAll("[data-view]")) {
-    const [i, j] = b.dataset.view.split(":").map(Number);
-    b.onclick = () => openView(shown[i].docs[j]);
-  }
-  for (const b of document.querySelectorAll("[data-folder]")) {
-    b.onclick = () => openView(shown[+b.dataset.folder].folder);
-  }
+  bindDocs(document.querySelector("#cards"), shown);
 }
 
 /**
@@ -133,41 +109,10 @@ function card({ order: o, docs, folder }, i) {
       <a class="no" href="./order.html?id=${encodeURIComponent(o.key)}">${escapeHtml(o.contract_no || o.key)}</a>
       <div class="what">${escapeHtml(o.get("order_no") || "")} · ${escapeHtml(o.get("item") || "изделие не указано")}</div>
     </div>
-    ${docs.length ? `<ul class="dlist">${docs.map((d, j) => `<li>
-        <span class="kind">${kindName(d.kind)}</span>
-        ${d.preview
-          ? `<button type="button" class="name" data-view="${i}:${j}" title="${escapeHtml(d.title)}">${escapeHtml(d.title)}</button>`
-          : `<a class="name" href="${escapeHtml(d.url)}" target="_blank" rel="noopener" title="${escapeHtml(d.title)}">${escapeHtml(d.title)} ↗</a>`}
-        <span class="acts">
-          ${d.preview ? `<button type="button" class="icon" data-view="${i}:${j}" title="Смотреть" aria-label="Смотреть">${EYE}</button>` : ""}
-          ${d.download ? `<a class="btn icon" href="${escapeHtml(d.download)}" title="Скачать" aria-label="Скачать">${DOWN}</a>` : ""}
-        </span>
-      </li>`).join("")}</ul>` : '<p class="src" style="margin:0">Документов нет — ссылки добавляются в карточке заказа.</p>'}
-    ${folder ? `<div class="dfolder">
-      <span class="fname">${FOLDER}<span>Папка договора</span></span>
-      <span class="acts">
-        <button type="button" class="icon" data-folder="${i}" title="Смотреть папку" aria-label="Смотреть папку">${EYE}</button>
-        <a class="btn" href="${escapeHtml(folder.url)}" target="_blank" rel="noopener"
-           title="Откроется папка в Google Drive — там «Скачать» отдаёт её архивом">Скачать ↗</a>
-      </span>
-    </div>` : ""}
+    ${docsHtml(docs, folder, i)}
   </div>`;
 }
 
-function openView(d) {
-  document.querySelector("#view-title").textContent = `${kindName(d.kind)}: ${d.title}`;
-  document.querySelector("#view-frame").src = d.preview;
-  document.querySelector("#view-open").href = d.url;
-  const save = document.querySelector("#view-save");
-  save.classList.toggle("hide", !d.download);
-  if (d.download) save.href = d.download;
-  document.querySelector("#view-box").classList.remove("hide");
-}
-
-function closeView() {
-  document.querySelector("#view-box").classList.add("hide");
-  document.querySelector("#view-frame").src = "about:blank";
-}
 
 </script>
 </body>
