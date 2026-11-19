@@ -53,10 +53,10 @@ export const fabricName = (order) =>
  * на каждой странице. photos — JPEG по адресу фото (что не загрузилось,
  * остаётся пустой клеткой).
  */
-export function fabricPdf(order, fonts, rate, photos = new Map()) {
+export function fabricPdf(order, fonts, rate, photos = new Map(), skip = new Set()) {
   const W = mm(210), H = mm(297), M = mm(11);
   const doc = pdf({ width: W, height: H, fonts });
-  const rows = fabricRows(order);
+  const rows = fabricRows(order).filter((r) => !skip.has(r.name));
   const grid = [0.75, 0.75, 0.75];
   const cols = [["Фото", 52], ["Цвет", 118], ["Материал", 112], ["Размеры", 56], ["Кол-во", 70],
     ["Расход", 58]];
@@ -93,12 +93,11 @@ export function fabricPdf(order, fonts, rate, photos = new Map()) {
     if (jpeg) doc.image(jpeg, M + 3, y + 3, cols[0][1] - 6, RH - 6);
     const mid = y + RH / 2 + 3.5;
     x = M + cols[0][1];
-    doc.text(r.name.charAt(0).toUpperCase() + r.name.slice(1), x + 5, mid, { size: 10, style: "bold" }); x += cols[1][1];
-    const [m1, ...m2] = r.material.split(/,\s*/);
-    if (m2.length) {
-      doc.text(`${m1},`, x + 5, mid - 5, { size: 9.5 });
-      doc.text(m2.join(", "), x + 5, mid + 8, { size: 9.5 });
-    } else doc.text(r.material || "—", x + 5, mid, { size: 9.5 });
+    const name = wrap(doc, r.name.charAt(0).toUpperCase() + r.name.slice(1), cols[1][1] - 10, 10, "bold");
+    name.forEach((l, k) => doc.text(l, x + 5, mid + (k - (name.length - 1) / 2) * 12, { size: 10, style: "bold" }));
+    x += cols[1][1];
+    const lines = wrap(doc, r.material || "—", cols[2][1] - 10, 9);
+    lines.forEach((l, k) => doc.text(l, x + 5, mid + (k - (lines.length - 1) / 2) * 11, { size: 9 }));
     x += cols[2][1];
     doc.text(r.sizes || "—", x + 5, mid, { size: 10 }); x += cols[3][1];
     doc.text(`${r.qty} шт`, x + 5, mid, { size: 10.5, style: "bold" }); x += cols[4][1];
@@ -115,4 +114,16 @@ export function fabricPdf(order, fonts, rate, photos = new Map()) {
   doc.text(`${t.qty} шт`, xq + 5, y + 15, { size: 10.5, style: "bold" });
   doc.text(`${fmtMeters(t.meters)} м`, W - M - cols[cols.length - 1][1] + 5, y + 15, { size: 10.5, style: "bold" });
   return doc.bytes();
+}
+
+/** Разбить текст по словам на строки не шире width — не больше трёх. */
+function wrap(doc, value, width, size, style = "regular") {
+  const out = [];
+  let line = "";
+  for (const word of String(value).split(/\s+/)) {
+    const next = line ? `${line} ${word}` : word;
+    if (line && doc.widthOf(next, { size, style }) > width) { out.push(line); line = word; } else line = next;
+  }
+  if (line) out.push(line);
+  return out.slice(0, 3);
 }

@@ -61,4 +61,11 @@ describe("закупка ткани", () => {
     assert.match(text, /\/Count 2>>/);
     assert.equal((text.match(/\/Subtype\/Image/g) || []).length, 1);   // одно фото — один объект
   });
+
+  it("убранные цвета в PDF не попадают", () => {
+    const colors = [{ name: "белый", hex: "", qty: 100 }, { name: "черный", hex: "", qty: 50 }];
+    const all = new TextDecoder("latin1").decode(fabricPdf(order(colors), fonts, 1));
+    const one = new TextDecoder("latin1").decode(fabricPdf(order(colors), fonts, 1, new Map(), new Set(["черный"])));
+    assert.ok(one.length < all.length);
+  });
 });
