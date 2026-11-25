@@ -12,6 +12,7 @@ const ICONS = {
   ship: "M3 8l3-3h7l3 3v8H3zM16 10h3l2 3v3h-5M6 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3M18 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3",
   parse: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4",
   docs: "M3 6h6l2 2h10v11H3zM3 11h18",
+  models: "M9 4l3 2 3-2 5 3-2 4-2-1v10H8V10l-2 1-2-4z",
 };
 
 const PAGES = [
@@ -19,6 +20,7 @@ const PAGES = [
   ["orders.html", "Заказы", "orders"],
   ["shipments.html", "Отправки", "ship"],
   ["documents.html", "Документы", "docs"],
+  ["models.html", "Модели", "models"],
   ["admin.html", "Карточки", "cards"],
   ["parse.html", "Разбор документов", "parse"],
 ];

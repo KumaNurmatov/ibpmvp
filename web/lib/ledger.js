@@ -564,6 +564,7 @@ export function orderFromRecord(record) {
   set("tnved", record.tnved);
   set("item_article", record.item_article);
   set("material", record.material);
+  set("model", record.model);
   set("ordered_qty", num(record.ordered_qty));
   set("unit_price", num(record.unit_price));
 

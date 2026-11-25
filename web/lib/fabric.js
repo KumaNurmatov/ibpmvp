@@ -9,9 +9,12 @@
  */
 import { mm, pdf } from "./pdf.js";
 
-/** Строки таблицы: только цвета, у которых указано, сколько штук шить. */
-export function fabricRows(order) {
-  const material = order.get?.("material") || "";
+/**
+ * Строки таблицы: только цвета, у которых указано, сколько штук шить.
+ * Материал — из заказа, а если там пусто — из модели (`fallback`).
+ */
+export function fabricRows(order, fallback = "") {
+  const material = order.get?.("material") || fallback || "";
   return (order.colors || [])
     .filter((c) => Number.isFinite(c.qty))
     .map((c) => ({ name: c.name, qty: c.qty, sizes: c.sizes || "", photo: c.photo || "", material }));
@@ -66,10 +69,10 @@ export const fabricName = (order) =>
  * на каждой странице. photos — JPEG по адресу фото (что не загрузилось,
  * остаётся пустой клеткой).
  */
-export function fabricPdf(order, fonts, rate, photos = new Map(), skip = new Set()) {
+export function fabricPdf(order, fonts, rate, photos = new Map(), skip = new Set(), material = "") {
   const W = mm(210), H = mm(297), M = mm(11);
   const doc = pdf({ width: W, height: H, fonts });
-  const rows = fabricRows(order).filter((r) => !skip.has(r.name));
+  const rows = fabricRows(order, material).filter((r) => !skip.has(r.name));
   const grid = [0.75, 0.75, 0.75];
   const cols = [["Фото", 52], ["Цвет", 118], ["Материал", 112], ["Размеры", 56], ["Кол-во", 70],
     ["Расход", 58]];
@@ -133,7 +136,7 @@ export function fabricPdf(order, fonts, rate, photos = new Map(), skip = new Set
 }
 
 /** Разбить текст по словам на строки не шире width — не больше трёх. */
-function wrap(doc, value, width, size, style = "regular") {
+export function wrap(doc, value, width, size, style = "regular") {
   const out = [];
   let line = "";
   for (const word of String(value).split(/\s+/)) {

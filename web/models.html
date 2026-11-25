@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Модели</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🧵</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./styles.css">
+<style>
+  .pane { display: grid; grid-template-columns: 270px 1fr; gap: 12px; align-items: start; }
+  .list { max-height: 78vh; overflow: auto; position: sticky; top: 70px; }
+  .list button.pick {
+    width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; border: 0;
+    border-radius: 8px; padding: 6px 8px; background: none; overflow-wrap: anywhere;
+  }
+  .list button.pick:hover { background: var(--bg); }
+  .list button.pick[aria-current="true"] { background: var(--drop); color: var(--accent); }
+  .list .thumb { width: 34px; height: 45px; object-fit: cover; border-radius: 6px; background: var(--shot); flex: none; }
+  .list .src { display: block; }
+  .wide-btn { width: 100%; margin-bottom: 8px; }
+  .saved { color: var(--ok); }
+  .mphoto { width: 150px; aspect-ratio: 3 / 4; height: auto; object-fit: cover; border-radius: var(--r-sm);
+    background: var(--shot); display: block; margin-bottom: 8px; }
+  .acc-photo { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; background: var(--shot); display: block; }
+  .acc-edit td { vertical-align: middle; }
+  .acc-edit input, .acc-edit select { min-width: 0; }
+  .acc-wrap { overflow-x: auto; }
+  .acc-edit { min-width: 640px; }
+  .acc-edit [data-k="name"] { min-width: 170px; }
+  .acc-edit [data-k="size"] { min-width: 120px; }
+  .acc-edit .n { width: 70px; }
+  .acc-edit .u { width: 60px; }
+  .acc-edit select { width: 140px; }
+  .acc-edit label.file { cursor: pointer; display: inline-block; }
+  .acc-edit label.file input { display: none; }
+  .contracts a { display: inline-block; margin: 0 8px 6px 0; }
+  .sup-edit input { min-width: 0; }
+  @media (max-width: 760px) { .pane { grid-template-columns: 1fr; } .list { position: static; max-height: none; } }
+  @media (max-width: 640px) {
+    .acc-edit { min-width: 0; }
+    .acc-edit, .acc-edit tbody, .acc-edit tr, .acc-edit td { display: block; width: 100%; }
+    .acc-edit thead { display: none; }
+    .acc-edit tr { border-bottom: 1px solid var(--line); padding: 6px 0; }
+    .acc-edit .n, .acc-edit .u { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Модели</h1>
+  <p class="sub" id="updated"></p>
+
+  <div class="pane">
+    <div class="card list">
+      <button id="new" class="primary wide-btn hide">+ Новая модель</button>
+      <div id="list"></div>
+      <button id="sup" class="wide-btn" style="margin-top:10px">Поставщики</button>
+    </div>
+    <div id="editor"></div>
+  </div>
+</div>
+
+<script type="module">
+import { escapeHtml, fatal, loadOrders, mountShell, showUpdated } from "./lib/shell.js";
+import { canEdit, save, saveImage } from "./lib/store.js";
+import { newId, normalizeModel, normalizeSupplier, ordersOf } from "./lib/models.js";
+
+mountShell("models.html");
+
+let data = null;
+let current = null;              // ключ открытой модели; "suppliers" — справочник
+const pending = new Map();       // путь фото → файл, ждущий сохранения
+const editable = canEdit();
+
+document.querySelector("#new").classList.toggle("hide", !editable);
+document.querySelector("#new").onclick = () => {
+  const id = newId("m", data.models.map((m) => m.id));
+  data.models.push(normalizeModel({ id, name: "НОВАЯ_МОДЕЛЬ" }));
+  open(id);
+};
+document.querySelector("#sup").onclick = () => open("suppliers");
+
+
+function open(id) {
+  current = id;
+  history.replaceState(null, "", `?id=${encodeURIComponent(id)}`);
+  drawList();
+  if (id === "suppliers") drawSuppliers(); else drawModel(data.models.find((m) => m.id === id));
+}
+
+function drawList() {
+  document.querySelector("#list").innerHTML = data.models.map((m) => {
+    const n = ordersOf(data.orders, m).length;
+    return `<button class="pick" data-id="${escapeHtml(m.id)}" aria-current="${m.id === current}">
+      ${m.photo ? `<img class="thumb" src="./${escapeHtml(m.photo)}" alt="">` : '<span class="thumb"></span>'}
+      <span><b>${escapeHtml(m.name)}</b><span class="src">${escapeHtml(m.fabric.name || "ткань не указана")} · договоров: ${n}</span></span>
+    </button>`;
+  }).join("") || '<span class="src">Моделей пока нет.</span>';
+  for (const b of document.querySelectorAll("#list [data-id]")) b.onclick = () => open(b.dataset.id);
+  document.querySelector("#sup").setAttribute("aria-current", String(current === "suppliers"));
+}
+
+// ── карточка модели ────────────────────────────────────────────────────
+
+const dis = editable ? "" : " disabled";
+const field = (id, label, value, type = "text", ph = "") => `<tr>
+  <th class="key"><label for="${id}" style="margin:0">${escapeHtml(label)}</label></th>
+  <td class="val"><input id="${id}" type="${type}" placeholder="${escapeHtml(ph)}"${dis}
+    value="${value === null || value === undefined ? "" : escapeHtml(value)}"></td></tr>`;
+const block = (name) => `<tr class="block"><th colspan="2">${escapeHtml(name)}</th></tr>`;
+const supplierSelect = (attrs, value) => `<select ${attrs}${dis}>
+  <option value="">—</option>${data.suppliers.map((s) =>
+    `<option value="${escapeHtml(s.id)}"${s.id === value ? " selected" : ""}>${escapeHtml(s.name)}</option>`).join("")}</select>`;
+const src = (path) => (pending.has(path) ? URL.createObjectURL(pending.get(path)) : `./${path}`);
+
+function drawModel(model) {
+  if (!model) { document.querySelector("#editor").innerHTML = ""; return; }
+  const m = structuredClone(model);
+  const linked = ordersOf(data.orders, m);
+  const f = m.fabric;
+  document.querySelector("#editor").innerHTML = `<div class="card"><table class="sheet">
+      ${block("Модель")}
+      ${field("m-name", "Название", m.name, "text", "например, ФУКРА_ПОЛНЫЙЗАМОК")}
+      <tr><th class="key">Фото модели</th><td class="val">
+        ${m.photo ? `<img class="mphoto" id="m-photo-img" src="${escapeHtml(src(m.photo))}" alt="">` : '<img class="mphoto hide" id="m-photo-img" alt="">'}
+        ${editable ? '<input type="file" accept="image/*" id="m-photo">' : ""}</td></tr>
+
+      ${block("Ткань")}
+      ${field("f-name", "Ткань", f.name, "text", "например, Фукра")}
+      ${field("f-composition", "Состав", f.composition, "text", "например, хлопок 35%, полиэстер 65%")}
+      ${field("f-price", "Цена за метр", f.price_per_m, "number")}
+      ${field("f-width", "Ширина", f.width, "text", "например, 180 см")}
+      <tr><th class="key"><label for="f-supplier" style="margin:0">Поставщик ткани</label></th>
+        <td class="val">${supplierSelect('id="f-supplier"', f.supplier)}</td></tr>
+      ${field("m-rate", "Расход на 1 шт, м", m.rate, "number", "примерный; в закупке ткани можно поменять")}
+
+      ${block("Фурнитура")}
+      <tr><td colspan="2">
+        <div class="acc-wrap"><table class="sheet-rows acc-edit" id="acc"></table></div>
+        ${editable ? '<button type="button" id="add-acc" style="margin-top:8px">+ Позиция</button>' : ""}
+        <p class="src" style="margin:6px 0 0">На 1 шт — сколько уходит на одно изделие: 1 молния, 1,2 м резинки. В заказе «Заказ фурнитуры» умножит на количество.</p>
+      </td></tr>
+
+      ${block("Договоры этой модели")}
+      <tr><td colspan="2" class="contracts">${linked.length ? linked.map((o) =>
+        `<a class="pill" href="./order.html?id=${encodeURIComponent(o.id)}">${escapeHtml(o.contract_no || o.id)}</a>`).join("")
+        : '<span class="src">Пока нет. Модель выбирается в карточке заказа («Карточки» → «Модель»).</span>'}</td></tr>
+
+      ${block("Примечание")}
+      <tr><td colspan="2"><textarea id="m-note" rows="2"${dis}>${escapeHtml(m.note)}</textarea></td></tr>
+    </table>
+    <div class="row-line" style="margin-top:14px">
+      <button id="m-save" class="primary"${dis}>Сохранить модель</button>
+      ${editable && !linked.length ? '<button id="m-drop" class="danger">Удалить модель</button>' : ""}
+      <span class="src" id="state">${editable ? "" : "только просмотр — нужен токен на странице «Карточки»"}</span>
+    </div></div>`;
+
+  const drawAcc = () => {
+    document.querySelector("#acc").innerHTML = `<thead><tr><th>Фото</th><th>Фурнитура</th><th>Размер / длина</th>
+      <th>На 1 шт</th><th>Ед.</th><th>Поставщик</th><th></th></tr></thead><tbody>${m.accessories.map((a, i) => `<tr>
+      <td>${editable ? `<label class="file" title="Загрузить фото">` : ""}${a.photo
+        ? `<img class="acc-photo" src="${escapeHtml(src(a.photo))}" alt="">` : '<span class="acc-photo"></span>'}${editable
+        ? `<input type="file" accept="image/*" data-aphoto="${i}"></label>` : ""}</td>
+      <td><input data-a="${i}" data-k="name" value="${escapeHtml(a.name)}" placeholder="молния"${dis}></td>
+      <td><input data-a="${i}" data-k="size" value="${escapeHtml(a.size)}" placeholder="длина 60 см"${dis}></td>
+      <td><input class="n" data-a="${i}" data-k="per_item" inputmode="decimal" value="${a.per_item ?? ""}"${dis}></td>
+      <td><input class="u" data-a="${i}" data-k="unit" value="${escapeHtml(a.unit)}"${dis}></td>
+      <td>${supplierSelect(`data-a="${i}" data-k="supplier"`, a.supplier)}</td>
+      <td class="drop">${editable ? `<button type="button" class="icon" data-adrop="${i}" aria-label="Убрать позицию">✕</button>` : ""}</td>
+    </tr>`).join("")}</tbody>`;
+    for (const el of document.querySelectorAll("#acc [data-a]")) {
+      el.onchange = el.oninput = () => {
+        const a = m.accessories[+el.dataset.a];
+        a[el.dataset.k] = el.dataset.k === "per_item" ? numOrNull(el.value) : el.value;
+      };
+    }
+    for (const b of document.querySelectorAll("#acc [data-adrop]")) {
+      b.onclick = () => { m.accessories.splice(+b.dataset.adrop, 1); drawAcc(); };
+    }
+    for (const input of document.querySelectorAll("#acc [data-aphoto]")) {
+      input.onchange = () => {
+        const a = m.accessories[+input.dataset.aphoto];
+        if (!input.files[0]) return;
+        a.photo = `assets/models/${m.id}-${a.id}.jpg`;
+        pending.set(a.photo, input.files[0]);
+        drawAcc();
+      };
+    }
+  };
+  drawAcc();
+
+  const add = document.querySelector("#add-acc");
+  if (add) add.onclick = () => {
+    m.accessories.push({ id: newId("f", m.accessories.map((a) => a.id)), name: "", size: "",
+      per_item: 1, unit: "шт", photo: "", supplier: "" });
+    drawAcc();
+  };
+  const photo = document.querySelector("#m-photo");
+  if (photo) photo.onchange = () => {
+    if (!photo.files[0]) return;
+    m.photo = `assets/models/${m.id}.jpg`;
+    pending.set(m.photo, photo.files[0]);
+    const img = document.querySelector("#m-photo-img");
+    img.src = src(m.photo);
+    img.classList.remove("hide");
+  };
+  document.querySelector("#m-save").onclick = () => saveModel(m);
+  const drop = document.querySelector("#m-drop");
+  if (drop) drop.onclick = () => dropModel(m);
+}
+
+async function saveModel(m) {
+  const val = (id) => document.querySelector(id).value;
+  m.name = val("#m-name").trim();
+  if (!m.name) return say("впишите название модели");
+  if (data.models.some((x) => x.id !== m.id && x.name === m.name)) return say(`модель ${m.name} уже есть`);
+  m.fabric = { name: val("#f-name"), composition: val("#f-composition"), price_per_m: numOrNull(val("#f-price")),
+    width: val("#f-width"), supplier: val("#f-supplier") };
+  m.rate = numOrNull(val("#m-rate"));
+  m.note = val("#m-note");
+  const clean = normalizeModel(m);
+  say("сохраняю…");
+  try {
+    await uploadPending([clean.photo, ...clean.accessories.map((a) => a.photo)], `модель ${clean.name}`);
+    const i = data.models.findIndex((x) => x.id === clean.id);
+    if (i >= 0) data.models[i] = clean; else data.models.push(clean);
+    const result = await save(data, `Модель ${clean.name}`);
+    open(clean.id);
+    say(`Сохранено${result.commit ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""} · на сайте появится примерно через минуту`, "saved");
+  } catch (err) {
+    say(err.message);
+  }
+}
+
+async function dropModel(m) {
+  if (!confirm(`Удалить модель ${m.name}? Она останется в истории правок.`)) return;
+  const was = data.models;
+  data.models = data.models.filter((x) => x.id !== m.id);
+  try {
+    await save(data, `Удалить модель ${m.name}`);
+    open(data.models[0]?.id || "suppliers");
+  } catch (err) {
+    data.models = was;
+    say(err.message);
+  }
+}
+
+/** Фото, выбранные в карточке, уходят в репозиторий только при сохранении. */
+async function uploadPending(paths, what) {
+  for (const path of paths) {
+    if (!path || !pending.has(path)) continue;
+    await saveImage(path, pending.get(path), `Фото: ${what}`);
+    pending.delete(path);
+  }
+}
+
+// ── поставщики ─────────────────────────────────────────────────────────
+
+function drawSuppliers() {
+  const list = structuredClone(data.suppliers);
+  const draw = () => {
+    document.querySelector("#editor").innerHTML = `<div class="card">
+      <h2 style="margin-top:0">Поставщики ткани и фурнитуры</h2>
+      <table class="sheet-rows sup-edit"><thead><tr><th>Поставщик</th><th>Номер контейнера</th><th>Адрес</th><th>Телефон</th><th></th></tr></thead>
+      <tbody>${list.map((s, i) => `<tr>
+        <td><input data-s="${i}" data-k="name" value="${escapeHtml(s.name)}" placeholder="название"${dis}></td>
+        <td><input data-s="${i}" data-k="container" value="${escapeHtml(s.container)}"${dis}></td>
+        <td><input data-s="${i}" data-k="address" value="${escapeHtml(s.address)}"${dis}></td>
+        <td><input data-s="${i}" data-k="phone" type="tel" value="${escapeHtml(s.phone)}" placeholder="+996"${dis}></td>
+        <td class="drop">${editable ? `<button type="button" class="icon" data-sdrop="${i}" aria-label="Убрать поставщика">✕</button>` : ""}</td>
+      </tr>`).join("")}</tbody></table>
+      ${list.length ? "" : '<p class="src">Поставщиков пока нет.</p>'}
+      <div class="row-line" style="margin-top:12px">
+        ${editable ? '<button type="button" id="s-add">+ Поставщик</button>' : ""}
+        <button id="s-save" class="primary"${dis}>Сохранить поставщиков</button>
+        <span class="src" id="state">${editable ? "" : "только просмотр — нужен токен на странице «Карточки»"}</span>
+      </div></div>`;
+    for (const el of document.querySelectorAll("[data-s]")) {
+      el.oninput = () => { list[+el.dataset.s][el.dataset.k] = el.value; };
+    }
+    for (const b of document.querySelectorAll("[data-sdrop]")) {
+      b.onclick = () => { list.splice(+b.dataset.sdrop, 1); draw(); };
+    }
+    const add = document.querySelector("#s-add");
+    if (add) add.onclick = () => {
+      list.push(normalizeSupplier({ id: newId("s", [...list, ...data.suppliers].map((s) => s.id)), name: "" }));
+      draw();
+    };
+    document.querySelector("#s-save").onclick = async () => {
+      const clean = list.map(normalizeSupplier).filter((s) => s.name);
+      const gone = new Set(data.suppliers.map((s) => s.id).filter((id) => !clean.some((s) => s.id === id)));
+      // Убранный поставщик не должен висеть ссылкой в моделях.
+      for (const m of data.models) {
+        if (gone.has(m.fabric.supplier)) m.fabric.supplier = "";
+        for (const a of m.accessories) if (gone.has(a.supplier)) a.supplier = "";
+      }
+      const was = data.suppliers;
+      data.suppliers = clean;
+      say("сохраняю…");
+      try {
+        const result = await save(data, "Поставщики");
+        open("suppliers");
+        say(`Сохранено${result.commit ? ` · <a href="${result.commit}" target="_blank" rel="noopener">коммит</a>` : ""}`, "saved");
+      } catch (err) {
+        data.suppliers = was;
+        say(err.message);
+      }
+    };
+  };
+  draw();
+}
+
+function say(html, cls = "") {
+  const node = document.querySelector("#state");
+  if (!node) return;
+  node.innerHTML = html;
+  node.className = `src ${cls}`;
+}
+
+function numOrNull(v) {
+  if (v === "" || v === null || v === undefined) return null;
+  const n = Number(String(v).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+}
+
+// Загрузка — в самом конце: помощники выше объявлены константами, и до
+// этой строки они ещё не существуют.
+try {
+  ({ data } = await loadOrders());
+  showUpdated(document.querySelector("#updated"), data.updated);
+  const want = new URLSearchParams(location.search).get("id");
+  open(want && (want === "suppliers" || data.models.some((m) => m.id === want)) ? want : data.models[0]?.id || "suppliers");
+} catch (err) {
+  fatal(`Не удалось загрузить данные: ${err.message}`);
+}
+</script>
+</body>
+</html>

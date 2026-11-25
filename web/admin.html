@@ -192,6 +192,8 @@ function drawEditor(record) {
         ${row("order_date", "Дата заказа", r.order_date, "date")}
         ${row("id", "Ключ карточки", r.id, "text", "подставится из договора")}
         ${row("item", "Изделие", r.item, "text", "например, Костюм летний с шортами")}
+        ${pick("model", "Модель", r.model, [["", "не выбрана"],
+          ...(data.models || []).map((m) => [m.id, m.name])])}
         ${pick("status", "Состояние", r.status, STATES)}
         ${row("ordered_qty", "Заказано, шт", r.ordered_qty, "number")}
         ${row("unit_price", "Цена пошива, ₽", r.unit_price, "number")}

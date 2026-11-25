@@ -13,6 +13,7 @@
 // одно значение на оба случая, запись уходила в корень репозитория, в файл,
 // которого сайт не видит: правки «сохранялись» и пропадали.
 import { normalizeColors } from "./colors.js";
+import { normalizeModels, normalizeSuppliers } from "./models.js";
 
 export const SITE_PATH = "data/orders.json";       // рядом со страницей
 export const REPO_PATH = "web/data/orders.json";   // в дереве репозитория
@@ -154,6 +155,29 @@ export async function savePhoto(id, file, slot = 1) {
   return photoSitePath(id, slot);
 }
 
+/**
+ * Положить картинку по произвольному пути рядом со страницей — для фото
+ * моделей и фурнитуры. Возвращает путь, который записывается в данные.
+ */
+export async function saveImage(sitePath, file, message) {
+  const auth = token();
+  if (!auth) throw new Error("нет токена — сохранять некуда");
+  const bytes = await shrink(file);
+  const path = `web/${sitePath}`;
+  const current = await head(auth, path);
+  const response = await fetch(contentsUrl(path), {
+    method: "PUT",
+    headers: headers(auth),
+    body: JSON.stringify({
+      message: message || `Фото: ${sitePath}`,
+      content: bytesToBase64(bytes),
+      ...(current.sha ? { sha: current.sha } : {}),
+    }),
+  });
+  if (!response.ok) throw new Error(await describe(response));
+  return sitePath;
+}
+
 /** Убрать фото из репозитория. Нет файла — считаем, что дело сделано. */
 export async function deletePhoto(id, slot = 1) {
   const auth = token();
@@ -238,6 +262,8 @@ function normalize(data) {
       item: o.item ?? "",
       item_article: o.item_article ?? "",
       material: o.material ?? "",
+      // Ключ модели из базы моделей: из неё берутся ткань, расход и фурнитура.
+      model: o.model ?? "",
       // Оттенков у изделия бывает несколько: название как у заказчика и цвет метки.
       colors: normalizeColors(o.colors),
       tnved: o.tnved ?? "",
@@ -285,6 +311,9 @@ function normalize(data) {
     shipments: (Array.isArray(data?.shipments) ? data.shipments : []).map(normalizeShipment),
     // Оплаты за доставку из выписки банка: пока не разнесены по отгрузкам,
     // лежат здесь. Разносятся в карточке отгрузки одним нажатием.
+    // База моделей и справочник поставщиков ткани и фурнитуры.
+    models: normalizeModels(data?.models),
+    suppliers: normalizeSuppliers(data?.suppliers),
     carriage: (Array.isArray(data?.carriage) ? data.carriage : []).map((p) => ({
       date: p.date ?? "", amount: p.amount ?? null, act_no: p.act_no ?? "",
       act_date: p.act_date ?? "", doc_number: p.doc_number ?? "", purpose: p.purpose ?? "",
