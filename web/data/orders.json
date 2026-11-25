@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-24",
+  "updated": "2026-11-25",
   "contractor": "Айзада (Az)",
   "workshops": [
     {
@@ -1215,6 +1215,13 @@
           "amount": 578856.69,
           "doc_number": "23",
           "purpose": "дог.647/1-1 от 07.04.2026,по спец.1 от 07.04.26,за текст.изд.(брюки)"
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-11-19",
+          "amount": 85453.52,
+          "doc_number": "845",
+          "purpose": "дог.647/1-1 от 07.04.2026,по спец.1 от 07.04.26,за текст.изд.(брюки)"
         }
       ],
       "terms": {
@@ -1614,6 +1621,13 @@
           "amount": 111571.74,
           "doc_number": "14",
           "purpose": "дог.728/1-1 от 24.04.2026,по спец.1 от 24.04.26,за текст.изд.(брюки)"
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-11-19",
+          "amount": 112881.78,
+          "doc_number": "847",
+          "purpose": "дог.728/1-1 от 24.04.2026,по спец.1 от 24.04.26,за текст.изд.(брюки)"
         }
       ],
       "terms": {
@@ -1875,6 +1889,13 @@
           "date": "2026-07-10",
           "amount": 380532.8,
           "doc_number": "5",
+          "purpose": "дог.766/1-1 от 04.05.2026,по спец.1 от 04.05.26,за текст.изд.(брюки)"
+        },
+        {
+          "kind": "доп. постоплата",
+          "date": "2026-11-19",
+          "amount": 168363.64,
+          "doc_number": "848",
           "purpose": "дог.766/1-1 от 04.05.2026,по спец.1 от 04.05.26,за текст.изд.(брюки)"
         }
       ],
@@ -5334,6 +5355,13 @@
           "amount": 762300,
           "doc_number": "646",
           "purpose": "дог.1065/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-11-19",
+          "amount": 1178540,
+          "doc_number": "818",
+          "purpose": "дог.1065/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд.(костюм)"
         }
       ],
       "terms": {
@@ -5401,6 +5429,13 @@
           "amount": 736890,
           "doc_number": "645",
           "purpose": "дог.1074/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд. (костюм)"
+        },
+        {
+          "kind": "постоплата",
+          "date": "2026-11-19",
+          "amount": 1194270,
+          "doc_number": "832",
+          "purpose": "дог.1074/1-1 от 23.09.2026,по спец.1 от 23.09.26,за текст.изд.(костюм)"
         }
       ],
       "terms": {
@@ -5636,24 +5671,34 @@
       "material": "",
       "colors": [
         {
-          "name": "белый",
-          "hex": "#f7f7f7"
-        },
-        {
-          "name": "серый",
-          "hex": "#9a9a9a"
-        },
-        {
           "name": "черный",
-          "hex": "#1c1c1c"
+          "hex": "#1c1c1c",
+          "qty": 400,
+          "sizes": "38–56"
         },
         {
           "name": "коричневый",
-          "hex": "#7b4b2a"
+          "hex": "#7b4b2a",
+          "qty": 320,
+          "sizes": "38–56"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7",
+          "qty": 300,
+          "sizes": "38–56"
+        },
+        {
+          "name": "серый",
+          "hex": "#9a9a9a",
+          "qty": 200,
+          "sizes": "38–56"
         },
         {
           "name": "сливочный",
-          "hex": "#f1e6cc"
+          "hex": "#f1e6cc",
+          "qty": 200,
+          "sizes": "38–56"
         }
       ],
       "tnved": "6104130000",
@@ -5720,7 +5765,32 @@
       "item": "Костюм спорт женский без начеса, бомбер на молнии",
       "item_article": "",
       "material": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "светло-серый",
+          "hex": "#9a9a9a",
+          "qty": 300,
+          "sizes": "38–56"
+        },
+        {
+          "name": "темно-коричневый",
+          "hex": "#7b4b2a",
+          "qty": 300,
+          "sizes": "38–56"
+        },
+        {
+          "name": "графит",
+          "hex": "#3d4045",
+          "qty": 300,
+          "sizes": "38–56"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 300,
+          "sizes": "38–56"
+        }
+      ],
       "tnved": "6112120000",
       "ordered_qty": 1200,
       "unit_price": 1100,
@@ -5884,7 +5954,38 @@
       "item": "Спортивный костюм брючный ПУКРА",
       "item_article": "",
       "material": "",
-      "colors": [],
+      "colors": [
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 280,
+          "sizes": "40–52"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a",
+          "qty": 350,
+          "sizes": "40–52"
+        },
+        {
+          "name": "графит",
+          "hex": "#3d4045",
+          "qty": 210,
+          "sizes": "40–52"
+        },
+        {
+          "name": "светло-серый",
+          "hex": "#9a9a9a",
+          "qty": 210,
+          "sizes": "40–52"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63",
+          "qty": 210,
+          "sizes": "40–52"
+        }
+      ],
       "tnved": "",
       "ordered_qty": 1260,
       "unit_price": 950,
@@ -6019,8 +6120,27 @@
       "item": "Спортивный костюм Фобус кофта зип/брюки",
       "item_article": "",
       "material": "",
-      "colors": [],
-      "tnved": "",
+      "colors": [
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63",
+          "qty": 600,
+          "sizes": "38–60"
+        },
+        {
+          "name": "графит",
+          "hex": "#3d4045",
+          "qty": 600,
+          "sizes": "38–60"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 600,
+          "sizes": "38–60"
+        }
+      ],
+      "tnved": "6104192000",
       "ordered_qty": 1800,
       "unit_price": 1280,
       "workshops": [
@@ -6029,8 +6149,8 @@
       "photo": "assets/photos/1148.jpg",
       "photo2": "",
       "shipment": {
-        "date": "",
-        "qty": null,
+        "date": "2026-11-20",
+        "qty": 1140,
         "places": null,
         "weight_gross": null,
         "driver": "",
@@ -6074,7 +6194,7 @@
         }
       ],
       "status": "",
-      "note": "По спецификации: 1800 шт × 1280 ₽ (т.-синий, графит, чёрный по 600). Источник: спец 1148, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет."
+      "note": "По спецификации: 1800 шт × 1280 ₽ (т.-синий, графит, чёрный по 600). Источник: спец 1148, архив 1064-1150 от 23.10.2026. Предоплаты в выписке по 23.10 нет. Отправка 20.11.2026: ТТН и инвойс № 20/11-6, 1140 шт (темно-синий 486, графит 102, черный 552) × 1280 ₽ = 1 459 200 ₽; мест и веса в CMR нет (отправка 1148.pdf, прислана 25.11.2026)."
     },
     {
       "id": "1149",
@@ -6161,23 +6281,33 @@
       "colors": [
         {
           "name": "лимонный",
-          "hex": "#f2e35a"
+          "hex": "#f2e35a",
+          "qty": 300,
+          "sizes": "38–56"
         },
         {
           "name": "розовый",
-          "hex": "#ef9cbc"
+          "hex": "#ef9cbc",
+          "qty": 300,
+          "sizes": "38–56"
         },
         {
           "name": "темно-синий",
-          "hex": "#1f2f63"
+          "hex": "#1f2f63",
+          "qty": 200,
+          "sizes": "38–56"
         },
         {
           "name": "бежевый",
-          "hex": "#d8c3a0"
+          "hex": "#d8c3a0",
+          "qty": 200,
+          "sizes": "38–56"
         },
         {
           "name": "голубой",
-          "hex": "#8ec5ea"
+          "hex": "#8ec5ea",
+          "qty": 200,
+          "sizes": "38–56"
         }
       ],
       "tnved": "",
@@ -6273,7 +6403,7 @@
       "payments": [
         {
           "kind": "предоплата",
-          "date": "2026-11-10",
+          "date": "2026-11-11",
           "amount": 44100,
           "doc_number": "893",
           "purpose": "дог.1166/1-1 от 27.10.2026,по спец.1 от 27.10.26,за текст.изд.(костюм)"
@@ -6299,6 +6429,11 @@
           "title": "спецификация 1166.pdf",
           "url": "https://drive.google.com/file/d/1elESyRzhxktZ7zuKOJrKr3HUUPsY5hvc/view",
           "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1166.pdf",
+          "url": "https://drive.google.com/file/d/12YZP3-mQPND2z41moatq4rM1xNnR7x8q/view",
+          "kind": "заказ"
         }
       ],
       "status": "",
@@ -6456,7 +6591,7 @@
       "payments": [
         {
           "kind": "предоплата",
-          "date": "2026-11-10",
+          "date": "2026-11-11",
           "amount": 364000,
           "doc_number": "684",
           "purpose": "дог.1196/1-1 от 06.11.2026,по спец.1 от 06.11.26,за текст.изд.(блузка)"
@@ -6482,6 +6617,11 @@
           "title": "спецификация 1196.pdf",
           "url": "https://drive.google.com/file/d/1CbXaUP19oURkqYTjFQBPDaohUpzJSz73/view",
           "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1196.pdf",
+          "url": "https://drive.google.com/file/d/1oqy2o1ukJ9iZ5XswsuHpfMTl-TkKmHIi/view",
+          "kind": "заказ"
         }
       ],
       "status": "",
@@ -6657,7 +6797,7 @@
       "payments": [
         {
           "kind": "предоплата",
-          "date": "2026-11-10",
+          "date": "2026-11-11",
           "amount": 196000,
           "doc_number": "685",
           "purpose": "дог.1200/1-1 от 06.11.2026,по спец.1 от 06.11.26,за текст.изд.(брюки)"
@@ -6683,10 +6823,690 @@
           "title": "спецификация 1200.pdf",
           "url": "https://drive.google.com/file/d/1dooCwtg4Q_p0evlRC6sljJA1zTy1Zy_w/view",
           "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1200.pdf",
+          "url": "https://drive.google.com/file/d/1DOOQUzQeMWfdqucx7qjFTl8mvJvocEQv/view",
+          "kind": "заказ"
         }
       ],
       "status": "",
       "note": "По спецификации: 2000 шт × 280 ₽ (серые, чёрные по 300; ещё 7 цветов по 200; 42-60), итого 560 000 ₽. Источник: спец 1200 (группа ЦЕХ АЙЗАДА, 06.11.2026), заказ 1200 (итог 2000). Предоплаты в выписке по 09.11.2026 нет."
+    },
+    {
+      "item_article": "БРКЛЕШСТРЕЛА01пуговка_1",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "assets/photos/1223-2.jpg",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-11-19",
+          "amount": 103950,
+          "doc_number": "824",
+          "purpose": "дог.1223/1-1 от 12.11.2026,по спец.1 от 12.11.26,за текст.изд.(брюки)"
+        }
+      ],
+      "status": "",
+      "id": "1223",
+      "order_no": "Аи12.11.26/1",
+      "contract_no": "1223/1-1",
+      "order_date": "2026-11-12",
+      "item": "Брюки клеш (1 пуговица по поясу + стрелки)",
+      "material": "полиэстер 95%, вискоза 5%",
+      "colors": [
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 270,
+          "sizes": "40–56",
+          "photo": "assets/photos/1223/01.jpg"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63",
+          "qty": 270,
+          "sizes": "40–56",
+          "photo": "assets/photos/1223/02.jpg"
+        }
+      ],
+      "ordered_qty": 540,
+      "unit_price": 550,
+      "photo": "assets/photos/1223.jpg",
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": 7,
+        "postpay_days": 20
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1LInfv1iSf3XN4gCDkVYSOt6G8dc2KRdv",
+          "kind": "папка"
+        },
+        {
+          "title": "договор 1223.pdf",
+          "url": "https://drive.google.com/file/d/1824Ly_lxZwzMdH3vyblFlRZ7jwGSwtpq/view",
+          "kind": "договор"
+        },
+        {
+          "title": "спецификация 1223.pdf",
+          "url": "https://drive.google.com/file/d/1rhP_ElAJPVb0bNoOik4J8v23wL3rRDsn/view",
+          "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1223.pdf",
+          "url": "https://drive.google.com/file/d/1Pyd67wy2wsZqDa5T8aKrp1MH3iriDsAU/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По спецификации от 12.11.2026: черные и темно-синие по 270 шт (40-56) × 550 ₽, итого 297 000 ₽. Предоплата 35%, срок 7 дней с предоплаты, остаток 65% — 20 банковских дней. Договор и спецификация подписаны обеими сторонами. Источник: договор, спец и заказ 1223, присланы 25.11.2026."
+    },
+    {
+      "item_article": "БРКЛЕШСТРЕЛА01пуговка_1",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-11-19",
+          "amount": 103950,
+          "doc_number": "823",
+          "purpose": "дог.1224/1-1 от 12.11.2026,по спец.1 от 12.11.26,за текст.изд.(брюки)"
+        }
+      ],
+      "status": "",
+      "id": "1224",
+      "order_no": "Аи12.11.26/2",
+      "contract_no": "1224/1-1",
+      "order_date": "2026-11-12",
+      "item": "Брюки клеш с разрезами",
+      "material": "полиэстер 95%, вискоза 5%",
+      "colors": [
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 270,
+          "sizes": "40–56",
+          "photo": "assets/photos/1224/01.jpg"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63",
+          "qty": 270,
+          "sizes": "40–56",
+          "photo": "assets/photos/1224/02.jpg"
+        }
+      ],
+      "ordered_qty": 540,
+      "unit_price": 550,
+      "photo": "assets/photos/1224.jpg",
+      "terms": {
+        "prepay_percent": 35,
+        "lead_time_days": 7,
+        "postpay_days": 20
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1gMxkFCgzPxzbUFJtmsPfPO1AzjoEY-Om",
+          "kind": "папка"
+        },
+        {
+          "title": "договор 1224.pdf",
+          "url": "https://drive.google.com/file/d/1rq9jEk_6G1cbZKORcZ5cdfObHrdPKit3/view",
+          "kind": "договор"
+        },
+        {
+          "title": "спецификация 1224.pdf",
+          "url": "https://drive.google.com/file/d/1vzm3wITW1wdwP3UnxMKnVUll-GwGKBb2/view",
+          "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1224.pdf",
+          "url": "https://drive.google.com/file/d/1PSzB2iPbXFghu19dEpycg4wDKud4TCJw/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По спецификации от 12.11.2026: брюки клеш с разрезами, черные и темно-синие по 270 шт (40-56) × 550 ₽, итого 297 000 ₽. Предоплата 35%. Расхождение: в документе заказа 1224 название и артикул как у 1223 («1 пуговица по поясу + стрелки»), но фото — брюки с разрезами, как в спецификации. Источник: договор, спец и заказ 1224, присланы 25.11.2026."
+    },
+    {
+      "item_article": "",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "assets/photos/1253-2.jpg",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "status": "",
+      "id": "1253",
+      "order_no": "Аи16.11.26/1",
+      "contract_no": "1253/1-1",
+      "order_date": "2026-11-16",
+      "item": "Льняной костюм двойка топ + брюки",
+      "material": "Лен 40%, вискоза 40%, полиэстер 20%",
+      "colors": [
+        {
+          "name": "хаки",
+          "hex": "#8b8656",
+          "qty": 160,
+          "sizes": "36–50",
+          "photo": "assets/photos/1253/01.jpg"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0",
+          "qty": 160,
+          "sizes": "36–50",
+          "photo": "assets/photos/1253/02.jpg"
+        },
+        {
+          "name": "пудровый",
+          "hex": "#e9c3bf",
+          "qty": 160,
+          "sizes": "36–50",
+          "photo": "assets/photos/1253/03.jpg"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 160,
+          "sizes": "36–50",
+          "photo": "assets/photos/1253/04.jpg"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a",
+          "qty": 160,
+          "sizes": "36–50",
+          "photo": "assets/photos/1253/05.jpg"
+        }
+      ],
+      "ordered_qty": 800,
+      "unit_price": 450,
+      "photo": "assets/photos/1253.jpg",
+      "terms": {
+        "prepay_percent": null,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1I7f9DmCS79BfSNYJdvXJAdJvEvA6uaiv",
+          "kind": "папка"
+        },
+        {
+          "title": "заказ 1253.pdf",
+          "url": "https://drive.google.com/file/d/1jsMVTwhoDfDtUDz8I3NjultEWdHeCnlR/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По документу заказа Az 16/11/2026/1: 5 цветов по 160 шт (36-50, по 20 на размер) × 450 ₽, итого 360 000 ₽. Договора и спецификации нет — процент предоплаты не известен. Источник: заказ 1253, прислан 25.11.2026."
+    },
+    {
+      "item_article": "",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "status": "",
+      "id": "1258",
+      "order_no": "Аи16.11.26/2",
+      "contract_no": "1258/1-1",
+      "order_date": "2026-11-16",
+      "item": "Платье с объемным длинным рукавом и юбкой-солнце",
+      "material": "Сингапур: хлопок 80%, вискоза 15%, эластан 5%",
+      "colors": [
+        {
+          "name": "розовый",
+          "hex": "#ef9cbc",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/01.jpg"
+        },
+        {
+          "name": "голубой",
+          "hex": "#8ec5ea",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/02.jpg"
+        },
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/03.jpg"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7",
+          "qty": 200,
+          "sizes": "36–54"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/04.jpg"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/05.jpg"
+        },
+        {
+          "name": "кофейный",
+          "hex": "#6f4e37",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/06.jpg"
+        },
+        {
+          "name": "лимонный",
+          "hex": "#f2e35a",
+          "qty": 200,
+          "sizes": "36–54",
+          "photo": "assets/photos/1258/07.jpg"
+        }
+      ],
+      "ordered_qty": 1600,
+      "unit_price": 350,
+      "photo": "assets/photos/1258.jpg",
+      "terms": {
+        "prepay_percent": null,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1a9WwbM0EJx3phUHxBUb2sHPElf3CZ-6I",
+          "kind": "папка"
+        },
+        {
+          "title": "заказ 1258.pdf",
+          "url": "https://drive.google.com/file/d/1n0I1BxqKbOzm5Fo4dAt9ouKtpze223G8/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По документу заказа Az 16/11/2026/2: 8 цветов по 200 шт (36-54, по 20 на размер) × 350 ₽, итого 560 000 ₽. У белого в заказе нет образца ткани. Договора и спецификации нет. Источник: заказ 1258, прислан 25.11.2026."
+    },
+    {
+      "item_article": "",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "status": "",
+      "id": "1259",
+      "order_no": "Аи16.11.26/3",
+      "contract_no": "1259/1-1",
+      "order_date": "2026-11-16",
+      "item": "Платье на бретелях лен",
+      "material": "Лен 40%, вискоза 40%, полиэстер 20%",
+      "colors": [
+        {
+          "name": "коричневый",
+          "hex": "#7b4b2a",
+          "qty": 120,
+          "sizes": "38–48",
+          "photo": "assets/photos/1259/01.jpg"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 120,
+          "sizes": "38–48",
+          "photo": "assets/photos/1259/02.jpg"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0",
+          "qty": 120,
+          "sizes": "38–48",
+          "photo": "assets/photos/1259/03.jpg"
+        },
+        {
+          "name": "хаки",
+          "hex": "#8b8656",
+          "qty": 120,
+          "sizes": "38–48",
+          "photo": "assets/photos/1259/04.jpg"
+        },
+        {
+          "name": "белый",
+          "hex": "#f7f7f7",
+          "qty": 120,
+          "sizes": "38–48"
+        }
+      ],
+      "ordered_qty": 600,
+      "unit_price": 300,
+      "photo": "assets/photos/1259.jpg",
+      "terms": {
+        "prepay_percent": null,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/16pYSlNmOz5HeXnmda3wqoICaz9uxqFk6",
+          "kind": "папка"
+        },
+        {
+          "title": "заказ 1259.pdf",
+          "url": "https://drive.google.com/file/d/1PArqQCfysIjtgJGqE6-uTS5r5qJfeP5S/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По документу заказа Az 16/11/2026/3: 5 цветов по 120 шт (38-48, по 20 на размер) × 300 ₽, итого 180 000 ₽. У белого в заказе нет образца ткани. Договора и спецификации нет. Источник: заказ 1259, прислан 25.11.2026."
+    },
+    {
+      "item_article": "КЮБШР01",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "assets/photos/1294-2.jpg",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [
+        {
+          "kind": "предоплата",
+          "date": "2026-11-25",
+          "amount": 213840,
+          "doc_number": "828",
+          "purpose": "дог.1294/1-1 от 23.11.2026,по спец.1 от 23.11.26,за текст.изд.(костюм)"
+        }
+      ],
+      "status": "",
+      "id": "1294",
+      "order_no": "Аи23.11.26/1",
+      "contract_no": "1294/1-1",
+      "order_date": "2026-11-23",
+      "item": "Костюм летний женский с шортами и рубашкой",
+      "material": "полиэстер 95%, вискоза 5%",
+      "colors": [
+        {
+          "name": "шоколадный",
+          "hex": "#5a3a26",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/01.jpg"
+        },
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/02.jpg"
+        },
+        {
+          "name": "оливковый",
+          "hex": "#7d7a3e",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/03.jpg"
+        },
+        {
+          "name": "экрю",
+          "hex": "#efe6d2",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/04.jpg"
+        },
+        {
+          "name": "светло-голубой",
+          "hex": "#8ec5ea",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/05.jpg"
+        },
+        {
+          "name": "терракотовый",
+          "hex": "#c2603f",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/06.jpg"
+        },
+        {
+          "name": "темно-оливковый",
+          "hex": "#55562a",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/07.jpg"
+        },
+        {
+          "name": "изумрудный",
+          "hex": "#1f8a5a",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/08.jpg"
+        },
+        {
+          "name": "бордовый",
+          "hex": "#7b1f33",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/09.jpg"
+        },
+        {
+          "name": "темно-синий",
+          "hex": "#1f2f63",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/10.jpg"
+        },
+        {
+          "name": "салатовый",
+          "hex": "#a6d96a",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/11.jpg"
+        },
+        {
+          "name": "светло-розовый",
+          "hex": "#f4c2d2",
+          "qty": 330,
+          "sizes": "36–56",
+          "photo": "assets/photos/1294/12.jpg"
+        }
+      ],
+      "ordered_qty": 3960,
+      "unit_price": 540,
+      "photo": "assets/photos/1294.jpg",
+      "terms": {
+        "prepay_percent": 10,
+        "lead_time_days": 7,
+        "postpay_days": 20
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1DBRBiYdRVtG_-QLPfmfXZ77mRmP-Oha3",
+          "kind": "папка"
+        },
+        {
+          "title": "договор 1294.pdf",
+          "url": "https://drive.google.com/file/d/1twXWPOy1Jjf5iJRutLZ71YiI3i-w3cn4/view",
+          "kind": "договор"
+        },
+        {
+          "title": "спецификация 1294.pdf",
+          "url": "https://drive.google.com/file/d/1RR5G8GHLdOpJiy4DHhDS8mTBPtAp3-4L/view",
+          "kind": "спецификация"
+        },
+        {
+          "title": "заказ 1294.pdf",
+          "url": "https://drive.google.com/file/d/1f81yQy7mjT7CLYu2owpFb3HNQPHEb1u1/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По спецификации от 23.11.2026: 12 цветов по 330 шт (36-56, по 30 на размер) × 540 ₽, итого 2 138 400 ₽. Предоплата 10%, остаток 90% — 20 банковских дней после получения. В спецификации модель «Костюм с юбкой-шортами и рубашкой». Источник: договор, спец и заказ 1294 (итог 3960), присланы 25.11.2026."
+    },
+    {
+      "item_article": "БЛУЗВЫРЕЗ01синга",
+      "tnved": "",
+      "workshops": [],
+      "photo2": "assets/photos/1304-2.jpg",
+      "shipment": {
+        "date": "",
+        "qty": null,
+        "places": null,
+        "weight_gross": null,
+        "driver": "",
+        "driver_phone": ""
+      },
+      "acceptance": {
+        "accepted_qty": null,
+        "rejected_qty": null,
+        "date": "",
+        "reason": ""
+      },
+      "payments": [],
+      "status": "",
+      "id": "1304",
+      "order_no": "Аи25.11.26/1",
+      "contract_no": "1304/1-1",
+      "order_date": "2026-11-25",
+      "item": "Блузка женская без рукавов майка",
+      "material": "",
+      "colors": [
+        {
+          "name": "черный",
+          "hex": "#1c1c1c",
+          "qty": 165,
+          "sizes": "42–62",
+          "photo": "assets/photos/1304/01.jpg"
+        },
+        {
+          "name": "оливковый",
+          "hex": "#7d7a3e",
+          "qty": 165,
+          "sizes": "42–62",
+          "photo": "assets/photos/1304/02.jpg"
+        },
+        {
+          "name": "бежевый",
+          "hex": "#d8c3a0",
+          "qty": 165,
+          "sizes": "42–62",
+          "photo": "assets/photos/1304/03.jpg"
+        },
+        {
+          "name": "шоколадный",
+          "hex": "#5a3a26",
+          "qty": 165,
+          "sizes": "42–62",
+          "photo": "assets/photos/1304/04.jpg"
+        }
+      ],
+      "ordered_qty": 660,
+      "unit_price": null,
+      "photo": "assets/photos/1304.jpg",
+      "terms": {
+        "prepay_percent": null,
+        "lead_time_days": null,
+        "postpay_days": null
+      },
+      "links": [
+        {
+          "title": "Папка договора",
+          "url": "https://drive.google.com/drive/folders/1cNS8wjrhHqEGwj7Ubmk6hAaEmVCB1idJ",
+          "kind": "папка"
+        },
+        {
+          "title": "заказ 1304.pdf",
+          "url": "https://drive.google.com/file/d/1xj8juBMJcy1ztAJ1j93kEaYuk3_f6r8r/view",
+          "kind": "заказ"
+        }
+      ],
+      "note": "По документу заказа 1304 от 25.11.2026: 4 цвета по 165 шт (42-62, по 15 на размер), итого 660 шт. Цены, договора и спецификации нет. Источник: заказ 1304, прислан 25.11.2026."
     }
   ],
   "shipments": [
@@ -6731,7 +7551,8 @@
         "1147",
         "1084",
         "1092",
-        "1149"
+        "1149",
+        "1148"
       ],
       "act_no": "",
       "act_date": "",
@@ -6852,6 +7673,22 @@
       "act_date": "2026-10-09",
       "doc_number": "664",
       "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 12 от 09.10.2026"
+    },
+    {
+      "date": "2026-11-11",
+      "amount": 146708,
+      "act_no": "15",
+      "act_date": "2026-10-27",
+      "doc_number": "724",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 15 от 27.10.2026"
+    },
+    {
+      "date": "2026-11-23",
+      "amount": 267460.8,
+      "act_no": "17",
+      "act_date": "2026-11-11",
+      "doc_number": "790",
+      "purpose": "договору перевозки груза 08.07/26 от 08.07.26,за услуги доставки товара, Акт 17 от 11.11.2026"
     }
   ]
 }
