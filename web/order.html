@@ -65,6 +65,18 @@
     </div>
   </div>
 
+  <div class="overlay hide" id="acc-box">
+    <div class="sheet-view">
+      <div class="row-line">
+        <b>Заказ фурнитуры</b>
+        <span class="src" id="acc-state"></span>
+        <a class="btn primary" id="acc-save" style="margin-left:auto">Скачать PDF</a>
+        <button id="acc-close">Закрыть</button>
+      </div>
+      <div class="fab-wrap" id="acc-sheet"></div>
+    </div>
+  </div>
+
   <div class="overlay hide" id="fabric-box">
     <div class="sheet-view">
       <div class="row-line">
@@ -83,6 +95,7 @@ import { money } from "./lib/ledger.js";
 import { colorList } from "./lib/colors.js";
 import { docsOf } from "./lib/documents.js";
 import { hasFabric } from "./lib/fabric.js";
+import { accessoryRows, fabricText, hasAccessories, modelOf, orderQty, supplierName } from "./lib/models.js";
 import { bindDocs, docsHtml } from "./lib/docview.js";
 import { ownPhotos, photoImg } from "./lib/photo.js";
 import { shipmentsOf, shipmentsWith } from "./lib/shipments.js";
@@ -93,10 +106,14 @@ import { dateRu, escapeHtml, fatal, loadOrders, mountShell, qty, status, worksho
 mountShell("orders.html");
 
 const id = new URLSearchParams(location.search).get("id");
+let model = null;       // модель заказа из базы моделей
+let suppliers = [];
 
 try {
   const { data, orders } = await loadOrders();
   const order = orders.find((o) => o.key === id);
+  model = modelOf(data.models, order);
+  suppliers = data.suppliers || [];
   // Машина, в которой заказ уехал: документы на доставку и оплата карго общие
   // на всю отгрузку, и ходить за ними через список — лишний шаг.
   const [ride] = shipmentsWith(shipmentsOf(data, orders), id);
@@ -108,6 +125,10 @@ try {
     document.querySelector("#blank").onclick = () => showBlank(order);
     const fb = document.querySelector("#fabric");
     if (fb) fb.onclick = () => showFabric(order);
+    const ac = document.querySelector("#acc");
+    if (ac) ac.onclick = () => showAccessories(order);
+    document.querySelector("#acc-close").onclick = () =>
+      document.querySelector("#acc-box").classList.add("hide");
     document.querySelector("#fabric-close").onclick = () =>
       document.querySelector("#fabric-box").classList.add("hide");
     document.querySelector("#blank-close").onclick = () =>
@@ -125,6 +146,7 @@ function render(o, ride) {
   const st = status(o);
   const price = o.get("unit_price");
   const edit = `${hasFabric(o) ? '<button id="fabric">Закупка ткани</button>' : ""}
+    ${hasAccessories(model) ? '<button id="acc">Заказ фурнитуры</button>' : ""}
     <button id="blank">Скачать бланк</button>
     <a class="btn" href="./admin.html?id=${encodeURIComponent(o.key)}">Править</a>`;
 
@@ -136,7 +158,7 @@ function render(o, ride) {
       <span class="pill ${st.cls}">${st.name}</span>
       <span class="row-line" style="margin-left:auto">${edit}</span>
     </div>
-    <p class="sub">${escapeHtml(o.get("item") || "изделие не указано")}${
+    <p class="sub">${model ? `<a href="./models.html?id=${encodeURIComponent(model.id)}"><b>${escapeHtml(model.name)}</b></a> · ` : ""}${escapeHtml(o.get("item") || "изделие не указано")}${
       o.get("item_article") ? ` · арт. ${escapeHtml(o.get("item_article"))}` : ""}${
       o.get("tnved") ? ` · ТН ВЭД ${escapeHtml(o.get("tnved"))}` : ""}${
       o.get("order_date") ? ` · заказ от ${dateRu(o.get("order_date"))}` : ""}</p>
@@ -287,8 +309,11 @@ async function showFabric(o) {
   const sheet = document.querySelector("#fabric-sheet");
   box.classList.remove("hide");
   const { fabricRows, fabricPdf, fabricName, fmtMeters, meters, parseRate, perSize, totals } = await import("./lib/fabric.js");
-  const rows = fabricRows(o);
+  const material = fabricText(model);
+  const rows = fabricRows(o, material);
   const date = o.get("order_date");
+  // Расход по умолчанию — примерный из модели; поменять можно прямо здесь.
+  if (fabricRate === null && model?.rate !== null && model?.rate !== undefined) fabricRate = model.rate;
   sheet.innerHTML = `<div class="fab-head"><b>Договор № ${escapeHtml(o.contract_no || o.key)}${
       date ? ` от ${dateRu(date)}` : ""}</b><div class="src">${escapeHtml(o.get("item") || "")}</div></div>
     <table class="fab"><thead><tr><th>Фото</th><th>Цвет</th><th class="mat">Материал</th><th class="sz">Размеры</th>
@@ -352,7 +377,7 @@ async function showFabric(o) {
       await Promise.all(rows.filter((r) => r.photo).map(async (r) => {
         try { photos.set(r.photo, new Uint8Array(await (await fetch(`./${r.photo}`)).arrayBuffer())); } catch {}
       }));
-      const url = URL.createObjectURL(new Blob([fabricPdf(o, fonts, fabricRate, photos, skip)], { type: "application/pdf" }));
+      const url = URL.createObjectURL(new Blob([fabricPdf(o, fonts, fabricRate, photos, skip, material)], { type: "application/pdf" }));
       if (save.dataset.url) URL.revokeObjectURL(save.dataset.url);
       save.dataset.url = url;
       save.href = url;
@@ -365,6 +390,56 @@ async function showFabric(o) {
   };
   for (const el of inputs) el.addEventListener("input", () => { delete save.dataset.ready; });
   state.textContent = "Впишите расход на 1 шт — он встанет во все цвета. ✕ убирает цвет из закупки. В карточку не сохраняется.";
+}
+
+/**
+ * Заказ фурнитуры: позиции модели × штуки заказа, с фото и поставщиком.
+ * Норма на изделие правится в модели, здесь только смотрят и скачивают.
+ */
+async function showAccessories(o) {
+  const box = document.querySelector("#acc-box");
+  const state = document.querySelector("#acc-state");
+  const save = document.querySelector("#acc-save");
+  const sheet = document.querySelector("#acc-sheet");
+  box.classList.remove("hide");
+  const { fmtMeters } = await import("./lib/fabric.js");
+  const n = orderQty(o);
+  const rows = accessoryRows(model, n);
+  const date = o.get("order_date");
+  const amount = (v, unit) => (v === null ? "—" : `${fmtMeters(v)} ${escapeHtml(unit)}`);
+  sheet.innerHTML = `<div class="fab-head"><b>Договор № ${escapeHtml(o.contract_no || o.key)}${
+      date ? ` от ${dateRu(date)}` : ""}</b><div class="src">Модель ${escapeHtml(model.name)}, ${qty(n)} шт</div></div>
+    <table class="fab"><thead><tr><th>Фото</th><th>Фурнитура</th><th>Размер</th><th>На 1 шт</th><th>Всего</th>
+      <th class="mat">Поставщик</th></tr></thead>
+    <tbody>${rows.map((r) => `<tr>
+      <td class="ph">${r.photo ? `<img src="./${escapeHtml(r.photo)}" alt="" loading="lazy">` : ""}</td>
+      <td><b>${escapeHtml(r.name)}</b></td><td>${escapeHtml(r.size || "—")}</td>
+      <td>${amount(r.per_item, r.unit)}</td><td class="m">${amount(r.total, r.unit)}</td>
+      <td class="mat">${escapeHtml(supplierName(suppliers, r.supplier) || "—")}</td></tr>`).join("")}</tbody></table>
+    <p class="src" style="margin:10px 0 0">Позиции и нормы правятся в карточке модели.</p>`;
+  state.textContent = "";
+  const { accessoriesName, accessoriesPdf } = await import("./lib/models.js");
+  save.download = accessoriesName(o);
+  save.onclick = async (e) => {
+    if (save.dataset.ready) return;
+    e.preventDefault();
+    state.textContent = "Собираю PDF…";
+    try {
+      const { loadFonts } = await import("./lib/pdf.js");
+      const fonts = await loadFonts();
+      const photos = new Map();
+      await Promise.all(rows.filter((r) => r.photo).map(async (r) => {
+        try { photos.set(r.photo, new Uint8Array(await (await fetch(`./${r.photo}`)).arrayBuffer())); } catch {}
+      }));
+      const url = URL.createObjectURL(new Blob([accessoriesPdf(o, model, suppliers, fonts, photos)], { type: "application/pdf" }));
+      save.href = url;
+      save.dataset.ready = "1";
+      state.textContent = "";
+      save.click();
+    } catch (err) {
+      state.textContent = `Не получилось собрать PDF: ${err.message}`;
+    }
+  };
 }
 
 /** Ужать лист под ширину окна, сохранив печатные пропорции. */
